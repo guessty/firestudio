@@ -1,5 +1,4 @@
 const path = require('path')
-import { existsSync } from 'fs'
 const withTypescript = require('@zeit/next-typescript')
 //
 const dir = path.resolve('.')
@@ -17,9 +16,12 @@ const defaultConfig = {
 const configSource = path.join(dir, 'firestudio.config')
 
 let appConfig = defaultConfig
-
-if (existsSync(configSource)) {
+try {
+  // appConfig = require.resolve(`${configSource}`)
+  console.log(configSource)
   appConfig = require(configSource)
+} catch {
+  console.log('Using default app config')
 }
 
 const config = {
@@ -35,7 +37,8 @@ const config = {
 }
 
 
-const appDir = path.join(path.resolve('.'), config.appDir)
+const appDir = path.join(dir, config.appDir)
+// const routes = require.resolve(`${path.join(appDir, 'config/routes')}`)
 const routes = require(path.join(appDir, 'config/routes'))
 
 const withDefaults = (route) => ({

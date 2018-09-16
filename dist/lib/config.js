@@ -2,8 +2,6 @@
 
 require("core-js/modules/web.dom.iterable");
 
-var _fs = require("fs");
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -28,8 +26,12 @@ var defaultConfig = {
 var configSource = path.join(dir, 'firestudio.config');
 var appConfig = defaultConfig;
 
-if ((0, _fs.existsSync)(configSource)) {
+try {
+  // appConfig = require.resolve(`${configSource}`)
+  console.log(configSource);
   appConfig = require(configSource);
+} catch (_unused) {
+  console.log('Using default app config');
 }
 
 var config = _objectSpread({}, appConfig, {
@@ -37,7 +39,7 @@ var config = _objectSpread({}, appConfig, {
   firebaseConfig: _objectSpread({}, defaultConfig.firebaseConfig, appConfig.firebaseConfig)
 });
 
-var appDir = path.join(path.resolve('.'), config.appDir);
+var appDir = path.join(dir, config.appDir); // const routes = require.resolve(`${path.join(appDir, 'config/routes')}`)
 
 var routes = require(path.join(appDir, 'config/routes'));
 

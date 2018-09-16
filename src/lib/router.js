@@ -6,6 +6,7 @@ const nextRoutes = require('next-routes')
 const router = nextRoutes()
 const appDir = path.join(path.resolve('.'), config.appDir)
 
+// const routes = require(`${path.join(appDir, 'config/routes')}`)
 const routes = require(path.join(appDir, 'config/routes'))
 
 routes.forEach((route) => {

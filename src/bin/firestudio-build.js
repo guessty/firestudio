@@ -7,10 +7,11 @@ import cpx from 'cpx'
 import { existsSync } from 'fs'
 //
 import config from './../lib/config'
+import buildFunctions from './../lib/build-functions'
 
 const dir = path.resolve('.')
 const appDir = path.join(dir, config.appDir)
-const functionsDir = path.join(dir, config.appDir)
+const functionsDir = path.join(dir, config.functionsDir)
 const distDir = path.join(dir, config.distDir)
 
 const nextConfig = config.nextConfig
@@ -30,23 +31,26 @@ if (!existsSync(path.join(appDir, 'pages'))) {
 
 build(appDir, nextConfig)
   .then(() => {
-    console.log('Build Successful')
+    console.log('App Build Successful')
     exportApp(appDir, { outdir: `${distDir}/public` }, nextConfig)
       .then(() => {
         console.log('Export of Static Pages Successful')
         const routesSource = `${appDir}/config/routes.js`
         const functionsTemplateSource = path.join(dir, 'node_modules/firestudio/dist/templates/functions/*.*')
-        const customFunctionsSource = `${functionsDir}/*.*`
         const functionsDistDir = `${distDir}/functions`
         if (!existsSync(routesSource)) {
           printAndExit(`> Cannot find routes config: ${routesSource}`)
         }
-        console.log(functionsTemplateSource)
         cpx.copy(functionsTemplateSource, functionsDistDir, {}, () => {
           cpx.copy(routesSource, `${functionsDistDir}/config`, {}, () => {
-            cpx.copy(customFunctionsSource, `${functionsDistDir}/functions`, {}, () => {
-              printAndExit('Finished', 0)
-            })
+            buildFunctions(functionsDir, functionsDistDir)
+              .then(() => {
+                console.log('Functions Build Successful')
+                printAndExit('Finished', 0)
+              })
+              .catch((err) => {
+                printAndExit(err)
+              })
           })
         })
       })

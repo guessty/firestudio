@@ -15,6 +15,8 @@ var _fs = require("fs");
 
 var _config = _interopRequireDefault(require("./../lib/config"));
 
+var _buildFunctions = _interopRequireDefault(require("./../lib/build-functions"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 //
@@ -22,7 +24,7 @@ var dir = _path.default.resolve('.');
 
 var appDir = _path.default.join(dir, _config.default.appDir);
 
-var functionsDir = _path.default.join(dir, _config.default.appDir);
+var functionsDir = _path.default.join(dir, _config.default.functionsDir);
 
 var distDir = _path.default.join(dir, _config.default.distDir);
 
@@ -41,7 +43,7 @@ if (!(0, _fs.existsSync)(_path.default.join(appDir, 'pages'))) {
 }
 
 (0, _build.default)(appDir, nextConfig).then(function () {
-  console.log('Build Successful');
+  console.log('App Build Successful');
   (0, _export.default)(appDir, {
     outdir: "".concat(distDir, "/public")
   }, nextConfig).then(function () {
@@ -50,19 +52,19 @@ if (!(0, _fs.existsSync)(_path.default.join(appDir, 'pages'))) {
 
     var functionsTemplateSource = _path.default.join(dir, 'node_modules/firestudio/dist/templates/functions/*.*');
 
-    var customFunctionsSource = "".concat(functionsDir, "/*.*");
     var functionsDistDir = "".concat(distDir, "/functions");
 
     if (!(0, _fs.existsSync)(routesSource)) {
       (0, _utils.printAndExit)("> Cannot find routes config: ".concat(routesSource));
     }
 
-    console.log(functionsTemplateSource);
-
     _cpx.default.copy(functionsTemplateSource, functionsDistDir, {}, function () {
       _cpx.default.copy(routesSource, "".concat(functionsDistDir, "/config"), {}, function () {
-        _cpx.default.copy(customFunctionsSource, "".concat(functionsDistDir, "/functions"), {}, function () {
+        (0, _buildFunctions.default)(functionsDir, functionsDistDir).then(function () {
+          console.log('Functions Build Successful');
           (0, _utils.printAndExit)('Finished', 0);
+        }).catch(function (err) {
+          (0, _utils.printAndExit)(err);
         });
       });
     });
