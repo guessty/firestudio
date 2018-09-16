@@ -1,4 +1,5 @@
 const path = require('path')
+const requireFoolWebpack = require('require-fool-webpack')
 const withTypescript = require('@zeit/next-typescript')
 //
 const dir = path.resolve('.')
@@ -16,30 +17,33 @@ const defaultConfig = {
 const configSource = path.join(dir, 'firestudio.config')
 
 let appConfig = defaultConfig
+
 try {
-  // appConfig = require.resolve(`${configSource}`)
-  console.log(configSource)
-  appConfig = require(configSource)
+  appConfig = requireFoolWebpack(configSource)
 } catch {
   console.log('Using default app config')
 }
 
+const appNextConfig = appConfig.nextConfig || {}
+const appFirebaseConfig = appConfig.firebaseConfig || {}
+
 const config = {
+  ...defaultConfig,
   ...appConfig,
   nextConfig: {
     ...defaultConfig.nextConfig,
-    ...appConfig.nextConfig
+    ...appNextConfig
   },
   firebaseConfig: {
     ...defaultConfig.firebaseConfig,
-    ...appConfig.firebaseConfig
+    ...appFirebaseConfig
   }
 }
 
 
 const appDir = path.join(dir, config.appDir)
 // const routes = require.resolve(`${path.join(appDir, 'config/routes')}`)
-const routes = require(path.join(appDir, 'config/routes'))
+const routes = requireFoolWebpack(path.join(appDir, 'config/routes'))
 
 const withDefaults = (route) => ({
   prerender: true,
