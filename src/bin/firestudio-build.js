@@ -41,16 +41,20 @@ build(appDir, nextConfig)
         if (!existsSync(routesSource)) {
           printAndExit(`> Cannot find routes config: ${routesSource}`)
         }
-        cpx.copy(functionsTemplateSource, functionsDistDir, {}, () => {
-          cpx.copy(routesSource, `${functionsDistDir}/config`, {}, () => {
-            buildFunctions(functionsDir, functionsDistDir)
-              .then(() => {
-                console.log('Functions Build Successful')
-                printAndExit('Finished', 0)
+        cpx.copy(`${dir}/package.json`, functionsDistDir, {}, () => {
+          cpx.copy(`${dir}/package-lock.json`, functionsDistDir, {}, () => {
+            cpx.copy(functionsTemplateSource, functionsDistDir, {}, () => {
+              cpx.copy(routesSource, `${functionsDistDir}/config`, {}, () => {
+                buildFunctions(functionsDir, functionsDistDir)
+                  .then(() => {
+                    console.log('Functions Build Successful')
+                    printAndExit('Finished', 0)
+                  })
+                  .catch((err) => {
+                    printAndExit(err)
+                  })
               })
-              .catch((err) => {
-                printAndExit(err)
-              })
+            })
           })
         })
       })

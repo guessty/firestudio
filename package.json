@@ -1,6 +1,6 @@
 {
   "name": "firestudio",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "A preconfigured solution for hosting a NextJS project on Google Firebase.",
   "main": "dist/index.js",
   "repository": "https://github.com/guessty/firestudio.git",
@@ -24,13 +24,15 @@
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
-    "@zeit/next-typescript": "^1.1.0",
     "chalk": "^2.4.1",
     "commander": "^2.18.0"
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
+    "@zeit/next-typescript": "^1.1.0",
     "cpx": "^1.5.0",
+    "firebase-admin": "^6.0.0",
+    "firebase-functions": "^2.0.5",
     "fs": "0.0.1-security",
     "next": "^6.1.2",
     "next-redux-wrapper": "^2.0.0",
@@ -41,6 +43,6 @@
     "require-fool-webpack": "^2.0.0",
     "ts-loader": "^5.1.1",
     "typescript": "^3.0.3",
-    "webpack": "3.10.0"
+    "webpack": "^4.19.0"
   }
 }

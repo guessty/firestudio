@@ -29,4 +29,5 @@ commander
   .description(pkg.description)
   .command('start', 'start the development server')
   .command('build', 'build the project')
+  .command('deploy', 'deploy the project to firebase')
   .parse(process.argv)
