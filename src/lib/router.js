@@ -1,17 +1,11 @@
-import path from 'path'
-//
-import config from './config'
 const nextRoutes = require('next-routes')
-const requireFoolWebpack = require('require-fool-webpack')
 
-const router = nextRoutes()
-const appDir = path.join(path.resolve('.'), config.appDir)
+const initRouter = (routes) => {
+  const router = nextRoutes()
+  routes.forEach((route) => {
+    router.add(route.name, route.pattern, route.page);
+  })
+  return router
+}
 
-// const routes = require(`${path.join(appDir, 'config/routes')}`)
-const routes = requireFoolWebpack(path.join(appDir, 'config/routes'))
-
-routes.forEach((route) => {
-  router.add(route.name, route.pattern, route.page);
-})
-
-module.exports = router
+module.exports = initRouter

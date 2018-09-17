@@ -1,5 +1,4 @@
 import next from 'next'
 //
-import libConfig from './config'
 
-module.exports = ({ dir, dev }) => next({ dir, dev, conf: libConfig.nextConfig })
+module.exports = ({ dir, dev, conf }) => next({ dir, dev, conf })
