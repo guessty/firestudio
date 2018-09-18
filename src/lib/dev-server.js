@@ -12,7 +12,7 @@ module.exports = (dir) => {
   const router = initRouter(routes)
   const port = parseInt(process.env.PORT, 10) || 3000
   const dev = process.env.NODE_ENV !== 'production'
-  const app = libApp({ dir: nextDir, dev, conf: libConfig.nextConfig })
+  const app = libApp({ dir: nextDir, dev, conf: libConfig.next })
   const handler = router.getRequestHandler(app)
 
   app.prepare()

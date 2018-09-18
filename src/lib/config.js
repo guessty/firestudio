@@ -8,10 +8,12 @@ const defaultConfig = {
   appDir: './src/app',
   functionsDir: './src/functions',
   distDir: './dist',
-  nextConfig: {
+  next: {
     webpack: (config) => config
   },
-  firebaseConfig: {}
+  firebase: {
+    projectId: '<projectId>'
+  }
 }
 
 const configSource = path.join(dir, 'firestudio.config')
@@ -24,25 +26,24 @@ try {
   console.log('Using default app config')
 }
 
-const appNextConfig = appConfig.nextConfig || {}
-const appFirebaseConfig = appConfig.firebaseConfig || {}
+const appNextConfig = appConfig.next|| {}
+const appFirebaseConfig = appConfig.firebase || {}
 
 const config = {
   ...defaultConfig,
   ...appConfig,
-  nextConfig: {
-    ...defaultConfig.nextConfig,
+  next: {
+    ...defaultConfig.next,
     ...appNextConfig
   },
-  firebaseConfig: {
-    ...defaultConfig.firebaseConfig,
+  firebase: {
+    ...defaultConfig.firebase,
     ...appFirebaseConfig
   }
 }
 
 
 const appDir = path.join(dir, config.appDir)
-// const routes = require.resolve(`${path.join(appDir, 'config/routes')}`)
 const routes = requireFoolWebpack(path.join(appDir, 'config/routes'))
 
 const withDefaults = (route) => ({
@@ -59,7 +60,7 @@ const staticPathMap = routes.reduce((pathMap, route) => {
 }, {})
 
 const nextConfig = {
-  ...config.nextConfig,
+  ...config.next,
   dir: config.appDir,
   distDir: `./../../${config.distDir}/functions/app`,
   assetPrefix: '',
@@ -68,5 +69,5 @@ const nextConfig = {
 
 module.exports = {
   ...config,
-  nextConfig: withTypescript(nextConfig)
+  next: withTypescript(nextConfig)
 }

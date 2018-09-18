@@ -5,7 +5,8 @@ const initRouter = require('firestudio/dist/lib/router')
 const routes = require('./config/routes')
 
 const router = initRouter(routes)
-const app = libApp({ dev: false, conf: { distDir: 'app' } })
+const dev = process.env.NODE_ENV !== 'production'
+const app = libApp({ dev, conf: { distDir: 'app' } })
 const handler = router.getRequestHandler(app)
 
 export const firestudioApp = functions.https.onRequest((request, response) => {

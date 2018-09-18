@@ -8,13 +8,14 @@ import { existsSync } from 'fs'
 //
 import config from './../lib/config'
 import buildFunctions from './../lib/build-functions'
+import generateFirebaseFiles from './../lib/generate-firebase-files'
 
 const dir = path.resolve('.')
 const appDir = path.join(dir, config.appDir)
 const functionsDir = path.join(dir, config.functionsDir)
 const distDir = path.join(dir, config.distDir)
 
-const nextConfig = config.nextConfig
+const nextConfig = config.next
 
 // Check if pages dir exists and warn if not
 if (!existsSync(appDir)) {
@@ -48,7 +49,14 @@ build(appDir, nextConfig)
                 buildFunctions(functionsDir, functionsDistDir)
                   .then(() => {
                     console.log('Functions Build Successful')
-                    printAndExit('Finished', 0)
+                    generateFirebaseFiles(config.firebase, distDir)
+                      .then(() => {
+                        console.log('Generated Deployment Config')
+                        printAndExit('Finished', 0)
+                      })
+                      .catch((err) => {
+                        printAndExit(err)
+                      })
                   })
                   .catch((err) => {
                     printAndExit(err)
