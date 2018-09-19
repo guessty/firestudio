@@ -4,12 +4,11 @@ const requireFoolWebpack = require('require-fool-webpack')
 //
 import libApp from './app'
 import libConfig from './config'
-import initRouter from './router'
 
 module.exports = (dir) => {
   const nextDir = path.join(dir, libConfig.appDir)
-  const routes = requireFoolWebpack(path.join(nextDir, 'config/routes'))
-  const router = initRouter(routes)
+  const router = requireFoolWebpack(path.join(nextDir, 'router'))
+  console.log(router)
   const port = parseInt(process.env.PORT, 10) || 3000
   const dev = process.env.NODE_ENV !== 'production'
   const app = libApp({ dir: nextDir, dev, conf: libConfig.next })

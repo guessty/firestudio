@@ -44,27 +44,14 @@ const config = {
 
 
 const appDir = path.join(dir, config.appDir)
-const routes = requireFoolWebpack(path.join(appDir, 'config/routes'))
-
-const withDefaults = (route) => ({
-  prerender: true,
-  ...route
-})
-
-const staticPathMap = routes.reduce((pathMap, route) => {
-  const routeWithDefaults = withDefaults(route)
-  if (routeWithDefaults.prerender) {
-    pathMap[routeWithDefaults.pattern] = { page: routeWithDefaults.page }
-  }
-  return pathMap
-}, {})
+const router = requireFoolWebpack(path.join(appDir, 'router'))
 
 const nextConfig = {
   ...config.next,
   dir: config.appDir,
   distDir: `./../../${config.distDir}/functions/app`,
   assetPrefix: '',
-  exportPathMap: () => staticPathMap,
+  exportPathMap: () => router.staticRoutes,
 }
 
 module.exports = {

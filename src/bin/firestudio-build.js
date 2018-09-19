@@ -8,7 +8,7 @@ import { existsSync } from 'fs'
 //
 import config from './../lib/config'
 import buildFunctions from './../lib/build-functions'
-import generateFirebaseFiles from './../lib/generate-firebase-files'
+import buildFirebaseConfig from './../lib/build-firebase-config'
 
 const dir = path.resolve('.')
 const appDir = path.join(dir, config.appDir)
@@ -30,28 +30,31 @@ if (!existsSync(path.join(appDir, 'pages'))) {
   printAndExit('> Couldn\'t find a `pages` directory. Please create one under the project root')
 }
 
+console.log('Building App...')
 build(appDir, nextConfig)
   .then(() => {
     console.log('App Build Successful')
+    console.log('Exporting Static Pages...')
     exportApp(appDir, { outdir: `${distDir}/public` }, nextConfig)
       .then(() => {
-        console.log('Export of Static Pages Successful')
-        const routesSource = `${appDir}/config/routes.js`
+        console.log('Export Successful')
+        console.log('Building Functions...')
+        const routerSource = `${appDir}/router`
         const functionsTemplateSource = path.join(dir, 'node_modules/firestudio/dist/templates/functions/*.*')
         const functionsDistDir = `${distDir}/functions`
-        if (!existsSync(routesSource)) {
-          printAndExit(`> Cannot find routes config: ${routesSource}`)
+        if (!existsSync(routerSource)) {
+          printAndExit(`> Cannot find router: ${routerSource}`)
         }
         cpx.copy(`${dir}/package.json`, functionsDistDir, {}, () => {
           cpx.copy(`${dir}/package-lock.json`, functionsDistDir, {}, () => {
             cpx.copy(functionsTemplateSource, functionsDistDir, {}, () => {
-              cpx.copy(routesSource, `${functionsDistDir}/config`, {}, () => {
+              cpx.copy(routerSource, `${functionsDistDir}`, {}, () => {
                 buildFunctions(functionsDir, functionsDistDir)
                   .then(() => {
                     console.log('Functions Build Successful')
-                    generateFirebaseFiles(config.firebase, distDir)
+                    console.log('Generating Deployment Config')
+                    buildFirebaseConfig(config.firebase, distDir)
                       .then(() => {
-                        console.log('Generated Deployment Config')
                         printAndExit('Finished', 0)
                       })
                       .catch((err) => {

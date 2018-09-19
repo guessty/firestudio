@@ -1,6 +1,7 @@
 import webpack from 'webpack'
 import { existsSync } from 'fs'
 import path from 'path'
+import nodeExternals from 'webpack-node-externals'
 //
 
 export default async function buildFunctions (functionsDir, functionsDistDir) {
@@ -19,6 +20,8 @@ export default async function buildFunctions (functionsDir, functionsDistDir) {
       await runCompiler({
         entry: entry,
         devtool: 'inline-source-map',
+        target: 'node', // in order to ignore built-in modules like path, fs, etc.
+        externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
         module: {
           rules: [
             {
