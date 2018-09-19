@@ -8,10 +8,9 @@ import libConfig from './config'
 module.exports = (dir) => {
   const nextDir = path.join(dir, libConfig.appDir)
   const router = requireFoolWebpack(path.join(nextDir, 'router'))
-  console.log(router)
   const port = parseInt(process.env.PORT, 10) || 3000
   const dev = process.env.NODE_ENV !== 'production'
-  const app = libApp({ dir: nextDir, dev, conf: libConfig.next })
+  const app = libApp({ dir: nextDir, dev, conf: {...libConfig.next, distDir: `./../../tmp/dev-build`} })
   const handler = router.getRequestHandler(app)
 
   app.prepare()

@@ -35,6 +35,7 @@ export default async function buildFunctions (functionsDir, functionsDistDir) {
           extensions: [ '.tsx', '.ts', '.js' ]
         },
         output: {
+          libraryTarget: 'umd',
           filename: 'index.js',
           path: path.join(functionsDistDir, 'functions')
         }
