@@ -39,7 +39,7 @@ build(appDir, nextConfig)
       .then(() => {
         console.log('Export Successful')
         console.log('Building Functions...')
-        const routerSource = `${appDir}/router`
+        const routerSource = `${appDir}/router.js`
         const functionsTemplateSource = path.join(dir, 'node_modules/firestudio/dist/templates/functions/*.*')
         const functionsDistDir = `${distDir}/functions`
         if (!existsSync(routerSource)) {
