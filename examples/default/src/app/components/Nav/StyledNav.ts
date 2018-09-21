@@ -16,7 +16,7 @@ export default styled.div`
       width: 40px;
       display: block;
       position: relative;
-  
+
       img {
         position: absolute;
         top: 50%;

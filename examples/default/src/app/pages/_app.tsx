@@ -61,8 +61,8 @@ class FirestudioApp extends App<IFirestudioAppProps> {
   }
   render() {
     const { Component, pageProps, store, pathname } = (this as any).props
-    const isPrerendered= Router.staticRoutes[pathname]
-    
+    const isPrerendered = Router.staticRoutes[pathname]
+
     return (
       <Container>
         <Provider store={store}>

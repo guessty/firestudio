@@ -2,12 +2,15 @@
 
 ### Download manually
 
-Download the example:
+#### Download the example:
 
 ```
+curl https://codeload.github.com/guessty/firestudio/tar.gz/v0.4.1 | tar -xz --strip=2 firestudio-0.4.1/examples/default && mv ./default ./firestudio-default-project
+
+cd firestudio-defaul-project
 ```
 
-Set up firebase:
+#### Set up firebase:
 
 * install Firebase Tools: `npm i -g firebase-tools`
 * create a project through the [firebase web console](https://console.firebase.google.com/)

@@ -24,7 +24,8 @@ class DynamicPage extends React.Component<IDynamicPageProps> {
             <strong>Use cloud rendering for pages with dynamic content where SEO is important.</strong>
           </Flex>
           <hr />
-          <p>Using Google Cloud Functions, pages can be rendered in the cloud meaning that search engines are able to index it and crawl it just as they would with prerendered pages.</p>
+          <p>Using Google Cloud Functions, pages can be rendered in the cloud meaning that search
+             engines are able to index it and crawl it just as they would with prerendered pages.</p>
           <Flex gutter="3rem">
             <Flex gutter="1.5rem">
               <h2>Route Configuration</h2>
@@ -33,7 +34,8 @@ class DynamicPage extends React.Component<IDynamicPageProps> {
             <Flex gutter="1.5rem">
               <h2>** Note **</h2>
               <Flex gutter="1rem">
-                <p>This page is configured to use cloud rendering and once deployed this route will also render sub-routes in the cloud.</p>
+                <p>This page is configured to use cloud rendering and once deployed this route will also
+                   render sub-routes in the cloud.</p>
                 <p>Try visiting <a href="/cloud-rendered-pages/test">/cloud-rendered-pages/test</a> and observe.</p>
               </Flex>
               {slug ? (
