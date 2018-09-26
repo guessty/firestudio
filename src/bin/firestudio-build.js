@@ -53,7 +53,7 @@ build(appDir, nextConfig)
                   .then(() => {
                     console.log('Functions Build Successful')
                     console.log('Generating Deployment Config')
-                    buildFirebaseConfig(config.firebase, distDir)
+                    buildFirebaseConfig(config.firebase, distDir, functionsDistDir)
                       .then(() => {
                         printAndExit('Finished', 0)
                       })

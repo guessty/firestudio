@@ -9,10 +9,11 @@ const defaultConfig = {
   functionsDir: './src/functions',
   distDir: './dist',
   next: {
-    webpack: (config) => config
+    webpack: (config) => config,
   },
   firebase: {
-    projectId: '<projectId>'
+    projectId: '<projectId>',
+    hostingRewrites: [],
   }
 }
 

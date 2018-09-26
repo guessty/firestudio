@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions'
 //
+import * as appFunctions from './functions'
 const libApp = require('firestudio/dist/lib/app')
 const router = require('./router')
 
@@ -10,4 +11,14 @@ export const firestudioApp = functions.https.onRequest((request, response) => {
   return app.prepare().then(() => handler(request, response))
 })
 
-export * from './functions'
+Object.keys(appFunctions).forEach((key) => {
+  if (key === "default" || key === "__esModule") return
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return functions.https.onRequest(appFunctions[key])
+    }
+  })
+})
+
+// export * from './functions'

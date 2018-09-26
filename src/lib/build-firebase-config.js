@@ -1,5 +1,6 @@
 import { writeFileSync } from 'fs'
 import path from 'path'
+const requireFoolWebpack = require('require-fool-webpack')
 //
 
 const generateFirebasrc = (config) => {
@@ -12,8 +13,15 @@ const generateFirebasrc = (config) => {
   return firebaserc
 }
 
-const generateJSON = (config) => {
-  const additionalRewrites = config.hostingRewrites || []
+const generateJSON = (config, functionsDistDir) => {
+  const customFunctions = requireFoolWebpack(`${functionsDistDir}/functions`)
+  const customFunctionKeys = Object.keys(customFunctions) || []
+  const additionalRewrites = customFunctionKeys.map((key) => {
+    return {
+      source: `/functions/${key}`,
+      function: key,
+    }
+  })
 
   const defaultConfig = {
     functions: {
@@ -48,7 +56,7 @@ const generateJSON = (config) => {
   return jsonConfig
 }
 
-export default async function generateFirebaseFiles (config, distDir) {
+export default async function generateFirebaseFiles (config, distDir, functionsDistDir) {
   writeFileSync(path.join(distDir, '.firebaserc'), generateFirebasrc(config), 'utf8', function(err) {
     if(err) {
         console.log(err);
@@ -56,7 +64,7 @@ export default async function generateFirebaseFiles (config, distDir) {
         console.log(".firebaserc was saved!");
     }
   })
-  writeFileSync(path.join(distDir, 'firebase.json'), generateJSON(config), 'utf8', function(err) {
+  writeFileSync(path.join(distDir, 'firebase.json'), generateJSON(config, functionsDistDir), 'utf8', function(err) {
     if(err) {
         console.log(err);
     } else {

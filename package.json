@@ -1,6 +1,6 @@
 {
   "name": "firestudio",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "description": "A preconfigured solution for hosting a React app on Google Firebase.",
   "main": "dist/index.js",
   "repository": "https://github.com/guessty/firestudio.git",
@@ -31,6 +31,7 @@
     "@babel/polyfill": "7.0.0",
     "@zeit/next-typescript": "1.1.0",
     "cpx": "1.5.0",
+    "express": "^4.16.3",
     "firebase-admin": "6.0.0",
     "firebase-functions": "2.0.5",
     "fs": "0.0.1-security",
