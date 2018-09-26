@@ -13,6 +13,8 @@ const generateFirebasrc = (config) => {
 }
 
 const generateJSON = (config) => {
+  const additionalRewrites = config.hostingRewrites || []
+
   const defaultConfig = {
     functions: {
       source: 'functions'
@@ -28,7 +30,8 @@ const generateJSON = (config) => {
         {
           source: '**/**',
           function: 'firestudioApp'
-        }
+        },
+        ...additionalRewrites
       ]
     }
   }
