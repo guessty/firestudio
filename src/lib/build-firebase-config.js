@@ -27,11 +27,11 @@ const generateJSON = (config) => {
         '**/node_nodules/**'
       ],
       rewrites: [
+        ...additionalRewrites,
         {
           source: '**/**',
           function: 'firestudioApp'
-        },
-        ...additionalRewrites
+        }
       ]
     }
   }
