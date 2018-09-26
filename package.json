@@ -1,6 +1,6 @@
 {
   "name": "firestudio",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "A preconfigured solution for hosting a React app on Google Firebase.",
   "main": "dist/index.js",
   "repository": "https://github.com/guessty/firestudio.git",

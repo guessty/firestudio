@@ -1,5 +1,6 @@
 import path from 'path'
 import express from 'express'
+import * as functions from 'firebase-functions'
 const requireFoolWebpack = require('require-fool-webpack')
 //
 import libApp from './app'
@@ -15,8 +16,11 @@ module.exports = (dir) => {
       const nextDir = path.join(dir, libConfig.appDir)
       const router = requireFoolWebpack(path.join(nextDir, 'router'))
       const port = parseInt(process.env.PORT, 10) || 3000
-      const dev = process.env.NODE_ENV !== 'production'
-      const app = libApp({ dir: nextDir, dev, conf: {...libConfig.next, distDir: `./../../tmp/dev-build`} })
+      const app = libApp({
+        dev: true,
+        dir: nextDir,
+        conf: {...libConfig.next, distDir: `./../../tmp/dev-build`},
+      })
       const handler = router.getRequestHandler(app)
       const customFunctions = requireFoolWebpack(`${functionsDistDir}/functions`)
       const customFunctionsKeys = Object.keys(customFunctions) || []
@@ -26,15 +30,14 @@ module.exports = (dir) => {
           const server = express()
 
           customFunctionsKeys.forEach(key => {
-            server.all(`/functions/${key}`, (req, res) => {
-              return customFunctions[key](req, res)
-            })
+            const wrappedFunction = functions.https.onRequest((req, res) => customFunctions[key](req, res))
+            server.all(`/functions/${key}`, wrappedFunction)
           })
 
           server.get('*', (req, res) => {
             return handler(req, res)
           })
-          
+
           server.listen(port, (err) => {
             if (err) throw err
             console.log(`> Ready on http://localhost:${port}`)
