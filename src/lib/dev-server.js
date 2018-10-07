@@ -1,6 +1,5 @@
 import path from 'path'
 import express from 'express'
-import * as functions from 'firebase-functions'
 const requireFoolWebpack = require('require-fool-webpack')
 //
 import libApp from './app'
@@ -30,8 +29,7 @@ module.exports = (dir) => {
           const server = express()
 
           customFunctionsKeys.forEach(key => {
-            const wrappedFunction = functions.https.onRequest((req, res) => customFunctions[key](req, res))
-            server.all(`/functions/${key}`, wrappedFunction)
+            server.all(`/functions/${key}`, customFunctions[key])
           })
 
           server.get('*', (req, res) => {
