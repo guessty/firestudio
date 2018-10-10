@@ -38,22 +38,24 @@ build(appDir, nextConfig)
     exportApp(appDir, { outdir: `${distDir}/public` }, nextConfig)
       .then(() => {
         console.log('Export Successful')
-        console.log('Building Functions...')
+        console.log('Copying Files...')
         const routerSource = `${appDir}/router.js`
         const functionsTemplateSource = path.join(dir, 'node_modules/firestudio/dist/templates/functions/*.*')
         const functionsDistDir = `${distDir}/functions`
         if (!existsSync(routerSource)) {
           printAndExit(`> Cannot find router: ${routerSource}`)
         }
-        cpx.copy(`${dir}/package.json`, functionsDistDir, {}, () => {
-          cpx.copy(`${dir}/package-lock.json`, functionsDistDir, {}, () => {
-            cpx.copy(functionsTemplateSource, functionsDistDir, {}, () => {
-              cpx.copy(routerSource, `${functionsDistDir}`, {}, () => {
-                buildFunctions(functionsDir, functionsDistDir)
+        if (config.firebase.incFunctions) {
+          console.log('Building Functions...')
+          cpx.copy(`${dir}/package.json`, functionsDistDir, {}, () => {
+            cpx.copy(`${dir}/package-lock.json`, functionsDistDir, {}, () => {
+              cpx.copy(functionsTemplateSource, functionsDistDir, {}, () => {
+                cpx.copy(routerSource, `${functionsDistDir}`, {}, () => {
+                  buildFunctions(functionsDir, functionsDistDir)
                   .then(() => {
                     console.log('Functions Build Successful')
                     console.log('Generating Deployment Config')
-                    buildFirebaseConfig(config.firebase, distDir, functionsDistDir)
+                    buildFirebaseConfig(config.firebase, distDir, functionsDistDir, routerSource)
                       .then(() => {
                         printAndExit('Finished', 0)
                       })
@@ -64,10 +66,20 @@ build(appDir, nextConfig)
                   .catch((err) => {
                     printAndExit(err)
                   })
+                })
               })
             })
           })
-        })
+        } else {
+          console.log('Generating Deployment Config')
+          buildFirebaseConfig(config.firebase, distDir, functionsDistDir, routerSource)
+          .then(() => {
+            printAndExit('Finished', 0)
+          })
+          .catch((err) => {
+            printAndExit(err)
+          })
+        }
       })
       .catch((err) => {
         printAndExit(err)

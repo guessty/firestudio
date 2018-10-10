@@ -13,20 +13,44 @@ const generateFirebasrc = (config) => {
   return firebaserc
 }
 
-const generateJSON = (config, functionsDistDir) => {
-  const customFunctions = requireFoolWebpack(`${functionsDistDir}/functions`)
-  const customFunctionKeys = Object.keys(customFunctions) || []
-  const additionalRewrites = customFunctionKeys.map((key) => {
-    return {
-      source: `/functions/${key}`,
-      function: key,
-    }
-  })
+const generateJSON = (config, functionsDistDir, routerSource) => {
+  const configRewrites = config.hostingRewrites || []
 
-  const defaultConfig = {
-    functions: {
-      source: 'functions'
-    },
+  let rewrites = []
+  if (config.incFunctions) {
+    const customFunctions = requireFoolWebpack(`${functionsDistDir}/functions`)
+    const customFunctionKeys = Object.keys(customFunctions) || []
+    const customFunctionRewrites = customFunctionKeys.map((key) => {
+      return {
+        source: `/functions/${key}`,
+        function: key,
+      }
+    })
+    rewrites = [
+      ...configRewrites,
+      ...customFunctionRewrites,
+      {
+        source: '**/**',
+        function: 'firestudioApp'
+      }
+    ]
+  } else {
+    const appRouter = requireFoolWebpack(`${routerSource}`)
+    const dynamicRoutes = appRouter.dynamicRoutes || []
+    const clientRewrites = Object.keys(dynamicRoutes).map((route) => {
+      const source = route.split(':slug').join('**')
+      return {
+        source,
+        destination: '/client-router/index.html'
+      }
+    })
+    rewrites = [
+      ...configRewrites,
+      ...clientRewrites,
+    ]
+  }
+
+  const hostingConfig = {
     hosting: {
       public: 'public',
       ignore: [
@@ -34,21 +58,17 @@ const generateJSON = (config, functionsDistDir) => {
         '**/.*',
         '**/node_nodules/**'
       ],
-      rewrites: [
-        ...additionalRewrites,
-        {
-          source: '**/**',
-          function: 'firestudioApp'
-        }
-      ]
+      rewrites
     }
   }
 
+  const functionsConfig = config.incFunctions ? { functions: { source: 'functions' } } : {}
   const firestoreConfig = config.firestore ? { firestore: config.firestore } : {}
   const storageConfig = config.storage ? { storage: config.storage } : {}
 
   const jsonConfig = JSON.stringify({
-    ...defaultConfig,
+    ...hostingConfig,
+    ...functionsConfig,
     ...firestoreConfig,
     ...storageConfig
   })
@@ -56,7 +76,7 @@ const generateJSON = (config, functionsDistDir) => {
   return jsonConfig
 }
 
-export default async function generateFirebaseFiles (config, distDir, functionsDistDir) {
+export default async function generateFirebaseFiles (config, distDir, functionsDistDir, routerSource) {
   writeFileSync(path.join(distDir, '.firebaserc'), generateFirebasrc(config), 'utf8', function(err) {
     if(err) {
         console.log(err);
@@ -64,7 +84,7 @@ export default async function generateFirebaseFiles (config, distDir, functionsD
         console.log(".firebaserc was saved!");
     }
   })
-  writeFileSync(path.join(distDir, 'firebase.json'), generateJSON(config, functionsDistDir), 'utf8', function(err) {
+  writeFileSync(path.join(distDir, 'firebase.json'), generateJSON(config, functionsDistDir, routerSource), 'utf8', function(err) {
     if(err) {
         console.log(err);
     } else {
