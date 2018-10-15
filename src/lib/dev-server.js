@@ -2,23 +2,22 @@ import path from 'path'
 import express from 'express'
 const requireFoolWebpack = require('require-fool-webpack')
 //
-import libApp from './app'
-import libConfig from './config'
-import libBuildFunctions from './build-functions'
+import firestudioApp from './app'
+import config from './build/config'
+import buildFunctions from './build/functions'
 
-module.exports = (dir) => {
-  const functionsDir = path.join(dir, libConfig.functionsDir)
-  const functionsDistDir = path.join(dir, 'tmp')
+module.exports = (currentPath) => {
+  const functionsDistDir = path.join(currentPath, 'tmp')
   
-  libBuildFunctions(functionsDir, functionsDistDir)
+  buildFunctions(currentPath, config, true)
     .then(() => {
-      const nextDir = path.join(dir, libConfig.appDir)
+      const nextDir = path.join(currentPath, config.app.dir)
       const router = requireFoolWebpack(path.join(nextDir, 'router'))
       const port = parseInt(process.env.PORT, 10) || 3000
-      const app = libApp({
+      const app = firestudioApp({
         dev: true,
         dir: nextDir,
-        conf: {...libConfig.next, distDir: `./../../tmp/dev-build`},
+        conf: {...libConfig.next, distDir: `./../../tmp/app`},
       })
       const handler = router.getRequestHandler(app)
       const customFunctions = requireFoolWebpack(`${functionsDistDir}/functions`)
@@ -29,7 +28,7 @@ module.exports = (dir) => {
           const server = express()
 
           customFunctionsKeys.forEach(key => {
-            server.all(`/functions/${key}`, customFunctions[key])
+            server.all(`/api/functions/${key}`, customFunctions[key])
           })
 
           server.get('*', (req, res) => {

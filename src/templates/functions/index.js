@@ -20,5 +20,3 @@ Object.keys(appFunctions).forEach((key) => {
     }
   })
 })
-
-// export * from './functions'

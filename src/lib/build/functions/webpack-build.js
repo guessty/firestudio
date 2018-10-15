@@ -4,7 +4,7 @@ import path from 'path'
 import nodeExternals from 'webpack-node-externals'
 //
 
-export default async function buildFunctions (functionsDir, functionsDistDir) {
+export default async function webpackBuild (functionsDir, functionsDistDir) {
   const functionsJSEntry = `${functionsDir}/index.js`
   const functionsTSEntry = `${functionsDir}/index.ts`
   let entry = undefined
