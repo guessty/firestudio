@@ -17,7 +17,7 @@ module.exports = (currentPath) => {
       const app = firestudioApp({
         dev: true,
         dir: nextDir,
-        conf: {...libConfig.next, distDir: `./../../tmp/app`},
+        conf: {...config.next, distDir: `./../../tmp/app`},
       })
       const handler = router.getRequestHandler(app)
       const customFunctions = requireFoolWebpack(`${functionsDistDir}/functions`)

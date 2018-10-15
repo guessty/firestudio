@@ -7,24 +7,36 @@ const initRouter = (routes = []) => {
   })
 
   const withDefaults = (route) => ({
-    prerender: true,
+    renderMethod: 'client',
     ...route
   })
 
-  const dynamicPathMap = {}
-  
-  const staticPathMap = routes.reduce((pathMap, route) => {
+  const exportRoutes = [
+    ...routes,
+    { name: '404', pattern: '/404.html', page: '/_404' },
+    { name: 'router', pattern: '/router.html', page: '/_router'},
+  ]
+
+  const clientPathMap = {}
+  const cloudPathMap = {}
+  const staticPathMap = {}
+
+  exportRoutes.forEach((route) => {
     const routeWithDefaults = withDefaults(route)
-    if (routeWithDefaults.prerender) {
-      pathMap[routeWithDefaults.pattern] = { page: routeWithDefaults.page }
+    if (routeWithDefaults.renderMethod === 'pre'
+      || routeWithDefaults.page === '/_router'
+      || routeWithDefaults.page === '/_404') {
+      staticPathMap[routeWithDefaults.pattern] = { page: routeWithDefaults.page }
+    } else if (routeWithDefaults.renderMethod === 'cloud') {
+      cloudPathMap[routeWithDefaults.pattern] = { page: routeWithDefaults.page }
     } else {
-      dynamicPathMap[routeWithDefaults.pattern] = { page: routeWithDefaults.page }
+      clientPathMap[routeWithDefaults.pattern] = { page: routeWithDefaults.page }
     }
-    return pathMap
-  }, {})
+  })
 
   router['staticRoutes'] = staticPathMap
-  router['dynamicRoutes'] = dynamicPathMap
+  router['clientRoutes'] = clientPathMap
+  router['cloudRoutes'] = cloudPathMap
 
   return router
 }

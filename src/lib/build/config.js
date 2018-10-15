@@ -1,7 +1,9 @@
 const path = require('path')
 const requireFoolWebpack = require('require-fool-webpack')
 const withTypescript = require('@zeit/next-typescript')
+const webpack= require('webpack')
 //
+const { parsed: localEnv } = require('dotenv')
 const dir = path.resolve('.')
 
 const appDir = './src/app'
@@ -15,15 +17,13 @@ const defaultConfig = {
   app: {
     dir: appDir,
     next: {
-      webpack: (config) => config,
+      webpack: () => {}
     },
   },
   firebase: {
     projectId: '<projectId>',
   },
   functions: {
-    cloudRenderApp: true,
-    enabled: true,
     dir: functionsDir,
   },
   plugins: [],
@@ -82,5 +82,7 @@ const config = {
     }
   }
 }
+
+console.log(config)
 
 module.exports = config

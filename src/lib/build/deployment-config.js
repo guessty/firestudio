@@ -14,44 +14,28 @@ const generateFirebasrc = (config) => {
 }
 
 const generateJSON = (config, functionsDistDir, routerSource) => {
-  const configRewrites = config.rewrites || []
-  let functionRewrites = []
-  let dynamicRewrites = []
-  let staticRewrites = []
   const appRouter = requireFoolWebpack(`${routerSource}`)
 
-  if (config.functions.enabled) {
-    const customFunctions = requireFoolWebpack(`${functionsDistDir}/functions`)
-    const customFunctionKeys = Object.keys(customFunctions) || []
-    const customFunctionRewrites = customFunctionKeys.map((key) => {
-      return {
-        source: `/api/functions/${key}`,
-        function: key,
-      }
-    })
-    const firestudioAppRewrite = config.functions.cloudRenderApp ? {
-      source: '**/**',
-      function: 'firestudioApp'
-    } : {}
+  const configRewrites = config.rewrites || []
 
-    functionRewrites = [
-      ...customFunctionRewrites,
-      firestudioAppRewrite
-    ]
-  } else {
-    const dynamicRoutes = appRouter.dynamicRoutes || {}
-    dynamicRewrites = Object.keys(dynamicRoutes).map((route) => {
-      const source = route.split(':slug').join('**')
-      return {
-        source,
-        destination: '/client-redirect.html'
-      }
-    })
-  }
+  const clientRewrites = Object.keys(appRouter.clientRoutes).map((route) => {
+    const source = route.split(':slug').join('**')
+    return {
+      source,
+      destination: '/router.html'
+    }
+  })
+
+  const cloudRewrites = Object.keys(appRouter.cloudRoutes).map((route) => {
+    const source = route.split(':slug').join('**')
+    return {
+      source,
+      function: 'firestudioApp'
+    }
+  })
 
   // added specific rewrite for static routes in order to support serve.js
-  const staticRoutes = appRouter.staticRoutes || {}
-  staticRewrites = Object.keys(staticRoutes).map((route) => {
+  const staticRewrites = Object.keys(appRouter.staticRoutes).map((route) => {
     const expression = /(.html|.json)/
     const destination = expression.test(route) ? route : path.join(route, 'index.html')
     return {
@@ -60,16 +44,31 @@ const generateJSON = (config, functionsDistDir, routerSource) => {
     }
   })
 
+  let customFunctions = {}
+  try {
+    customFunctions = requireFoolWebpack(`${functionsDistDir}/functions`)
+  } catch {
+    console.log('> no custom functions to rewrite')
+  }
+  const functionRewrites = Object.keys(customFunctions).map((key) => {
+    return {
+      source: `/api/functions/${key}`,
+      function: key,
+    }
+  })
+  
   const firebaseRewrites = [
     ...configRewrites,
-    ...dynamicRewrites,
+    ...clientRewrites,
+    ...cloudRewrites,
     ...functionRewrites,
   ]
 
   const serveRewrites =[
-    ...configRewrites,
     ...staticRewrites,
-    ...dynamicRewrites,
+    ...configRewrites,
+    ...clientRewrites,
+    ...cloudRewrites,
     ...functionRewrites,
   ]
 

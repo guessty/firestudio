@@ -13,9 +13,7 @@ const currentPath = path.resolve('.')
 async function build (currentPath, config) {
   await validate(currentPath, config)
   await buildApp(currentPath, config)
-  if (config.functions.enabled) {
-    await buildFunctions(currentPath, config)
-  }
+  await buildFunctions(currentPath, config)
   await buildDeploymentConfig(currentPath, config)
 }
 
