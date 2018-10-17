@@ -9,7 +9,7 @@ export default async function validate (currentPath, config) {
   const pagesDir = path.join(appDir, 'pages')
   const routerSource = path.join(appDir, 'router.js')
   const functionsDir = path.join(srcDir, 'functions')
-  const pluginsDir = path.join(srcDir, 'plugins')
+  // const pluginsDir = path.join(srcDir, 'plugins')
 
   // Check for '/src' directory in '<rootDir>'
   if (!existsSync(srcDir)) {
@@ -36,13 +36,16 @@ export default async function validate (currentPath, config) {
   }
 
   // Check for '/functions' directory in '<root>/src' if functions are enabled
-  if (config.functions.enabled && !existsSync(functionsDir)) {
-    printAndExit(`> No '/functions' directory found in '/src'. Please create one to continue.`)
+  if (existsSync(functionsDir)
+    && !existsSync(path.join(functionsDir, 'index.js'))
+    && !existsSync(path.join(functionsDir, 'index.ts' ))
+  ) {
+    printAndExit(`> No index file found in '/src/functions' directory. Please create one to continue.`)
   }
 
-  // Check for '/plugins' directory in '<root>/src' if plugins are enabled
-  if (config.plugins.length && !existsSync(pluginsDir)) {
-    printAndExit(`> No '/plugins' directory found in '/src'. Please create one to continue.`)
-  }
+  // // Check for '/plugins' directory in '<root>/src' if plugins are enabled
+  // if (config.plugins.length && !existsSync(pluginsDir)) {
+  //   printAndExit(`> No '/plugins' directory found in '/src'. Please create one to continue.`)
+  // }
 }
 

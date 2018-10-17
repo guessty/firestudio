@@ -1,9 +1,7 @@
 const path = require('path')
 const requireFoolWebpack = require('require-fool-webpack')
 const withTypescript = require('@zeit/next-typescript')
-const webpack= require('webpack')
 //
-const { parsed: localEnv } = require('dotenv')
 const dir = path.resolve('.')
 
 const appDir = './src/app'
@@ -28,7 +26,7 @@ const defaultConfig = {
   functions: {
     dir: functionsDir,
   },
-  plugins: [],
+  // plugins: [],
   rewrites: [],
 }
 
@@ -47,7 +45,7 @@ const appNextConfig = appConfig.next|| defaultConfig.app.next
 const firebaseConfig = customConfig.firebase || defaultConfig.firebase
 const functionsConfig = customConfig.functions || defaultConfig.functions
 const rewritesConfig = customConfig.rewrites || defaultConfig.rewrites
-const pluginsConfig = customConfig.plugins || defaultConfig.plugins
+// const pluginsConfig = customConfig.plugins || defaultConfig.plugins
 
 
 const appPath = path.join(dir, appDir)
@@ -73,7 +71,7 @@ const config = {
     dir: functionsDir
   },
   rewrites: rewritesConfig,
-  plugins: pluginsConfig,
+  // plugins: pluginsConfig,
   dist: {
     dir: distDir,
     public: {
