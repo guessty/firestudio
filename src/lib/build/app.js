@@ -1,5 +1,5 @@
 import build from 'next/dist/build'
-import exportApp from 'next/dist/server/export'
+import exportApp from 'next/dist/export'
 import path from 'path'
 //
 

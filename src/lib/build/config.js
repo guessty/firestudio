@@ -17,7 +17,9 @@ const defaultConfig = {
   app: {
     dir: appDir,
     next: {
-      webpack: () => {}
+      webpack (config, options) {
+        return config
+      },
     },
   },
   firebase: {
@@ -82,7 +84,5 @@ const config = {
     }
   }
 }
-
-console.log(config)
 
 module.exports = config
