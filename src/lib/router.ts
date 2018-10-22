@@ -1,12 +1,20 @@
 const nextRoutes = require('next-routes')
+//
 
-const initRouter = (routes = []) => {
+interface IRouteProps {
+  name: string
+  pattern: string
+  page: string
+  renderMethod: string
+}
+
+const initRouter = (routes: any = []) => {
   const router = nextRoutes()
-  routes.forEach((route) => {
+  routes.forEach((route: IRouteProps) => {
     router.add(route.name, route.pattern, route.page);
   })
 
-  const withDefaults = (route) => ({
+  const withDefaults = (route: IRouteProps) => ({
     renderMethod: 'client',
     ...route
   })
@@ -17,9 +25,9 @@ const initRouter = (routes = []) => {
     { name: 'router', pattern: '/router.html', page: '/_router'},
   ]
 
-  const clientPathMap = {}
-  const cloudPathMap = {}
-  const staticPathMap = {}
+  const clientPathMap: any = {}
+  const cloudPathMap: any = {}
+  const staticPathMap: any = {}
 
   exportRoutes.forEach((route) => {
     const routeWithDefaults = withDefaults(route)
@@ -41,4 +49,4 @@ const initRouter = (routes = []) => {
   return router
 }
 
-module.exports = initRouter
+export default initRouter

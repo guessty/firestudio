@@ -1,12 +1,12 @@
 import * as functions from 'firebase-functions'
 //
 import * as appFunctions from './functions'
-const libApp = require('firestudio/dist/lib/app')
+const App = require('firestudio')
 const router = require('./router')
 //
 
 const firestudioApp = (request, response) => {
-  const app = libApp({ dev: false, conf: { distDir: 'app' } })
+  const app = App({ dev: false, conf: { distDir: 'app' } })
   const handler = router.getRequestHandler(app)
   console.log('File: ' + request.originalUrl) // eslint-disable-line no-console
   return app.prepare().then(() => handler(request, response))

@@ -2,7 +2,7 @@
 
 const chalk = require('chalk')
 const commander = require('commander')
-const pkg = require('./../../package.json')
+const pkg = require('./../package.json')
 
 commander
   .version(pkg.version)

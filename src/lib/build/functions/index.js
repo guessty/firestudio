@@ -5,7 +5,7 @@ import webpackBuild from './webpack-build'
 
 const copyFiles = (currentPath, appPath, functionsDistPath) => new Promise((resolve) => {
   const routerPath = path.join(appPath, 'router.js')
-  const functionsTemplateSource = path.join(currentPath, 'node_modules/firestudio/dist/templates/functions/*.*')
+  const functionsTemplateSource = path.join(currentPath, 'node_modules/firestudio/lib/build/functions/template/*.*')
 
   console.log('Copying Files...')
   cpx.copy(`${currentPath}/package.json`, functionsDistPath, {}, () => {

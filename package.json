@@ -1,29 +1,35 @@
 {
   "name": "firestudio",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "A preconfigured solution for hosting a React app on Google Firebase.",
-  "main": "dist/index.js",
+  "main": "index.js",
+  "types": "index.d.ts",
   "repository": "https://github.com/guessty/firestudio.git",
   "author": "guessty <christian.guest@outlook.com>",
   "license": "MIT",
   "files": [
-    "dist",
+    "lib",
+    "bin",
     "app.js",
     "document.js",
     "error.js",
     "head.js",
-    "router.js"
+    "router.js",
+    "store.js"
   ],
   "scripts": {
-    "babel": "./node_modules/.bin/babel src --out-dir dist"
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:js": "babel src --out-dir ./ --extensions \".js,.jsx,.ts,.tsx\" --source-maps inline",
+    "build": "npm run build:types && npm run build:js"
   },
   "bin": {
-    "firestudio": "./dist/bin/firestudio.js"
+    "firestudio": "./bin/firestudio.js"
   },
   "devDependencies": {
-    "@babel/cli": "7.0.0",
-    "@babel/core": "7.0.0",
-    "@babel/preset-env": "7.0.0",
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "@types/next": "^7.0.3",
     "chalk": "2.4.1",
     "commander": "2.18.0"
   },
@@ -31,13 +37,13 @@
     "@babel/polyfill": "7.0.0",
     "@zeit/next-typescript": "1.1.0",
     "cpx": "1.5.0",
+    "deep-object-diff": "^1.1.0",
     "dotenv": "^6.1.0",
     "express": "^4.16.3",
     "firebase-admin": "6.0.0",
     "firebase-functions": "2.0.5",
     "fs": "0.0.1-security",
     "next": "7.0.2",
-    "next-redux-wrapper": "2.0.0",
     "next-routes": "1.4.2",
     "path": "0.12.7",
     "react": "16.5.0",
@@ -45,6 +51,7 @@
     "require-fool-webpack": "2.0.0",
     "ts-loader": "5.1.1",
     "typescript": "3.0.3",
+    "unstated": "^2.1.1",
     "webpack": "4.19.0",
     "webpack-node-externals": "1.7.2"
   }

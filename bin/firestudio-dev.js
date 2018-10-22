@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+"use strict";
+
+var path = require('path'); //
+
+
+var devServer = require('./../lib/dev-server');
+
+module.exports = devServer(path.resolve('.'));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uL3NyYy9iaW4vZmlyZXN0dWRpby1kZXYuanMiXSwibmFtZXMiOlsicGF0aCIsInJlcXVpcmUiLCJkZXZTZXJ2ZXIiLCJtb2R1bGUiLCJleHBvcnRzIiwicmVzb2x2ZSJdLCJtYXBwaW5ncyI6IkFBQUE7OztBQUNBLElBQU1BLElBQUksR0FBR0MsT0FBTyxDQUFDLE1BQUQsQ0FBcEIsQyxDQUNBOzs7QUFDQSxJQUFNQyxTQUFTLEdBQUdELE9BQU8sQ0FBQyxxQkFBRCxDQUF6Qjs7QUFFQUUsTUFBTSxDQUFDQyxPQUFQLEdBQWlCRixTQUFTLENBQUNGLElBQUksQ0FBQ0ssT0FBTCxDQUFhLEdBQWIsQ0FBRCxDQUExQiIsInNvdXJjZXNDb250ZW50IjpbIiMhL3Vzci9iaW4vZW52IG5vZGVcbmNvbnN0IHBhdGggPSByZXF1aXJlKCdwYXRoJylcbi8vXG5jb25zdCBkZXZTZXJ2ZXIgPSByZXF1aXJlKCcuLy4uL2xpYi9kZXYtc2VydmVyJylcblxubW9kdWxlLmV4cG9ydHMgPSBkZXZTZXJ2ZXIocGF0aC5yZXNvbHZlKCcuJykpXG4iXX0=
