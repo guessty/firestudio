@@ -13,12 +13,12 @@ const generateFirebasrc = (config) => {
   return firebaserc
 }
 
-const generateJSON = (config, functionsDistDir, routerSource) => {
-  const appRouter = requireFoolWebpack(`${routerSource}`)
+const generateJSON = (config, functionsDistDir, routesSource) => {
+  const appRoutes = requireFoolWebpack(`${routesSource}`)
 
   const configRewrites = config.rewrites || []
 
-  const clientRewrites = Object.keys(appRouter.clientRoutes).map((route) => {
+  const clientRewrites = Object.keys(appRoutes.clientRoutes).map((route) => {
     const source = route.split(':slug').join('**')
     return {
       source,
@@ -26,7 +26,7 @@ const generateJSON = (config, functionsDistDir, routerSource) => {
     }
   })
 
-  const cloudRewrites = Object.keys(appRouter.cloudRoutes).map((route) => {
+  const cloudRewrites = Object.keys(appRoutes.cloudRoutes).map((route) => {
     const source = route.split(':slug').join('**')
     return {
       source,
@@ -35,7 +35,7 @@ const generateJSON = (config, functionsDistDir, routerSource) => {
   })
 
   // added specific rewrite for static routes in order to support serve.js
-  const staticRewrites = Object.keys(appRouter.staticRoutes).map((route) => {
+  const staticRewrites = Object.keys(appRoutes.staticRoutes).map((route) => {
     const expression = /(.html|.json)/
     const destination = expression.test(route) ? route : path.join(route, 'index.html')
     return {
@@ -103,7 +103,7 @@ const generateJSON = (config, functionsDistDir, routerSource) => {
 export default async function buildDeploymentConfig (currentPath, config) {
   const distDir = path.join(currentPath, config.dist.dir)
   const functionsDistDir = path.join(currentPath, config.dist.functions.dir)
-  const routerSource = path.join(currentPath, config.app.dir, 'router.js')
+  const routesSource = path.join(currentPath, config.app.dir, 'routes.js')
 
   console.log('Building Deployment Config...')
   await writeFileSync(path.join(distDir, '.firebaserc'), generateFirebasrc(config), 'utf8', function(err) {
@@ -114,7 +114,7 @@ export default async function buildDeploymentConfig (currentPath, config) {
     }
   })
 
-  const JSONConfig = await generateJSON(config, functionsDistDir, routerSource)
+  const JSONConfig = await generateJSON(config, functionsDistDir, routesSource)
 
   await writeFileSync(path.join(distDir, 'firebase.json'), JSONConfig.firebase, 'utf8', function(err) {
     if(err) {

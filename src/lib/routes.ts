@@ -2,16 +2,15 @@ const nextRoutes = require('next-routes')
 //
 
 interface IRouteProps {
-  name: string
   pattern: string
   page: string
   renderMethod: string
 }
 
-const initRouter = (routes: any = []) => {
-  const router = nextRoutes()
+const initRoutes = (routes: any = []) => {
+  const appRoutes = nextRoutes()
   routes.forEach((route: IRouteProps) => {
-    router.add(route.name, route.pattern, route.page);
+    appRoutes.add({ pattern: route.pattern, page: route.page });
   })
 
   const withDefaults = (route: IRouteProps) => ({
@@ -21,8 +20,8 @@ const initRouter = (routes: any = []) => {
 
   const exportRoutes = [
     ...routes,
-    { name: '404', pattern: '/404.html', page: '/_404' },
-    { name: 'router', pattern: '/router.html', page: '/_router'},
+    { pattern: '/404.html', page: '/_404' },
+    { pattern: '/router.html', page: '/_router'},
   ]
 
   const clientPathMap: any = {}
@@ -31,7 +30,7 @@ const initRouter = (routes: any = []) => {
 
   exportRoutes.forEach((route) => {
     const routeWithDefaults = withDefaults(route)
-    if (routeWithDefaults.renderMethod === 'pre'
+    if (routeWithDefaults.renderMethod === 'static'
       || routeWithDefaults.page === '/_router'
       || routeWithDefaults.page === '/_404') {
       staticPathMap[routeWithDefaults.pattern] = { page: routeWithDefaults.page }
@@ -42,11 +41,11 @@ const initRouter = (routes: any = []) => {
     }
   })
 
-  router['staticRoutes'] = staticPathMap
-  router['clientRoutes'] = clientPathMap
-  router['cloudRoutes'] = cloudPathMap
+  appRoutes['staticRoutes'] = staticPathMap
+  appRoutes['clientRoutes'] = clientPathMap
+  appRoutes['cloudRoutes'] = cloudPathMap
 
-  return router
+  return appRoutes
 }
 
-export default initRouter
+export default initRoutes

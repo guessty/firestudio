@@ -1,8 +1,8 @@
 import path from 'path'
 import express from 'express'
+import next from 'next'
 const requireFoolWebpack = require('require-fool-webpack')
 //
-import firestudioApp from './app'
 import config from './build/config'
 import buildFunctions from './build/functions'
 
@@ -12,14 +12,14 @@ module.exports = (currentPath) => {
   buildFunctions(currentPath, config, true)
     .then(() => {
       const nextDir = path.join(currentPath, config.app.dir)
-      const router = requireFoolWebpack(path.join(nextDir, 'router'))
+      const routes = requireFoolWebpack(path.join(nextDir, 'routes'))
       const port = parseInt(process.env.PORT, 10) || 3000
-      const app = firestudioApp({
+      const app = next({
         dev: true,
         dir: nextDir,
-        conf: {...config.app.next, distDir: `./../../tmp/app`},
+        conf: {...config.next, distDir: `./../../tmp/app`},
       })
-      const handler = router.getRequestHandler(app)
+      const handler = routes.getRequestHandler(app)
       const customFunctions = requireFoolWebpack(`${functionsDistDir}/functions`)
       const customFunctionsKeys = Object.keys(customFunctions) || []
 

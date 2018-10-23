@@ -14,11 +14,6 @@ const nextDistDir = `./../../${distDir}/functions/app`
 const defaultConfig = {
   app: {
     dir: appDir,
-    next: {
-      webpack (config, options) {
-        return config
-      },
-    },
   },
   firebase: {
     projectId: '<projectId>',
@@ -31,45 +26,50 @@ const defaultConfig = {
 }
 
 const configSource = path.join(dir, 'firestudio.config')
-
 let customConfig = defaultConfig
-
 try {
   customConfig = requireFoolWebpack(configSource)
 } catch {
   console.log('Using default app config')
 }
 
+
 const appConfig = customConfig.app || defaultConfig.app
-const appNextConfig = appConfig.next|| defaultConfig.app.next
 const firebaseConfig = customConfig.firebase || defaultConfig.firebase
 const functionsConfig = customConfig.functions || defaultConfig.functions
 const rewritesConfig = customConfig.rewrites || defaultConfig.rewrites
 // const pluginsConfig = customConfig.plugins || defaultConfig.plugins
 
-
 const appPath = path.join(dir, appDir)
-const router = requireFoolWebpack(path.join(appPath, 'router'))
+const routes = requireFoolWebpack(path.join(appPath, 'routes'))
+
+const nextConfigSource = path.join(dir, 'next.config')
+let customNextConfig = {}
+try {
+  customNextConfig = requireFoolWebpack(nextConfigSource)
+} catch {
+  console.log('Using default next.js config')
+}
 
 const nextConfig = {
-  ...appNextConfig,
+  ...customNextConfig,
   dir: appDir,
   distDir: nextDistDir,
   assetPrefix: '',
-  exportPathMap: () => router.staticRoutes,
+  exportPathMap: () => routes.staticRoutes,
 }
 
 const config = {
   app: {
     ...appConfig,
-    dir: appDir,
-    next: withTypescript(nextConfig)
+    dir: appDir
   },
   firebase: firebaseConfig,
   functions: {
     ...functionsConfig,
     dir: functionsDir
   },
+  next: withTypescript(nextConfig),
   rewrites: rewritesConfig,
   // plugins: pluginsConfig,
   dist: {

@@ -7,7 +7,7 @@ export default async function validate (currentPath, config) {
   const srcDir = path.join(currentPath, 'src')
   const appDir = path.join(srcDir, 'app')
   const pagesDir = path.join(appDir, 'pages')
-  const routerSource = path.join(appDir, 'router.js')
+  const routesSource = path.join(appDir, 'routes.js')
   const functionsDir = path.join(srcDir, 'functions')
   // const pluginsDir = path.join(srcDir, 'plugins')
 
@@ -30,9 +30,9 @@ export default async function validate (currentPath, config) {
     printAndExit(`> No '/pages' directory found in '/src/app'. Please create one to continue.`)
   }
 
-  // Check 'router.js' has been added in '<root>/src/app'
-  if (!existsSync(routerSource)) {
-    printAndExit(`> Cannot find a router: ${routerSource}`)
+  // Check 'routes.js' has been added in '<root>/src/app'
+  if (!existsSync(routesSource)) {
+    printAndExit(`> Cannot find a routes config: ${routesSource}`)
   }
 
   // Check for '/functions' directory in '<root>/src' if functions are enabled

@@ -1,1 +1,3 @@
-module.exports = require('./lib/app')
+import * as next from 'next'
+
+export default next
