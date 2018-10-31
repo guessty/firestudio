@@ -4,8 +4,10 @@ node_modules
 /lib
 /index.js
 /index.d.ts
-/routes.js
-/routes.d.ts
+/link.js
+/link.d.ts
+/router.js
+/router.d.ts
 /store.js
 /store.d.ts
 .vscode
