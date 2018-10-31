@@ -1,13 +1,12 @@
 import path from 'path'
-import { printAndExit } from 'next/dist/lib/utils'
+import { printAndExit } from 'next/dist/server/lib/utils'
 import { existsSync } from 'fs'
 //
 
-export default async function validate (currentPath, config) {
+export default async function validate (currentPath) {
   const srcDir = path.join(currentPath, 'src')
   const appDir = path.join(srcDir, 'app')
   const pagesDir = path.join(appDir, 'pages')
-  const routesSource = path.join(appDir, 'routes.js')
   const functionsDir = path.join(srcDir, 'functions')
   // const pluginsDir = path.join(srcDir, 'plugins')
 
@@ -28,11 +27,6 @@ export default async function validate (currentPath, config) {
     }
 
     printAndExit(`> No '/pages' directory found in '/src/app'. Please create one to continue.`)
-  }
-
-  // Check 'routes.js' has been added in '<root>/src/app'
-  if (!existsSync(routesSource)) {
-    printAndExit(`> Cannot find a routes config: ${routesSource}`)
   }
 
   // Check for '/functions' directory in '<root>/src' if functions are enabled

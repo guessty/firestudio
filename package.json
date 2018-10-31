@@ -1,6 +1,6 @@
 {
   "name": "firestudio",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "A preconfigured solution for hosting a React app on Google Firebase.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -10,7 +10,8 @@
   "files": [
     "lib",
     "bin",
-    "routes.js",
+    "link.js",
+    "router.js",
     "store.js"
   ],
   "scripts": {

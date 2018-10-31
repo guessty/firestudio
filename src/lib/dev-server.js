@@ -3,16 +3,16 @@ import express from 'express'
 import next from 'next'
 const requireFoolWebpack = require('require-fool-webpack')
 //
-import config from './build/config'
 import buildFunctions from './build/functions'
+import buildRoutes from './build/routes'
 
-module.exports = (currentPath) => {
+export default async (currentPath, config) => {
   const functionsDistDir = path.join(currentPath, 'tmp')
-  
+
   buildFunctions(currentPath, config, true)
-    .then(() => {
+    .then(async () => {
       const nextDir = path.join(currentPath, config.app.dir)
-      const routes = requireFoolWebpack(path.join(nextDir, 'routes'))
+      const routes = await buildRoutes(config.routes.raw)
       const port = parseInt(process.env.PORT, 10) || 3000
       const app = next({
         dev: true,

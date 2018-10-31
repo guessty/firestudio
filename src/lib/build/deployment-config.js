@@ -8,25 +8,24 @@ const generateFirebasrc = (config) => {
     projects: {
       default: config.firebase.projectId
     }
-  })
+  }, null, 2)
   
   return firebaserc
 }
 
-const generateJSON = (config, functionsDistDir, routesSource) => {
-  const appRoutes = requireFoolWebpack(`${routesSource}`)
+const generateJSON = (config, functionsDistDir) => {
 
   const configRewrites = config.rewrites || []
 
-  const clientRewrites = Object.keys(appRoutes.clientRoutes).map((route) => {
+  const clientRewrites = Object.keys(config.routes.client).map((route) => {
     const source = route.split(':slug').join('**')
     return {
       source,
-      destination: '/router.html'
+      destination: '/_client-rerouter.html'
     }
   })
 
-  const cloudRewrites = Object.keys(appRoutes.cloudRoutes).map((route) => {
+  const cloudRewrites = Object.keys(config.routes.cloud).map((route) => {
     const source = route.split(':slug').join('**')
     return {
       source,
@@ -35,7 +34,7 @@ const generateJSON = (config, functionsDistDir, routesSource) => {
   })
 
   // added specific rewrite for static routes in order to support serve.js
-  const staticRewrites = Object.keys(appRoutes.staticRoutes).map((route) => {
+  const staticRewrites = Object.keys(config.routes.static).map((route) => {
     const expression = /(.html|.json)/
     const destination = expression.test(route) ? route : path.join(route, 'index.html')
     return {
@@ -59,16 +58,16 @@ const generateJSON = (config, functionsDistDir, routesSource) => {
   
   const firebaseRewrites = [
     ...configRewrites,
-    ...clientRewrites,
     ...cloudRewrites,
+    ...clientRewrites,
     ...functionRewrites,
   ]
 
   const serveRewrites =[
     ...staticRewrites,
     ...configRewrites,
-    ...clientRewrites,
     ...cloudRewrites,
+    ...clientRewrites,
     ...functionRewrites,
   ]
 
@@ -88,7 +87,7 @@ const generateJSON = (config, functionsDistDir, routesSource) => {
   const firebaseJSONConfig = JSON.stringify({
     ...firebaseHostingConfig,
     ...firebaseFunctionsConfig,
-  })
+  }, null, 2)
 
   const serveJSONConfig = JSON.stringify({
     rewrites: serveRewrites
@@ -103,24 +102,22 @@ const generateJSON = (config, functionsDistDir, routesSource) => {
 export default async function buildDeploymentConfig (currentPath, config) {
   const distDir = path.join(currentPath, config.dist.dir)
   const functionsDistDir = path.join(currentPath, config.dist.functions.dir)
-  const routesSource = path.join(currentPath, config.app.dir, 'routes.js')
 
-  console.log('Building Deployment Config...')
   await writeFileSync(path.join(distDir, '.firebaserc'), generateFirebasrc(config), 'utf8', function(err) {
     if(err) {
         console.log(err);
     } else {
-        console.log(".firebaserc was saved!");
+        console.log("|- .firebaserc was saved!");
     }
   })
 
-  const JSONConfig = await generateJSON(config, functionsDistDir, routesSource)
+  const JSONConfig = await generateJSON(config, functionsDistDir)
 
   await writeFileSync(path.join(distDir, 'firebase.json'), JSONConfig.firebase, 'utf8', function(err) {
     if(err) {
         console.log(err);
     } else {
-        console.log("firebase.json was saved!");
+        console.log("|- firebase.json was saved!");
     }
   })
 
@@ -128,9 +125,7 @@ export default async function buildDeploymentConfig (currentPath, config) {
     if(err) {
         console.log(err);
     } else {
-        console.log("serve.json was saved!");
+        console.log("|- serve.json was saved!");
     }
   })
-
-  console.log('Deployment Config Built')
 }
