@@ -12,7 +12,7 @@ export default async (currentPath, config) => {
   buildFunctions(currentPath, config, true)
     .then(async () => {
       const nextDir = path.join(currentPath, config.app.dir)
-      const routes = await buildRoutes(config.routes.raw)
+      const routes = await buildRoutes(config.routes)
       const port = parseInt(process.env.PORT, 10) || 3000
       const app = next({
         dev: true,

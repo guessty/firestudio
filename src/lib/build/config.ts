@@ -1,4 +1,6 @@
 const path = require('path')
+const fs = require('fs')
+const ReactDOMServer = require('react-dom/server')
 const requireFoolWebpack = require('require-fool-webpack')
 const withTypescript = require('@zeit/next-typescript')
 //
@@ -11,43 +13,58 @@ const publicDistDir = './dist/public'
 const functionsDistDir = './dist/functions'
 const nextDistDir = `./../../${distDir}/functions/app`
 
-const createRouteMethodMap = async (routes) => {
-  const withDefaults = (route) => ({
-    renderMethod: 'client',
-    ...route
-  })
-  
+const normalizePath = (path: any) => path.replace(/\\/g, '/')
+
+const generateRoutesFromDir = (dir: any, pathString:string = undefined, routes: any = []) => {
+  const normalizedPath = normalizePath(dir)
+  const stats = fs.statSync(normalizedPath);
+  const baseName = path.basename(dir)
+  if (stats.isDirectory()) {
+    let nextPathString = ''
+    if (pathString !== undefined) {
+      nextPathString = `${pathString}/${baseName}`
+    }
+    const children = fs.readdirSync(normalizedPath)
+
+    children.forEach((child: any) => {
+      generateRoutesFromDir(path.join(dir, child), nextPathString, routes)
+    })
+  } else if (stats.isFile()) {
+    const fileString = `${pathString}/${baseName}`
+    const page = fileString.replace(/\.[^/.]+$/, '')
+
+    if (page === '/index') {
+      const route = {
+        pattern: '/',
+        page: '/',
+      }
+      routes.push(route)
+    } else if (page !== '/_app' && page !== '/_document') {
+      const route = {
+        pattern: page.replace('/index', '').replace('/_', '/:'),
+        page: page.replace('/index', ''),
+      }
+      routes.push(route)
+    }
+  }
+  return routes
+} 
+
+const generateExportPathMap = async (routes: any) => {
   const allRoutes = [
     ...routes,
-    { pattern: '/404.html', page: '/_404' },
-    { pattern: '/_client-rerouter.html', page: '/_client-rerouter'},
+    { pattern: '/404.html', page: '/404' },
+    { pattern: '/client-redirect.html', page: '/client-redirect' },
   ]
-
-  const routeMap = {
-    client: {},
-    cloud: {},
-    static: {}
-  }
-  
-  allRoutes.forEach((route) => {
-    const routeWithDefaults = withDefaults(route)
-    if (routeWithDefaults.renderMethod === 'static'
-      || routeWithDefaults.page === '/_client-rerouter'
-      || routeWithDefaults.page === '/_404') {
-      routeMap.static[routeWithDefaults.pattern] = { page: routeWithDefaults.page }
-    } else if (routeWithDefaults.renderMethod === 'cloud') {
-      routeMap.cloud[routeWithDefaults.pattern] = { page: routeWithDefaults.page }
-    } else {
-      routeMap.client[routeWithDefaults.pattern] = { page: routeWithDefaults.page }
-    }
-  })
-
-  return routeMap
+  return allRoutes.reduce((routeMap, route) => {
+    routeMap[route.pattern] = { page: route.page }
+    return routeMap
+  }, {})
 }
 
 const buildConfig = async () => {
   // Loading configuration
-  const defaultConfig = {
+  const defaultConfig: any = {
     app: {
       dir: appDir,
     },
@@ -74,11 +91,9 @@ const buildConfig = async () => {
   const firebaseConfig = customConfig.firebase || defaultConfig.firebase
   const functionsConfig = customConfig.functions || defaultConfig.functions
   const rewritesConfig = customConfig.rewrites || defaultConfig.rewrites
-  const routesConfig = customConfig.routes || defaultConfig.routes
-  // const pluginsConfig = customConfig.plugins || defaultConfig.plugins
   
   const nextConfigSource = path.join(dir, 'next.config')
-  let customNextConfig = {
+  let customNextConfig: any = {
     publicRuntimeConfig: {}
   }
   try {
@@ -88,9 +103,9 @@ const buildConfig = async () => {
   }
 
   // Building Routes
-  const routeMap = await createRouteMethodMap(routesConfig)
+  const routes = generateRoutesFromDir(path.join(appDir, 'pages'))
 
-  console.log(__dirname)
+  const routeMap = await generateExportPathMap(routes)
   
   // Define Next Configuration
   const nextConfig = {
@@ -98,16 +113,15 @@ const buildConfig = async () => {
     dir: appDir,
     distDir: nextDistDir,
     assetPrefix: '',
-    exportPathMap: () => routeMap.static,
+    exportPathMap: () => routeMap,
     generateBuildId: async () => {
       return 'build'
     },
     publicRuntimeConfig: {
       ...customNextConfig.publicRuntimeConfig,
-      routesConfig,
-      routeRenderMethods: routeMap,
+      routes,
     },
-    webpack: (config, { buildId, dev, isServer, defaultLoaders }) => {
+    webpack: (config: any, { buildId, dev, isServer, defaultLoaders }: any) => {
       // Perform customizations to webpack config
       // Important: return the modified config
       if (customNextConfig.webpack) {
@@ -117,8 +131,8 @@ const buildConfig = async () => {
       const entry = async () => {
         return {
           ... await coreEntry(),
-          'static/build/pages/_client-rerouter.js': [ path.join(__dirname, '..', '..', 'lib/pages/client-rerouter.js') ],
-          'static/build/pages/_404.js': [ path.join(__dirname, '..', '..', 'lib/pages/404.js') ]
+          'static/build/pages/client-redirect.js': [ path.join(__dirname, '..', '..', 'lib/pages/client-redirect.js') ],
+          'static/build/pages/404.js': [ path.join(__dirname, '..', '..', 'lib/pages/404.js') ]
         }
       }
       config.entry = entry
@@ -139,11 +153,7 @@ const buildConfig = async () => {
     },
     next: withTypescript(nextConfig),
     rewrites: rewritesConfig,
-    routes: {
-      raw: routesConfig,
-      ...routeMap
-    },
-    // plugins: pluginsConfig,
+    routes,
     dist: {
       dir: distDir,
       public: {

@@ -1,13 +1,13 @@
 import * as React from 'react'
 import Routes, { Router } from './../routes'
 //
-import Loader from './client-loader'
+import Loader from './page-loader'
 
-interface IClientRerouterProps {
-  loaderComponent?: React.PureComponent
+interface IClientRedirectProps {
+  pageLoader?: React.PureComponent
 }
 
-export default class extends React.PureComponent<IClientRerouterProps> {
+export default class extends React.PureComponent<IClientRedirectProps> {
   componentDidMount() {
     const routes = Routes.routes
     const asPath = Router.asPath
@@ -20,8 +20,8 @@ export default class extends React.PureComponent<IClientRerouterProps> {
   }
 
   render() {
-    const { loaderComponent } = this.props
-    return loaderComponent ? (loaderComponent) : (
+    const { pageLoader } = this.props
+    return pageLoader ? (pageLoader) : (
       <Loader />
     )
   }

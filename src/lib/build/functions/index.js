@@ -36,7 +36,7 @@ export default async function buildFunctions (currentPath, config, dev = false) 
   console.log('|- loaded template files!')
   await writeNextConfigFile(functionsDistPath, config.next)
   console.log('|- generated next configuration file!');
-  await writeRoutesFile(functionsDistPath, config.routes.raw)
+  await writeRoutesFile(functionsDistPath, config.routes)
   console.log('|- configured routes!');
   await webpackBuild(config.functions.dir, functionsDistPath)
   console.log('|- complied functions!')

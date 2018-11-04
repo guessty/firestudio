@@ -1,8 +1,7 @@
-import { connect, Store, StoreDebugger, StateContainer } from './lib/store'
+import * as Store from './lib/store'
 
-export {
-  connect,
-  Store,
-  StoreDebugger,
-  StateContainer,
-}
+const Provider = Store.Provider
+const Container = Store.Container
+const subscribe = Store.subscribe
+
+export { Provider, Container, subscribe }

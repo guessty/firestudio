@@ -3,7 +3,26 @@ import * as Unstated from 'unstated'
 import { detailedDiff } from 'deep-object-diff'
 //
 
-const Store = Unstated.Provider
+interface IFirestudioIndexProps {
+  children: any
+  debugStore?: boolean
+}
+
+class Provider extends React.PureComponent<IFirestudioIndexProps> {
+  componentDidMount() {
+    if (this.props.debugStore) {
+      StoreDebugger.isEnabled = true
+    }
+  }
+  render() {
+    const { children } = this.props
+    return (
+      <Unstated.Provider>
+        {children}
+      </Unstated.Provider>
+    )
+  }
+}
 
 const FIRESTUDIO_STORE_DEBUGGER = {
   isEnabled: false,
@@ -15,7 +34,7 @@ if (typeof window !== 'undefined') {
 
 const StoreDebugger = FIRESTUDIO_STORE_DEBUGGER
 
-class StateContainer extends Unstated.Container<any> {
+class Container extends Unstated.Container<any> {
   state = {}
   setState = async (
     updater: object | ((prevState: object) => object),
@@ -55,13 +74,7 @@ class StateContainer extends Unstated.Container<any> {
   }
 }
 
-export {
-  Store,
-  StoreDebugger,
-  StateContainer,
-}
-
-export const connect = (to: any) => (Component: any) => (props: any) => {
+const subscribe = (to: any) => (Component: any) => (props: any) => {
   const containers = Object.keys(to).map(key => to[key])
   return (
     <Unstated.Subscribe to={[...containers]}>
@@ -74,4 +87,11 @@ export const connect = (to: any) => (Component: any) => (props: any) => {
       }}
     </Unstated.Subscribe>
   )
+}
+
+
+export {
+  Provider,
+  Container,
+  subscribe
 }
