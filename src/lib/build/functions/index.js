@@ -16,8 +16,15 @@ const copyFiles = (currentPath, functionsDistPath) => new Promise((resolve) => {
   })
 })
 
-const writeRoutesFile = async (functionsDistPath, routes) => {
-  await fs.writeFile(`${functionsDistPath}/routes.js`, `module.exports = ${JSON.stringify(routes, null, 2)}`, function (err) {
+const writeRoutesFile = async (functionsDistPath, config) => {
+  const { routes, cloudRenderedRoutes, cloudRenderAllDynamicRoutes } = config
+  const routesConfig = {
+    routes,
+    cloudRenderAllDynamicRoutes,
+    cloudRenderedRoutes
+  }
+
+  await fs.writeFile(`${functionsDistPath}/routes.config.js`, `module.exports = ${JSON.stringify(routesConfig, null, 2)}`, function (err) {
     if (err) throw err;
   });
 }
@@ -36,7 +43,7 @@ export default async function buildFunctions (currentPath, config, dev = false) 
   console.log('|- loaded template files!')
   await writeNextConfigFile(functionsDistPath, config.next)
   console.log('|- generated next configuration file!');
-  await writeRoutesFile(functionsDistPath, config.routes)
+  await writeRoutesFile(functionsDistPath, config)
   console.log('|- configured routes!');
   await webpackBuild(config.functions.dir, functionsDistPath)
   console.log('|- complied functions!')

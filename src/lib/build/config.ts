@@ -77,6 +77,8 @@ const buildConfig = async () => {
     // plugins: [],
     rewrites: [],
     routes: [],
+    cloudRenderAllDynamicRoutes: false,
+    cloudRenderedRoutes: [],
   }
   
   const configSource = path.join(dir, 'firestudio.config')
@@ -87,10 +89,14 @@ const buildConfig = async () => {
     console.log('Using default app config')
   }
   
-  const appConfig = customConfig.app || defaultConfig.app
+  const appConfig = defaultConfig.app
+  const functionsConfig = defaultConfig.functions
   const firebaseConfig = customConfig.firebase || defaultConfig.firebase
-  const functionsConfig = customConfig.functions || defaultConfig.functions
   const rewritesConfig = customConfig.rewrites || defaultConfig.rewrites
+  const cloudRenderedRoutes =
+    customConfig.cloudRenderedRoutes || defaultConfig.cloudRenderedRoutes
+  const cloudRenderAllDynamicRoutes =
+    customConfig.cloudRenderAllDynamicRoutes || defaultConfig.cloudRenderAllDynamicRoutes
   
   const nextConfigSource = path.join(dir, 'next.config')
   let customNextConfig: any = {
@@ -105,7 +111,7 @@ const buildConfig = async () => {
   // Building Routes
   const routes = generateRoutesFromDir(path.join(appDir, 'pages'))
 
-  const routeMap = await generateExportPathMap(routes)
+  const exportPathMap = await generateExportPathMap(routes)
   
   // Define Next Configuration
   const nextConfig = {
@@ -113,7 +119,7 @@ const buildConfig = async () => {
     dir: appDir,
     distDir: nextDistDir,
     assetPrefix: '',
-    exportPathMap: () => routeMap,
+    exportPathMap: () => exportPathMap,
     generateBuildId: async () => {
       return 'build'
     },
@@ -146,6 +152,8 @@ const buildConfig = async () => {
       ...appConfig,
       dir: appDir
     },
+    cloudRenderAllDynamicRoutes,
+    cloudRenderedRoutes,
     firebase: firebaseConfig,
     functions: {
       ...functionsConfig,
@@ -154,6 +162,7 @@ const buildConfig = async () => {
     next: withTypescript(nextConfig),
     rewrites: rewritesConfig,
     routes,
+    exportPathMap,
     dist: {
       dir: distDir,
       public: {

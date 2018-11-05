@@ -3,19 +3,19 @@ import next from 'next'
 import buildRoutes from 'firestudio/lib/build/routes'
 //
 import * as appFunctions from './functions'
-const routes = require('./routes')
+const routesConfig = require('./routes.config')
 const config = require('./next.config')
 //
 
 const firestudioApp = (request, response) => {
-  const appRoutes = buildRoutes(routes)
+  const appRoutes = buildRoutes(routesConfig.routes)
   const app = next({ dev: false, conf: Object.assign({}, config, { distDir: 'app' }) })
   const handler = appRoutes.getRequestHandler(app)
   console.log('File: ' + request.originalUrl) // eslint-disable-line no-console
   return app.prepare().then(() => handler(request, response))
 }
 
-if (routes.find((route) => route.renderMethod === 'cloud')) {
+if (routesConfig.cloudRenderAllDynamicRoutes || routesConfig.cloudRenderedRoutes.length) {
   Object.defineProperty(exports, 'firestudioApp', {
     enumerable: true,
     get: function get() {

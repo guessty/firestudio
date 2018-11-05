@@ -27,13 +27,24 @@ const generateJSON = async (config, functionsDistDir) => {
   const getRewrites = async () => {
     const staticRewrites = []
     const dynamicRewrites = []
+    const cloudRewrites = []
+
+    const normalisedCloudRenderedRoutes = config.cloudRenderedRoutes.map((route) => {
+      return route.replace(/\.[^/.]+$/, '')
+        .replace('/index', '')
+        .replace('/_', '/:')
+    })
 
     config.routes.forEach((route) => {
       if (route.pattern.includes('/:')) {
         const source = getDynamicSource(route.pattern)
         dynamicRewrites.push({
           source,
-          destination: '/client-redirect.html',
+          ...(config.cloudRenderAllDynamicRoutes) ? {
+            function: 'firestudioApp',
+          } : {
+            destination: '/client-redirect.html'
+          },
         })
       } else {
         const source = route.pattern
@@ -45,39 +56,25 @@ const generateJSON = async (config, functionsDistDir) => {
         })
       }
     })
+
+    normalisedCloudRenderedRoutes.forEach((route) => {
+      if (config.exportPathMap[route]) {
+        const source = getDynamicSource(route)
+        cloudRewrites.push({
+          source,
+          function: 'firestudioApp',
+        })
+      }
+    }) 
+
     return {
       staticRewrites,
       dynamicRewrites,
+      cloudRewrites,
     }
   }
   
   const appRewrites = await getRewrites()
-
-  // const clientRewrites = Object.keys(config.routes.client).map((route) => {
-  //   const source = route.split(':slug').join('**')
-  //   return {
-  //     source,
-  //     destination: '/_client-rerouter.html'
-  //   }
-  // })
-
-  // const cloudRewrites = Object.keys(config.routes.cloud).map((route) => {
-  //   const source = route.split(':slug').join('**')
-  //   return {
-  //     source,
-  //     function: 'firestudioApp'
-  //   }
-  // })
-
-  // // added specific rewrite for static routes in order to support serve.js
-  // const staticRewrites = Object.keys(config.routes.static).map((route) => {
-  //   const expression = /(.html|.json)/
-  //   const destination = expression.test(route) ? route : path.join(route, 'index.html')
-  //   return {
-  //     source: route,
-  //     destination
-  //   }
-  // })
 
   let customFunctions = {}
   try {
@@ -94,8 +91,7 @@ const generateJSON = async (config, functionsDistDir) => {
   
   const firebaseRewrites = [
     ...configRewrites,
-    // ...cloudRewrites,
-    // ...clientRewrites,
+    ...appRewrites.cloudRewrites,
     ...appRewrites.dynamicRewrites,
     ...functionRewrites,
   ]
@@ -103,9 +99,8 @@ const generateJSON = async (config, functionsDistDir) => {
   const serveRewrites =[
     ...appRewrites.staticRewrites,
     ...configRewrites,
+    ...appRewrites.cloudRewrites,
     ...appRewrites.dynamicRewrites,
-    // ...cloudRewrites,
-    // ...clientRewrites,
     ...functionRewrites,
   ]
 
