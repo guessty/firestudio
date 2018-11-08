@@ -39,6 +39,7 @@ export default async function buildFunctions (currentPath, config, dev = false) 
   const functionsDistPath = dev
     ? path.join(currentPath, 'tmp/functions')
     : path.join(currentPath, config.dist.functions.dir)
+  console.log(functionsDistPath)
   await copyFiles(currentPath, functionsDistPath)
   console.log('|- loaded template files!')
   await writeNextConfigFile(functionsDistPath, config.next)

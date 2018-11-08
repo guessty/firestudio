@@ -1,6 +1,7 @@
+import { PassThrough } from "stream";
+
 const path = require('path')
 const fs = require('fs')
-const ReactDOMServer = require('react-dom/server')
 const requireFoolWebpack = require('require-fool-webpack')
 const withTypescript = require('@zeit/next-typescript')
 //
@@ -9,9 +10,9 @@ const dir = path.resolve('.')
 const appDir = './src/app'
 const functionsDir = './src/functions'
 const distDir = './dist'
-const publicDistDir = './dist/public'
-const functionsDistDir = './dist/functions'
-const nextDistDir = `./../../${distDir}/functions/app`
+const publicDistFolderName = 'public'
+const functionsDistFolderName = 'functions'
+const nextDistFolderName = `${functionsDistFolderName}/app`
 
 const normalizePath = (path: any) => path.replace(/\\/g, '/')
 
@@ -65,16 +66,12 @@ const generateExportPathMap = async (routes: any) => {
 const buildConfig = async () => {
   // Loading configuration
   const defaultConfig: any = {
-    app: {
-      dir: appDir,
-    },
     firebase: {
       projectId: '<projectId>',
     },
-    functions: {
-      dir: functionsDir,
-    },
-    // plugins: [],
+    appDir,
+    distDir,
+    functionsDir,
     rewrites: [],
     routes: [],
     cloudRenderAllDynamicRoutes: false,
@@ -89,8 +86,9 @@ const buildConfig = async () => {
     console.log('Using default app config')
   }
   
-  const appConfig = defaultConfig.app
-  const functionsConfig = defaultConfig.functions
+  const appDirConfig = customConfig.appDir || defaultConfig.appDir
+  const functionsDirConfig = customConfig.functionsDir || defaultConfig.functionsDir
+  const distDirConfig = customConfig.distDir || defaultConfig.distDir
   const firebaseConfig = customConfig.firebase || defaultConfig.firebase
   const rewritesConfig = customConfig.rewrites || defaultConfig.rewrites
   const cloudRenderedRoutes =
@@ -109,15 +107,23 @@ const buildConfig = async () => {
   }
 
   // Building Routes
-  const routes = generateRoutesFromDir(path.join(appDir, 'pages'))
+  const routes = generateRoutesFromDir(path.join(appDirConfig, 'pages'))
 
   const exportPathMap = await generateExportPathMap(routes)
+
+  console.log(path.relative(
+    path.resolve(appDirConfig),
+    path.resolve(distDirConfig, functionsDistFolderName, nextDistFolderName)
+  ),)
   
   // Define Next Configuration
   const nextConfig = {
     ...customNextConfig,
-    dir: appDir,
-    distDir: nextDistDir,
+    dir: appDirConfig,
+    distDir: path.relative(
+      path.resolve(appDirConfig),
+      path.resolve(distDirConfig, nextDistFolderName)
+    ),
     assetPrefix: '',
     exportPathMap: () => exportPathMap,
     generateBuildId: async () => {
@@ -145,19 +151,19 @@ const buildConfig = async () => {
       return config
     },
   }
+
+  console.log(nextConfig)
   
   // Return App Configuration
   return {
     app: {
-      ...appConfig,
-      dir: appDir
+      dir: appDirConfig
     },
     cloudRenderAllDynamicRoutes,
     cloudRenderedRoutes,
     firebase: firebaseConfig,
     functions: {
-      ...functionsConfig,
-      dir: functionsDir
+      dir: functionsDirConfig
     },
     next: withTypescript(nextConfig),
     rewrites: rewritesConfig,
@@ -166,10 +172,10 @@ const buildConfig = async () => {
     dist: {
       dir: distDir,
       public: {
-        dir: publicDistDir
+        dir: path.join(distDirConfig, publicDistFolderName)
       },
       functions: {
-        dir: functionsDistDir
+        dir: path.join(distDirConfig, functionsDistFolderName)
       }
     }
   }
