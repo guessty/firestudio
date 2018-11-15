@@ -3,36 +3,62 @@ import * as Unstated from 'unstated'
 import { detailedDiff } from 'deep-object-diff'
 //
 
-interface IFirestudioIndexProps {
+interface IStoreProps {
   children: any
+  store? : any
   debugStore?: boolean
 }
 
-class Provider extends React.PureComponent<IFirestudioIndexProps> {
+const isServer = typeof window === 'undefined'
+const __NEXT_TOOLS_STORE__ = '__NEXT_TOOLS_STORE__'
+
+class Provider extends React.PureComponent<IStoreProps> {
+  constructor(props: IStoreProps) {
+    super(props)
+    this.getOrCreateStore = this.getOrCreateStore.bind(this)
+  }
+  initStore() {
+    const { store } = this.props
+    return Object.keys(store).reduce((containers, container) => [
+      ...containers,
+      new store[container](),
+    ], [])
+  }
   componentDidMount() {
     if (this.props.debugStore) {
       StoreDebugger.isEnabled = true
     }
   }
+  getOrCreateStore() {
+    if (isServer) {
+      return this.initStore()
+    }
+
+    if (!(window as any)[__NEXT_TOOLS_STORE__]) {
+      (window as any)[__NEXT_TOOLS_STORE__] = this.initStore()
+    }
+
+    return (window as any)[__NEXT_TOOLS_STORE__]
+  }
   render() {
     const { children } = this.props
     return (
-      <Unstated.Provider>
+      <Unstated.Provider inject={this.getOrCreateStore()}>
         {children}
       </Unstated.Provider>
     )
   }
 }
 
-const FIRESTUDIO_STORE_DEBUGGER = {
+const __NEXT_TOOLS_STORE_DEBUGGER__ = {
   isEnabled: false,
 }
 
-if (typeof window !== 'undefined') {
-	(window as any).FIRESTUDIO_STORE_DEBUGGER = FIRESTUDIO_STORE_DEBUGGER;
+if (!isServer) {
+	(window as any).__NEXT_TOOLS_STORE_DEBUGGER__ = __NEXT_TOOLS_STORE_DEBUGGER__;
 }
 
-const StoreDebugger = FIRESTUDIO_STORE_DEBUGGER
+const StoreDebugger = __NEXT_TOOLS_STORE_DEBUGGER__
 
 class Container extends Unstated.Container<any> {
   state = {}
@@ -45,7 +71,7 @@ class Container extends Unstated.Container<any> {
     await super.setState(updater, callback)
     const newState = { ...this.state }
 
-    if (FIRESTUDIO_STORE_DEBUGGER.isEnabled) {
+    if (__NEXT_TOOLS_STORE_DEBUGGER__.isEnabled) {
       const diff: {
         added?: string,
         updated?: string,

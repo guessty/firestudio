@@ -1,10 +1,10 @@
-import webpack from 'webpack'
 import { existsSync } from 'fs'
-import path from 'path'
-import nodeExternals from 'webpack-node-externals'
+import * as path from 'path'
+const webpack = require('webpack')
+const nodeExternals = require('webpack-node-externals')
 //
 
-export default async function webpackBuild (functionsDir, functionsDistDir) {
+export default async function webpackBuild (functionsDir: string, functionsDistDir: string) {
   const functionsJSEntry = `${functionsDir}/index.js`
   const functionsTSEntry = `${functionsDir}/index.ts`
   let entry = undefined
@@ -49,16 +49,16 @@ export default async function webpackBuild (functionsDir, functionsDistDir) {
   }
 }
 
-function runCompiler (webpackConfig) {
+function runCompiler (webpackConfig: any) {
   return new Promise(async (resolve, reject) => {
     const webpackCompiler = await webpack(webpackConfig)
-    webpackCompiler.run((err, stats) => {
+    webpackCompiler.run((err: any, stats: any) => {
       if (err) return reject(err)
 
       const jsonStats = stats.toJson('errors-only')
 
       if (jsonStats.errors.length > 0) {
-        const error = new Error(jsonStats.errors[0])
+        const error: any = new Error(jsonStats.errors[0])
         error.errors = jsonStats.errors
         error.warnings = jsonStats.warnings
         return reject(error)

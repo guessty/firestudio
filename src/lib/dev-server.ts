@@ -1,12 +1,12 @@
-import path from 'path'
-import express from 'express'
-import next from 'next'
+import * as path from 'path'
+const express = require('express')
+const next = require('next')
 const requireFoolWebpack = require('require-fool-webpack')
 //
-import buildFunctions from './build/functions'
 import buildRoutes from './build/routes'
+import { default as buildFunctions } from './build/functions'
 
-export default async (currentPath, config) => {
+export default async (currentPath: string, config: any) => {
   const devDistDir = path.join(currentPath, 'tmp')
 
   buildFunctions(currentPath, config, true)
@@ -32,16 +32,16 @@ export default async (currentPath, config) => {
             server.all(`/api/functions/${key}`, customFunctions[key])
           })
 
-          server.get('*', (req, res) => {
+          server.get('*', (req: any, res: any) => {
             return handler(req, res)
           })
 
-          server.listen(port, (err) => {
+          server.listen(port, (err: any) => {
             if (err) throw err
             console.log(`> Ready on http://localhost:${port}`)
           })
         })
-        .catch((error) => {
+        .catch((error: any) => {
           console.log('error', error)
         })
     })

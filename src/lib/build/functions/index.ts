@@ -1,22 +1,22 @@
-import path from 'path'
-import cpx from 'cpx'
-import fs from 'fs'
+import * as path from 'path'
+import * as fs from 'fs'
+const cpx = require('cpx')
 //
-import webpackBuild from './webpack-build'
+import { default as webpackBuild } from './webpack-build'
 
-const copyFiles = (currentPath, functionsDistPath) => new Promise((resolve) => {
+const copyFiles = (currentPath: string, functionsDistPath: string) => new Promise((resolve) => {
   const functionsTemplateSource = path.join(currentPath, 'node_modules/firestudio/lib/build/functions/template/*.*')
 
   cpx.copy(`${currentPath}/package.json`, functionsDistPath, {}, () => {
     cpx.copy(`${currentPath}/package-lock.json`, functionsDistPath, {}, () => {
       cpx.copy(functionsTemplateSource, functionsDistPath, {}, () => {
-          resolve();
+        resolve();
       })
     })
   })
 })
 
-const writeRoutesFile = async (functionsDistPath, config) => {
+const writeRoutesFile = async (functionsDistPath: string, config: any) => {
   const { routes, cloudRenderedRoutes, cloudRenderAllDynamicRoutes } = config
   const routesConfig = {
     routes,
@@ -29,13 +29,13 @@ const writeRoutesFile = async (functionsDistPath, config) => {
   });
 }
 
-const writeNextConfigFile = async (functionsDistPath, nextConfig) => {
+const writeNextConfigFile = async (functionsDistPath: string, nextConfig: any) => {
   await fs.writeFile(`${functionsDistPath}/next.config.js`, `module.exports = ${JSON.stringify(nextConfig, null, 2)}`, function (err) {
     if (err) throw err;
   });
 }
 
-export default async function buildFunctions (currentPath, config, dev = false) {
+export default async function buildFunctions (currentPath: string, config: any, dev = false) {
   const functionsDistPath = dev
     ? path.join(currentPath, 'tmp/functions')
     : path.join(currentPath, config.dist.functions.dir)

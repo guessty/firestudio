@@ -1,5 +1,3 @@
-import { PassThrough } from "stream";
-
 const path = require('path')
 const fs = require('fs')
 const requireFoolWebpack = require('require-fool-webpack')
@@ -58,7 +56,9 @@ const generateExportPathMap = async (routes: any) => {
     { pattern: '/client-redirect.html', page: '/client-redirect' },
   ]
   return allRoutes.reduce((routeMap, route) => {
-    routeMap[route.pattern] = { page: route.page }
+    const pattern = route.pattern.includes('/:') ? `/_dynamic${route.pattern}`: route.pattern
+    routeMap[pattern] = { page: route.page }
+
     return routeMap
   }, {})
 }
@@ -110,11 +110,6 @@ const buildConfig = async () => {
   const routes = generateRoutesFromDir(path.join(appDirConfig, 'pages'))
 
   const exportPathMap = await generateExportPathMap(routes)
-
-  console.log(path.relative(
-    path.resolve(appDirConfig),
-    path.resolve(distDirConfig, functionsDistFolderName, nextDistFolderName)
-  ),)
   
   // Define Next Configuration
   const nextConfig = {
@@ -151,8 +146,6 @@ const buildConfig = async () => {
       return config
     },
   }
-
-  console.log(nextConfig)
   
   // Return App Configuration
   return {

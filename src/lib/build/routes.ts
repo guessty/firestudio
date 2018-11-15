@@ -1,10 +1,10 @@
 const nextRoutes = require('next-routes')
 //
 
-const buildRoutes = (routes = []) => {
+const buildRoutes = (routes: any = []) => {
   const appRoutes = nextRoutes()
   
-  routes.forEach((route) => {
+  routes.forEach((route: any) => {
     appRoutes.add({ pattern: route.pattern, page: route.page });
   })
 
@@ -12,3 +12,4 @@ const buildRoutes = (routes = []) => {
 }
 
 module.exports = buildRoutes
+export default buildRoutes

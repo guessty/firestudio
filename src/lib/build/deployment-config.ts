@@ -1,9 +1,9 @@
 import { writeFileSync } from 'fs'
-import path from 'path'
+import * as path from 'path'
 const requireFoolWebpack = require('require-fool-webpack')
 //
 
-const generateFirebasrc = (config) => {
+const generateFirebasrc = (config: any) => {
   const firebaserc = JSON.stringify({
     projects: {
       default: config.firebase.projectId
@@ -13,29 +13,31 @@ const generateFirebasrc = (config) => {
   return firebaserc
 }
 
-const generateJSON = async (config, functionsDistDir) => {
+const generateJSON = async (config: any, functionsDistDir: string) => {
 
   const configRewrites = config.rewrites || []
 
-  const getDynamicSource = (route) => {
-    const splitRoute = route.split('/')
-    return splitRoute.map((element) => {
-      return element.includes(':') ? '**' : element
+  const getDynamicSource = (route: any) => {
+    const routesArray = route.split('/')
+    const validRouteArray = routesArray.filter((part: string) => part !== '_dynamic')
+
+    return validRouteArray.map((element: any) => {
+      return element.includes(':') ? `**` : element
     }).join('/')
   }
 
   const getRewrites = async () => {
-    const staticRewrites = []
-    const dynamicRewrites = []
-    const cloudRewrites = []
+    const staticRewrites: any = []
+    const dynamicRewrites: any = []
+    const cloudRewrites: any = []
 
-    const normalisedCloudRenderedRoutes = config.cloudRenderedRoutes.map((route) => {
+    const normalisedCloudRenderedRoutes = config.cloudRenderedRoutes.map((route: any) => {
       return route.replace(/\.[^/.]+$/, '')
         .replace('/index', '')
         .replace('/_', '/:')
     })
 
-    config.routes.forEach((route) => {
+    config.routes.forEach((route: any) => {
       if (route.pattern.includes('/:')) {
         const source = getDynamicSource(route.pattern)
         dynamicRewrites.push({
@@ -43,7 +45,8 @@ const generateJSON = async (config, functionsDistDir) => {
           ...(config.cloudRenderAllDynamicRoutes) ? {
             function: 'firestudioApp',
           } : {
-            destination: '/client-redirect.html'
+            destination: `/_dynamic${route.page.replace('/_', '/:')}/index.html`,
+            // destination: '/client-redirect.html'
           },
         })
       } else {
@@ -57,7 +60,7 @@ const generateJSON = async (config, functionsDistDir) => {
       }
     })
 
-    normalisedCloudRenderedRoutes.forEach((route) => {
+    normalisedCloudRenderedRoutes.forEach((route: any) => {
       if (config.exportPathMap[route]) {
         const source = getDynamicSource(route)
         cloudRewrites.push({
@@ -124,7 +127,7 @@ const generateJSON = async (config, functionsDistDir) => {
 
   const serveJSONConfig = JSON.stringify({
     rewrites: serveRewrites
-  })
+  }, null, 2)
 
   return {
     firebase: firebaseJSONConfig,
@@ -132,33 +135,18 @@ const generateJSON = async (config, functionsDistDir) => {
   }
 }
 
-export default async function buildDeploymentConfig (currentPath, config) {
+export default async function buildDeploymentConfig (currentPath: string, config: any) {
   const distDir = path.join(currentPath, config.dist.dir)
   const functionsDistDir = path.join(currentPath, config.dist.functions.dir)
 
-  await writeFileSync(path.join(distDir, '.firebaserc'), generateFirebasrc(config), 'utf8', function(err) {
-    if(err) {
-        console.log(err);
-    } else {
-        console.log("|- .firebaserc was saved!");
-    }
-  })
+  await writeFileSync(path.join(distDir, '.firebaserc'), generateFirebasrc(config), 'utf8')
+  console.log("|- .firebaserc was saved!")
 
   const JSONConfig = await generateJSON(config, functionsDistDir)
 
-  await writeFileSync(path.join(distDir, 'firebase.json'), JSONConfig.firebase, 'utf8', function(err) {
-    if(err) {
-        console.log(err);
-    } else {
-        console.log("|- firebase.json was saved!");
-    }
-  })
+  await writeFileSync(path.join(distDir, 'firebase.json'), JSONConfig.firebase, 'utf8')
+  console.log("|- firebase.json was saved!")
 
-  await writeFileSync(path.join(distDir, '/public/serve.json'), JSONConfig.serve, 'utf8', function(err) {
-    if(err) {
-        console.log(err);
-    } else {
-        console.log("|- serve.json was saved!");
-    }
-  })
+  await writeFileSync(path.join(distDir, '/public/serve.json'), JSONConfig.serve, 'utf8')
+  console.log("|- serve.json was saved!")
 }
