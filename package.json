@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "repository": "guessty/create-firestudio-app",
+  "repository": "guessty/firestudio",
   "bugs": {
     "url": "https://github.com/guessty/create-firestudio-app/issues"
   },
