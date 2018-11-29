@@ -1,0 +1,23 @@
+
+ @tailwind preflight;
+
+ @tailwind components;
+ 
+ @tailwind utilities;
+
+html {
+  font-size: 62.5%;
+  overflow-x: hidden;
+  font-family: 'Quicksand', sans-serif;
+}
+body {
+  font-size: 1.4rem;
+}
+*, :before, :after, h1, h2, h3, h4, h5, h6, hr, p, ul, ol, dl {
+  margin: 0;
+}
+hr {
+  border: 0;
+  border-bottom: 1px solid lightgrey;
+}
+ 
