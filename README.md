@@ -1,10 +1,20 @@
-# firestudio default boilerplate
+# firestudio
 
-A highly opinionated boilerplate for developing apps using NextJS and Firebase.
+A cli for creating apps using NextJS and firebase. - Uses a highly opinionated boilerpate (see `/lib/templates/default`).
 
 ## Set Up
 
-### Step 1: Setup firebase:
+### Step 1: Install Firestudio globally
+
+`npm i -g firestudio`
+
+### Step 2: Create Firestudio App
+
+In the console run `firestudio create <your-app-name>`.
+
+This will create a Firestudio project and install all dependencies.
+
+### Step 3: Set up firebase:
 
 You will need to configue firebase to serve the app locally and deploy.
 
@@ -14,7 +24,7 @@ You will need to configue firebase to serve the app locally and deploy.
 * login to the Firebase CLI tool with `firebase login`
 
 
-### Step 2: Update you app's next.config.js file with your firebase projectId:
+### Step 4: Update you app's next.config.js file with your firebase projectId:
 
 
 ```javascript
@@ -28,7 +38,7 @@ module.exports = withSPA({
 
 ```
 
-### Step 3: Start developing
+### Step 5: Start developing
 
 The `package.json` file comes with some with all the scripts you need to get started.
 
