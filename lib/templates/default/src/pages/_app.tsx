@@ -7,10 +7,13 @@ import AppLayout from '@layouts/App'
 import Loader from '@components/Loader'
 import * as Store from '@store'
 import { Provider } from '@store/store'
+import initIcons from '@config/fontAwesome'
 // import Toastr from '@components/Toastr'
 //
 require('sanitize.css');
 require('./../styles.css')
+
+initIcons()
 
 interface IFirestudioAppProps {
   store: any
