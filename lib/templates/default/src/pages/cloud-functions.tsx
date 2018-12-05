@@ -1,17 +1,17 @@
 import * as React from 'react'
-import { Flex } from 'react-grid-flexbox'
 //
+import Flex from '@components/Flex'
 import SayHelloButton from '@containers/SayHelloButton'
 //
 
 export default () => (
-  <Flex gutter="2rem">
-    <Flex gutter="0.5rem">
+  <Flex className="gap-8 gap-around">
+    <Flex className="gap-2">
       <h1>Cloud Functions</h1>
       <strong>Extend your apps functionality without servers or runtime environments</strong>
     </Flex>
     <hr />
-    <Flex gutter="1rem">
+    <Flex className="gap-4">
       <p>Firestudio uses Firebase to host your app serverlessly meaning you don't have to
           worry about configuring a server environment.</p>
       <p>Although this keeps things simple it does mean that there is now no server to be
@@ -27,7 +27,7 @@ export default () => (
           so remain vigilent about what information you return and add in authentication steps as needed.</p>
     </Flex>
     <h2>Example Function</h2>
-    <Flex gutter="1rem">
+    <Flex className="gap-4">
       <p>You will find an example function (customFunction) in the 'src/functions' folder</p>
       <code>{`
         export const customFunction = (request, response) => {

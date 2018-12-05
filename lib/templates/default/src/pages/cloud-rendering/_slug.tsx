@@ -1,6 +1,6 @@
 import * as React from 'react'
-import { Flex } from 'react-grid-flexbox'
 //
+import Flex from '@components/Flex'
 
 interface IDynamicPageProps {
   query: {
@@ -23,12 +23,12 @@ export default class DynamicPage extends React.Component<IDynamicPageProps> {
     const { query: { slug }, isPageLoading } = this.props
     console.log(this.props)
     return isPageLoading ? (
-      <Flex gutter="2rem">
+      <Flex className="gap-8 gap-around">
         <AltLoader />
       </Flex>
     ) : (
-      <Flex gutter="2rem">
-        <Flex gutter="0.5rem">
+      <Flex className="gap-8 gap-around">
+        <Flex className="gap-2">
           <h1>Dynamic Route</h1>
           <p>{slug}</p>
         </Flex>

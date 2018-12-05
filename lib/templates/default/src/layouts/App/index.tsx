@@ -1,6 +1,7 @@
 import * as React from 'react'
-import { Grid, Flex } from 'react-grid-flexbox'
+import { Grid } from 'react-grid-flexbox'
 //
+import Flex from '@components/Flex'
 import Nav from '@components/Nav'
 import Footer from '@components/Footer'
 
@@ -18,8 +19,8 @@ const AppLayout = (props: IAppLayoutProps) => (
     `}
   >
     <Nav data-grid-area="nav" />
-    <Flex data-grid-area="main" gutter="20px" incGutterEdges={true}>
-      <div>{props.children}</div>
+    <Flex data-grid-area="main" className="gap-8">
+      {props.children}
     </Flex>
     <Footer data-grid-area="footer" />
   </Grid>

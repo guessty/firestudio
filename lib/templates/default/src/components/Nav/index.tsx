@@ -1,15 +1,14 @@
 import * as React from 'react'
-import { Flex } from 'react-grid-flexbox'
-import Link from 'next-spa/link'
 //
-// import Routes from '@routes'
+import Link from '@components/Link'
+import Flex from '@components/Flex'
 import StyledNav from './StyledNav'
 //
 
 const Nav = () => (
   <StyledNav>
-    <nav className="nav">
-      <Flex direction="row" gutter="20px" vAlign="middle">
+    <nav className="nav flex h-full px-8 border-b border-border-grey">
+      <Flex className="flex-row items-center gap-8 gap-between">
         <Link to="/" prefetch={true}>
           <a className="nav__link nav__logo">
             <img src="/static/firestudio-logo.png" alt="logo" width={40} />

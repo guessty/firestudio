@@ -1,18 +1,18 @@
 import * as React from 'react'
-import { Flex } from 'react-grid-flexbox'
-import Link from 'next-spa/link'
 //
+import Link from '@components/Link'
+import Flex from '@components/Flex'
 
 export default () => (
-  <Flex gutter="2rem">
+  <Flex className="gap-8 gap-around">
     <h1>About</h1>
     <hr />
     <p>Firestudio was created with the aim of providing a "zero-config" solution to
         developing web applications with ReactJS and hosting them on Google Firebase.</p>
-    <Flex gutter="3rem">
-      <Flex gutter="1.5rem">
+    <Flex className="gap-12">
+      <Flex className="gap-6">
         <h2>What's in the box?</h2>
-        <Flex gutter="1rem">
+        <Flex className="gap-4">
           <ol>
             <li><strong>TypeScript Support</strong> - Write your app in TypeScript,
               ES6 or Vanilla JS - no configuration needed.</li>
@@ -26,9 +26,9 @@ export default () => (
           </ol>
         </Flex>
       </Flex>
-      <Flex gutter="1.5rem">
+      <Flex className="gap-6">
         <h2>Credit where credit is due</h2>
-        <Flex gutter="1rem">
+        <Flex className="gap-4">
           <p>At its core Firestudio is essentially a re-packaged NextJS application
               that has been configured to work with Google's Firebase platform.</p>
           <p>So big thanks go out to the teams behind NextJS and Firebase for creating

@@ -1,6 +1,6 @@
 {
   "name": "firestudio",
-  "version": "0.11.5",
+  "version": "0.11.6",
   "description": "CLI for developing apps with NextJS and Firebase",
   "main": "index.js",
   "scripts": {
