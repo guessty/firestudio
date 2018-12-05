@@ -17,9 +17,7 @@ export default () => (
             <li><strong>TypeScript Support</strong> - Write your app in TypeScript,
               ES6 or Vanilla JS - no configuration needed.</li>
             <li><strong>Linting Support</strong> - Linting is configured and ready to go.</li>
-            <li><strong>Static Hosting</strong> - See <Link to="/pre-rendering">
-              <a>pre-rendering</a>
-            </Link></li>
+            <li><strong>Static Hosting</strong> - See <Link to="/pre-rendering">pre-rendering</Link></li>
             <li><strong>Cloud Functions</strong> - Extend your app further by using Google Cloud Functions.</li>
             <li><strong>React and Redux</strong> - All the state management you could need.</li>
             <li><strong>Styled Components</strong> - CSS-in-JS awesomeness.</li>

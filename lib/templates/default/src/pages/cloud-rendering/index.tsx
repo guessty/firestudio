@@ -22,9 +22,7 @@ export default () => (
         <Flex className="gap-4">
           <p>This page is configured to use cloud rendering and once deployed this route will also
               render sub-routes in the cloud.</p>
-          <p>Try visiting <Link route="/cloud-rendering/test">
-            <a href="/cloud-rendering/test">/cloud-rendering/test</a>
-          </Link> and observe.</p>
+          <p>Try visiting <Link route="/cloud-rendering/test">/cloud-rendering/test</Link> and observe.</p>
         </Flex>
       </Flex>
     </Flex>
