@@ -18,7 +18,7 @@ class FirestudioDocument extends Document<IFirestudioDocumentProps> {
   render() {
     const { styleTags } = (this as any).props
     return (
-      <html>
+      <html lang="en">
         <Head>
           <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" />
           <link
