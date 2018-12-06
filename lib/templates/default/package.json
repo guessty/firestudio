@@ -58,6 +58,7 @@
     "babel-plugin-inline-import": "3.0.0",
     "babel-plugin-module-resolver": "3.1.1",
     "babel-plugin-styled-components": "1.8.0",
+    "babel-plugin-tailwind-components": "^0.5.10",
     "sanitize.css": "^8.0.0",
     "tailwindcss": "^0.7.2",
     "tslint": "5.11.0",
