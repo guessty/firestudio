@@ -1,5 +1,9 @@
 import * as React from 'react'
 
-export default () => (
-  <h2 style={{ padding: '60px 20px', textAlign: 'center', color: 'red' }}>Loading...</h2>
-)
+export default class Loader extends React.PureComponent {
+  render() {
+    return (
+      <h2 className="w-full text-dark-blue text-center mt-8">Loading...</h2>
+    )
+  }
+}

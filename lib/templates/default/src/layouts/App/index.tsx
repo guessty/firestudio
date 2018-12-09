@@ -11,7 +11,7 @@ interface IAppLayoutProps {
 
 const AppLayout = (props: IAppLayoutProps) => (
   <Grid
-    templateRows="63px minmax(calc(100vh - 63px), auto) auto"
+    templateRows="5rem minmax(calc(100vh - 5rem), auto) auto"
     templateAreas={`
       "nav"
       "main"
@@ -19,7 +19,7 @@ const AppLayout = (props: IAppLayoutProps) => (
     `}
   >
     <Nav data-grid-area="nav" />
-    <Flex data-grid-area="main" className="gap-8">
+    <Flex data-grid-area="main" className="">
       {props.children}
     </Flex>
     <Footer data-grid-area="footer" />

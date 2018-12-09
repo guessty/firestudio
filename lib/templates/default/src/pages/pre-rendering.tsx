@@ -22,7 +22,7 @@ export default () => (
         ie using <code>componentDidMount()</code>.</p>
       <p>or</p>
       <p><strong>2.</strong> If SEO is important you can <Link to="/cloud-rendering">
-        <a>render the page in the cloud</a>
+        render the page in the cloud
       </Link></p>
     </Flex>
   </Flex>

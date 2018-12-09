@@ -1,9 +1,9 @@
 import * as React from 'react'
 import Link from 'next-spa/link'
 
-export default (props) => (
+export default ({ className, ...props }) => (
   <Link {...props} passHref>
-    <a className={props.className || ''}>
+    <a className={className || ''}>
       {props.children}
     </a>
   </Link>

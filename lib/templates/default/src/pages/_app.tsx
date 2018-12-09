@@ -11,7 +11,7 @@ import initIcons from '@config/fontAwesome'
 // import Toastr from '@components/Toastr'
 //
 require('sanitize.css');
-require('./../styles.css')
+require('./../styles.scss')
 
 initIcons()
 

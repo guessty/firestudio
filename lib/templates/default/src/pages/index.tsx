@@ -12,6 +12,6 @@ export default () => (
     </Flex>
     <hr />
     <h2>Develop and host web apps without the configuration.</h2>
-    <Link to="/about"><a>Find out more!</a></Link>
+    <Link to="/about">Find out more!</Link>
   </Flex>
 )
