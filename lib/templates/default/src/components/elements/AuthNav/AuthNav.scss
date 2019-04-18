@@ -1,0 +1,7 @@
+$module: 'AuthNav';
+
+.#{$module} {
+  .firebaseui-card-content {
+    @apply p-0;
+  }
+}

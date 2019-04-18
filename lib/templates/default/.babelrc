@@ -11,22 +11,20 @@
       "useBuiltIns": "usage"
     }],
     "next/babel",
-    "@zeit/next-typescript/babel"
   ],
   "plugins": [
-    "tailwind-components",
-    ["styled-components", { "ssr": true, "displayName": true }],
+    "macros",
     "@babel/plugin-proposal-class-properties",
     "@babel/plugin-syntax-dynamic-import",
     ["inline-import", { "extensions": [".css", ".scss"] }],
     [ "module-resolver", {
       "root": ["./"],
       "alias": {
-        "@components": "./src/components",
+        "@atoms": "./src/components/atoms",
+        "@elements": "./src/components/elements",
+        "@layouts": "./src/components/layouts",
+        "@hocs": "./src/components/hocs",
         "@config": "./src/config",
-        "@containers": "./src/containers",
-        "@helpers": "./src/helpers",
-        "@layouts": "./src/layouts",
         "@store": "./src/store"
       }
     }]

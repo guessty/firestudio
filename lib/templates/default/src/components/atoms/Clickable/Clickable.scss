@@ -1,0 +1,44 @@
+$module: 'Clickable';
+
+$transition: all 150ms ease-out;
+
+.#{$module} {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  transition: $transition;
+
+  &--button {
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    justify-content: center;
+    font-weight: 600;
+    padding: 0.5rem 3rem;
+
+    &:hover,
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &--link {
+    display: inline-block;
+    text-decoration: underline;
+
+    &:hover,
+    &:focus {
+      text-decoration: none;
+    }
+  }
+
+  &:not(.#{$module}--is-flat):not(.#{$module}--link) {
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.2);
+
+    &:hover,
+    &:focus {
+      box-shadow: 0 0 3px rgba(0,0,0,.12);
+      transform: translateY(1px);
+    }
+  }
+}
