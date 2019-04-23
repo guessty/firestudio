@@ -15,4 +15,5 @@ commander
   .usage(`${chalk.green('<project-directory>')} [options]`)
   .allowUnknownOption()
   .on('--help', messages.help)
+  .command('build', 'build firebase deployment config')
   .parse(process.argv)
