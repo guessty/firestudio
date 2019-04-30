@@ -4,3 +4,5 @@ dist
 tmp
 .vscode
 .rpt2_cache
+service-account.json
+firebase.config.js
