@@ -89,7 +89,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.12.4",
     "eslint-plugin-react-hooks": "^1.5.0",
-    "firestudio": "^0.13.1",
+    "firestudio": "^0.13.2",
     "ncp": "^2.0.0",
     "node-sass": "^4.12.0",
     "nodemon": "^1.18.11",
