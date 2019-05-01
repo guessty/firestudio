@@ -11,7 +11,7 @@ class SayHelloButton extends Component {
     request({
       method: 'post',
       url: Api.ROUTES.HELLO,
-    }, 'ads', 'last')
+    }, 'hello', 'last')
       .then((response) => {
         if (response) {
           /* tslint:disable-next-line */
