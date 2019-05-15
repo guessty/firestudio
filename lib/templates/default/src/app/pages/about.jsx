@@ -6,17 +6,17 @@ import Link from '@elements/Link';
 export default class extends PureComponent {
   render() {
     return (
-      <Flex className="flex-around-8">
+      <Flex className="gap-around-8">
         <h1>About</h1>
         <hr />
         <p>
           Firestudio was created with the aim of providing a &quot;zero-config&quot; solution to
           developing web applications with ReactJS and hosting them on Google Firebase.
         </p>
-        <Flex className="flex-between-12">
-          <Flex className="flex-between-6">
+        <Flex className="gap-between-12">
+          <Flex className="gap-between-6">
             <h2>What&apos;s in the box?</h2>
-            <Flex className="flex-between-4">
+            <Flex className="gap-between-4">
               <ol>
                 <li>
                   <strong>Linting Support</strong>
@@ -45,9 +45,9 @@ export default class extends PureComponent {
               </ol>
             </Flex>
           </Flex>
-          <Flex className="flex-between-6">
+          <Flex className="gap-between-6">
             <h2>Credit where credit is due</h2>
-            <Flex className="flex-between-4">
+            <Flex className="gap-between-4">
               <p>
                 At its core Firestudio is essentially a re-packaged NextJS application
                 that has been configured to work with Googles Firebase platform.

@@ -6,13 +6,13 @@ import Link from '@elements/Link';
 export default class extends PureComponent {
   render() {
     return (
-      <Flex className="flex-around-8">
-        <Flex className="flex-between-2">
+      <Flex className="gap-around-8">
+        <Flex className="gap-between-2">
           <h1>Pre-rendering Pages</h1>
           <strong>Pages are exported to HTML for cost-effective hosting.</strong>
         </Flex>
         <hr />
-        <Flex className="flex-between-4">
+        <Flex className="gap-between-4">
           <p>
             Firestudio is configured by default to export/prerender all of the pages to
             HTML so that they can be hosted through Firebase Hosting.
@@ -20,7 +20,7 @@ export default class extends PureComponent {
           <p>This keeps the hosting costs of your application as low as possible.</p>
         </Flex>
         <h2>Pages with Dynamic Content</h2>
-        <Flex className="flex-between-4">
+        <Flex className="gap-between-4">
           <p>For handling pages with dynamic content you have 2 options:</p>
           <p>
             <strong>1.</strong>

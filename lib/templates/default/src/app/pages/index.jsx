@@ -7,8 +7,8 @@ import Link from '@elements/Link';
 export default class extends PureComponent {
   render() {
     return (
-      <Flex className="flex-around-8">
-        <Flex className="flex-between-2">
+      <Flex className="gap-around-8">
+        <Flex className="gap-between-2">
           <h1>Firestudio</h1>
           <strong>
             Get ready to play with fire!

@@ -25,7 +25,7 @@ export default class Nav extends React.PureComponent {
     return (
       <nav className="nav h-full bg-blue-darker text-white font-medium">
         <div className="mx-auto flex h-full px-8">
-          <Flex className="flex-row flex-grow items-center flex-between-4" childClassName="h-full">
+          <Flex className="flex-row flex-grow items-center gap-between-4" childClassName="h-full">
             <Clickable
               href="/"
               as={Link}

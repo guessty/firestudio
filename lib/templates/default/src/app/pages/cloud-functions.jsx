@@ -7,13 +7,13 @@ import SayHelloButton from '@elements/SayHelloButton';
 export default class extends PureComponent {
   render() {
     return (
-      <Flex className="flex-around-8">
-        <Flex className="flex-between-2">
+      <Flex className="gap-around-8">
+        <Flex className="gap-between-2">
           <h1>Cloud Functions</h1>
           <strong>Extend your apps functionality without servers or runtime environments</strong>
         </Flex>
         <hr />
-        <Flex className="flex-between-4">
+        <Flex className="gap-between-4">
           <p>
             Firestudio uses Firebase to host your app serverlessly meaning you don&apos;t have to
             worry about configuring a server environment.
@@ -46,7 +46,7 @@ export default class extends PureComponent {
           </p>
         </Flex>
         <h2>Example Function</h2>
-        <Flex className="flex-between-4">
+        <Flex className="gap-between-4">
           <p>
             You will find an example function (customFunction) in the
             &apos;src/functions&apos; folder

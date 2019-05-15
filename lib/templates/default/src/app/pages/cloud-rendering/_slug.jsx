@@ -17,12 +17,12 @@ export default class DynamicPage extends Component {
     console.log(slug);
 
     return isPageLoading ? (
-      <Flex className="flex-around-8">
+      <Flex className="gap-around-8">
         <AltLoader />
       </Flex>
     ) : (
-      <Flex className="flex-around-8">
-        <Flex className="flex-between-2">
+      <Flex className="gap-around-8">
+        <Flex className="gap-between-2">
           <h1>Dynamic Route</h1>
           <p>{slug}</p>
         </Flex>

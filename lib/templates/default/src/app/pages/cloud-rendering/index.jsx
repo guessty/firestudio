@@ -6,8 +6,8 @@ import Link from '@elements/Link';
 export default class extends PureComponent {
   render() {
     return (
-      <Flex className="flex-around-8">
-        <Flex className="flex-between-2">
+      <Flex className="gap-around-8">
+        <Flex className="gap-between-2">
           <h1>Cloud Rendering Pages</h1>
           <strong>
             Use cloud rendering for pages with dynamic content where SEO is important.
@@ -18,8 +18,8 @@ export default class extends PureComponent {
           Using Google Cloud Functions, pages can be rendered in the cloud meaning that search
           engines are able to index it and crawl it just as they would with prerendered pages.
         </p>
-        <Flex className="flex-between-12">
-          <Flex className="flex-between-6">
+        <Flex className="gap-between-12">
+          <Flex className="gap-between-6">
             <h2>Route Configuration</h2>
             <p>
               Simply add
@@ -27,9 +27,9 @@ export default class extends PureComponent {
               to the route config and Firestudio will handle the rest.
             </p>
           </Flex>
-          <Flex className="flex-between-6">
+          <Flex className="gap-between-6">
             <h2>** Note **</h2>
-            <Flex className="flex-between-4">
+            <Flex className="gap-between-4">
               <p>
                 This page is configured to use cloud rendering and once
                 deployed this route will also render sub-routes in the cloud.
