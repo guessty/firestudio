@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
+import { Flex, Clickable } from 'firestudio-ui';
 //
-import Clickable from '@atoms/Clickable';
-import Link from '@atoms/Link';
-import Flex from '@atoms/Flex';
+import Link from '@elements/Link';
 
 export default class extends PureComponent {
   render() {

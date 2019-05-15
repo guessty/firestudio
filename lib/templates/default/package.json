@@ -59,6 +59,7 @@
     "firebase": "^5.10.1",
     "firebase-admin": "^7.3.0",
     "firebase-functions": "^2.3.0",
+    "firestudio-ui": "^0.1.0",
     "http-errors": "^1.7.2",
     "next": "7.0.2",
     "next-spa": "0.3.9",

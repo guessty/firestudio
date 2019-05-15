@@ -1,8 +1,8 @@
 import React from 'react';
+import { Flex } from 'firestudio-ui';
 //
-import Flex from '@atoms/Flex';
-import Nav from '@elements/Nav';
-import Footer from '@elements/Footer';
+import Nav from '@partials/Nav';
+import Footer from '@partials/Footer';
 
 require('./App.scss');
 

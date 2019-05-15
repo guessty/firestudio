@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
+import { Clickable } from 'firestudio-ui';
 //
-import Clickable from '@atoms/Clickable';
 import { Api } from '@store/containers';
 import { subscribe } from '@store';
 //

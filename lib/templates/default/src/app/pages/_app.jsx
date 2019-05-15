@@ -4,12 +4,11 @@ import { withSPARouter } from 'next-spa/router';
 import React from 'react';
 import cookies from 'browser-cookies';
 //
-import AppLayout from '@layouts/App';
+import AppLayout from '@templates/App';
 import Loader from '@elements/Loader';
 import Store from '@store';
 import { Api } from '@store/containers';
 import initIcons from '@config/fontAwesome';
-// import Toastr from '@components/Toastr'
 //
 require('sanitize.css');
 require('./../styles.scss');
@@ -62,7 +61,6 @@ class FirestudioApp extends App {
         </Head>
         <Store>
           <AppLayout>
-            {/* <Toastr /> */}
             <Component {...pageProps} />
           </AppLayout>
         </Store>

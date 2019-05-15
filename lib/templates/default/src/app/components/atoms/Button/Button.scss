@@ -1,9 +1,0 @@
-$module: 'Button';
-
-.#{$module} {
-  @apply flex justify-center items-center text-center py-2 px-4 font-medium rounded border trans;
-
-  &--disabled {
-    @apply opacity-50;
-  }
-}

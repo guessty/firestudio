@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
+import { Flex } from 'firestudio-ui';
 //
-import Flex from '@atoms/Flex';
 import SayHelloButton from '@elements/SayHelloButton';
 //
 

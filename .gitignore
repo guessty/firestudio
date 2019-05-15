@@ -4,3 +4,5 @@ node_modules
 .rpt2_cache
 firebase.config.js
 service-account.json
+dist
+tmp

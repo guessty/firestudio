@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
+import { Flex } from 'firestudio-ui';
 //
-import Flex from '@atoms/Flex';
-
 
 const AltLoader = () => (
   <h2 style={{ padding: '60px 20px', textAlign: 'center', color: 'blue' }}>Loading...</h2>
