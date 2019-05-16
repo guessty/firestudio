@@ -1,0 +1,10 @@
+
+
+// This file is needed to make firebase services available to the client.
+// Add a firebase.config.js in the /config folder which exports the following:
+
+module.exports = {
+  apiKey: <apiKey>,
+  authDomain: <authDomain>,
+  projectId: <projectId>,
+};

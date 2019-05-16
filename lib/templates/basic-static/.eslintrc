@@ -1,0 +1,51 @@
+{
+  "parser": "babel-eslint",
+  "extends": ["react-app", "airbnb"],
+  "globals": {},
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "legacyDecorators": true
+    }
+  },
+  "rules": {
+    "import/no-unresolved": "off",
+    "newline-before-return": "error",
+    "import/prefer-default-export": "off",
+    "no-prototype-builtins": "off",
+    "no-underscore-dangle": "off",
+    "react/jsx-one-expression-per-line": [1, { "allow": "single-child" }],
+    "react/prefer-stateless-function": 0,
+    "react/prop-types": 0,
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [
+          ".js",
+          ".jsx"
+        ]
+      }
+    ],
+    "jsx-a11y/label-has-associated-control": [
+      2,
+      {
+        "labelComponents": [
+          "label"
+        ],
+        "labelAttributes": [
+          "htmlFor"
+        ],
+        "controlComponents": [
+          "input"
+        ]
+      }
+    ],
+    "jsx-a11y/label-has-for": "off"
+  },
+  "plugins": [
+    "react"
+  ]
+}
