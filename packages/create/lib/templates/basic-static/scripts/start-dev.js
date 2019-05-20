@@ -19,7 +19,5 @@ admin.initializeApp({
   authDomain: firebaseConfig.authDomain,
 });
 
-const functionRoutes = require('../src/functions/routes').default;
-
 const server = express();
-initFirestudio({ conf, functionRoutes })(next)(server);
+initFirestudio({ conf })(next)(server);

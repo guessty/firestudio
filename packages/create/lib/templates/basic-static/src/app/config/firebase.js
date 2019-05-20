@@ -1,13 +1,8 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import getConfig from 'next/config';
 
-if (typeof window !== 'undefined') {
-  const { publicRuntimeConfig } = getConfig();
-
-  if (!firebase.apps.length) {
-    firebase.initializeApp(publicRuntimeConfig.FIREBASE);
-  }
+if (typeof window !== 'undefined' && !firebase.apps.length) {
+  firebase.initializeApp(process.env.FIREBASE);
 }
 
 export default firebase;
