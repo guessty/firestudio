@@ -1,0 +1,242 @@
+$module: 'FormField';
+$transition: all 150ms ease-out;
+
+.#{$module} {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  margin: -0.25rem;
+  z-index: 1;
+  flex-grow: 1;
+
+  &__container {
+    padding: 0.25rem;
+  }
+
+  &__label {
+    display: block;
+    cursor: pointer;
+  }
+
+  &__input {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    height: 2rem;
+    width: 100%;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #d3d3d3;
+    border-radius: 0;
+    background-color: #ffffff;
+    padding: 0rem 0.75rem;
+    background-position: right 0.25rem center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    appearance: textfield;
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    z-index: 1;
+
+    // Keep segregated from the `-ms` selectors
+    &::-webkit-contacts-auto-fill-button,
+    &::-webkit-credentials-auto-fill-button {
+      visibility: hidden;
+      display: none;
+    }
+
+    &::-ms-reveal,
+    &::-ms-clear {
+      visibility: hidden;
+      display: none;
+    }
+
+    &:hover,
+    &:hover + .#{$module}__input-mask {
+      border-color: var(--ui-field-hover-color, #808080);
+      z-index: 2;
+    }
+
+    &:focus,
+    &:focus + .#{$module}__input-mask {
+      border-color: var(--ui-field-focus-color, darkcyan);
+      z-index: 2;
+      box-shadow: 0px 5px 10px -2px var(--ui-field-focus-color,rgba(0, 139, 139, 0.5));
+    }
+
+    &[type="checkbox"],
+    &[type="radio"] {
+      width: 1rem;
+      height: 1rem;
+      padding: 0;
+      opacity: 0;
+      border: none;
+      position: absolute;
+
+      & + .#{$module}__input-mask {
+        width: 1rem;
+        height: 1rem;
+        padding: 0;
+        display: block;
+
+        div {
+          background-color: #ffffff;
+          display: flex;
+          height: 100%;
+          width: 100%;
+          justify-content: center;
+          align-items: center;
+        }
+
+        svg {
+          opacity: 0;
+        }
+      }
+
+      &:checked {
+        & + .#{$module}__input-mask {
+          div {
+            background-color: var(--ui-field-valid-color, #32cd32);
+            color: #ffffff;
+          }
+
+          svg {
+            opacity: 1;
+          }
+        }
+      }
+    }
+
+    @at-root select#{&} {
+      line-height: normal;
+    }
+
+    @at-root textarea#{&} {
+      min-height: 3.4rem;
+    }
+
+    &-mask {
+      cursor: pointer;
+      pointer-events: none;
+    }
+
+    &--grow {
+      flex-grow: 1;
+    }
+
+    &--masked {
+      border-width: 0;
+      width: auto;
+      opacity: 0;
+      border: none;
+      position: absolute;
+    }
+
+    &--textfield {
+      appearance: none;
+      -moz-appearance: textfield;
+
+      &::-webkit-inner-spin-button,
+      &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+  }
+
+  &__group {
+    display: flex;
+    width: 100%;
+    border-color: inherit;
+
+    .#{$module} {
+
+      &__input {
+        margin-left: -1px;
+        z-index: inherit;
+        width: auto;
+
+        &:first-child {
+          margin-left: 0;
+        }
+
+        &:focus,
+        &:hover {
+          z-index: 2;
+        }
+
+        &--masked {
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
+
+  &__error {
+    color: var(--ui-field-error-color, #cd5c5c);
+    display: block;
+    padding: 0 0.25rem;
+    width: 100%;
+  }
+
+  &--checkbox,
+  &--radio {
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  &--isValid,
+  &--hasError {
+
+    .#{$module} {
+
+      &__container, &__input {
+        border-color: inherit;
+      }
+
+      &__input-mask {
+        div {
+          border-color: inherit;
+        }
+      }
+    }
+  }
+
+  &--isValid {
+    border-color: var(--ui-field-valid-color, limegreen);
+
+    &:not(.#{$module}--noIcon) {
+      .#{$module} {
+
+        &__input:not(.#{$module}__input-mask):not([type="checkbox"]):not([type="radio"]):not(select):not(.#{$module}__select) {
+          background-image: var(--ui-field-valid-icon, none);
+        }
+      }
+    }
+  }
+
+  &--hasError {
+    border-color: var(--ui-field-error-color, #cd5c5c);
+
+    &:not(.#{$module}--noIcon) {
+      .#{$module} {
+
+        &__input:not(.#{$module}__input-mask):not([type="checkbox"]):not([type="radio"]):not(select):not(.#{$module}__select) {
+          background-image: var(--ui-field-error-icon, none);
+        }
+      }
+    }
+  }
+
+  &--condensed {
+
+    .#{$module}__input {
+      height: auto;
+    }
+  }
+}
