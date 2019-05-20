@@ -1,0 +1,27 @@
+$module: 'PrismicImage';
+
+.#{$module} {
+  @apply relative h-full w-full p-6 pin-t pin-l overflow-hidden;
+
+  &__image {
+    @apply absolute h-full w-full p-6 pin-t pin-l;
+    background-repeat: no-repeat;
+    background-position: 50%;
+  }
+
+  &--cover {
+    @apply static p-0;
+
+    .#{$module}__image {
+      background-size: cover;
+    }
+  }
+
+  &--contain {
+
+    .#{$module}__image {
+      background-size: contain;
+    }
+  }
+}
+

@@ -1,0 +1,73 @@
+$module: 'PrismicCarousel';
+
+.#{$module} {
+  .slick-arrow {
+    @apply hidden opacity-100 justify-center trans;
+
+    svg {
+      @apply border-2 p-2 w-12 h-12 rounded-full;
+      padding-top: calc(.5rem - 1px);
+      padding-left: calc(.5rem - 1px);
+    }
+
+    @screen sm {
+      @apply flex opacity-50;
+      background: none;
+
+      &:hover,
+      &:focus {
+        @apply opacity-100;
+      }
+    }
+  }
+
+  &__item {
+    &--stacked {
+      @apply flex-col-reverse;
+    }
+  }
+
+  &--light {
+
+    .slick-dots {
+
+      li {
+        button:before {
+          @apply text-black-full;
+        }
+
+        &.slick-active {
+          button:before {
+            @apply text-black-full;
+          }
+        }
+      }
+    }
+
+    .slick-arrow {
+      @apply text-black-full;
+    }
+  }
+
+  &--dark {
+
+    .slick-dots {
+
+      li {
+        button:before {
+          @apply text-white-full;
+        }
+
+        &.slick-active {
+          button:before {
+            @apply text-white-full;
+          }
+        }
+      }
+    }
+
+    .slick-arrow {
+      @apply text-white-full;
+    }
+  }
+}

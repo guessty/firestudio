@@ -1,0 +1,76 @@
+$module: 'PrismicRichText';
+
+.#{$module} {
+
+  & > div {
+    @apply relative flex flex-col -m-1;
+  }
+
+  h1, h2, h3, h4, h5 {
+    @apply font-semibold;
+  }
+
+  h1, h2, h3, h4, h5, h6, p, ul {
+    @apply p-2;
+  }
+
+  ul {
+    list-style-position: inside;
+  }
+
+  h1 {
+    @apply text-2xl;
+
+    @screen sm {
+      @apply text-3xl;
+    }
+  }
+
+  h2 {
+    @apply text-xl;
+
+    @screen sm {
+      @apply text-2xl;
+    }
+  }
+
+  h3 {
+    @apply text-lg;
+
+    @screen sm {
+      @apply text-xl;
+    }
+  }
+
+  h4 {
+    @apply text-base;
+
+    @screen sm {
+      @apply text-lg;
+    }
+  }
+
+  h5 {
+    @apply text-sm;
+
+    @screen sm {
+      @apply text-base;
+    }
+  }
+
+  li {
+    @apply leading-normal text-xs;
+
+    @screen sm {
+      @apply text-sm;
+    }
+  }
+
+  p {
+    @apply leading-normal text-xs;
+
+    @screen sm {
+      @apply text-sm;
+    }
+  }
+}

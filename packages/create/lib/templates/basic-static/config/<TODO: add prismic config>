@@ -1,0 +1,7 @@
+// This file is needed to make prismic services available to the client.
+// Add a prismic.config.js in the /config folder which exports the following:
+
+module.exports = {
+  API_URL: <apiUrl>,
+  ACCESS_TOKEN: <accessToken>,
+};

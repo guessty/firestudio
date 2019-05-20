@@ -1,0 +1,16 @@
+$module: 'PrismicText';
+
+.#{$module} {
+
+  &__container {
+    @apply mx-auto;
+  }
+
+  &--light {
+    @apply bg-grey-lighter-20 text-black-full;
+  }
+
+  &--dark {
+    @apply bg-cyan-darker-20 text-white-full;
+  }
+}

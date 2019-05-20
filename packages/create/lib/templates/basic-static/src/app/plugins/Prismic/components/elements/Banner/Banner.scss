@@ -1,0 +1,186 @@
+$module: 'PrismicBanner';
+
+.#{$module} {
+  @apply relative flex overflow-hidden text-center w-screen;
+  min-height: 9rem;
+
+  @screen sm {
+    min-height: 16rem;
+  }
+
+  &__container.container {
+    @apply flex flex-col mx-auto items-center justify-center;
+
+    @screen max-md {
+      @apply max-w-full;
+    }
+  }
+
+  &__image-container {
+    @apply absolute h-full w-full p-6 pin-t pin-l;
+
+    @screen sm {
+      @apply p-12;
+    }
+  }
+
+  &__content {
+    @apply relative flex flex-col p-6 items-center justify-center text-inherit;
+
+    @screen sm {
+      @apply p-12;
+    }
+
+    h2 {
+      @apply text-2xl;
+
+      @screen sm {
+        @apply text-4xl;
+      }
+    }
+  }
+
+  &__button-container {
+    @apply relative flex flex-row justify-center items-center mt-4 w-full;
+
+    @screen sm {
+      @apply -mx-2 p-2;
+    }
+  }
+
+  &--light {
+    @apply text-black-full;
+
+    &.#{$module} {
+
+      &--split-left,
+      &--split-right {
+        @apply bg-white-full;
+      }
+    }
+  }
+
+  &--dark {
+    @apply text-white-full;
+
+    &.#{$module} {
+      @apply bg-cyan-darker-20;
+
+      .#{$module}__image-container {
+        @apply bg-cyan-darker-60;
+      }
+
+      &--split-left,
+      &--split-right {
+        @apply bg-cyan-darker-20;
+      }
+
+      &--stacked-above,
+      &--stacked-below {
+        @apply bg-cyan-darker-20;
+      }
+    }
+  }
+
+  &--layered-left,
+  &--layered-right {
+    @apply text-left;
+
+    .#{$module} {
+
+      &__container {
+        @apply items-start;
+      }
+
+      &__content {
+        @apply items-start;
+      }
+    }
+  }
+
+  &--layered-right {
+    .#{$module} {
+      &__container {
+        @apply items-end;
+      }
+    }
+  }
+
+  &--split-left,
+  &--split-right {
+    @screen md {
+      @apply text-left;
+    }
+
+    .#{$module} {
+
+      &__container {
+        @apply flex-row flex-wrap items-start;
+
+        @screen md {
+          @apply flex-no-wrap;
+        }
+      }
+
+      &__image-container {
+        @apply relative w-full h-48;
+
+        @screen md {
+          @apply w-1/2 h-full;
+        }
+      }
+
+      &__content {
+        @apply w-full;
+
+        @screen md {
+          @apply items-start w-1/2;
+        }
+      }
+
+      &__button-container {
+        @screen md {
+          @apply justify-start;
+        }
+      }
+    }
+  }
+
+  &--split-right {
+    .#{$module} {
+      &__container {
+        @apply flex-row-reverse;
+      }
+    }
+  }
+
+  &--stacked-above,
+  &--stacked-below {
+    .#{$module} {
+      &__container {
+        @apply flex-col;
+      }
+
+      &__image-container {
+        @apply relative h-48 m-12;
+        width: 20rem;
+      }
+
+      &__content {
+        @apply w-full pt-0;
+      }
+    }
+  }
+
+  &--stacked-below {
+    .#{$module} {
+      &__container {
+        @apply flex-col-reverse;
+      }
+
+      &__content {
+        @apply w-full pt-12 pb-0;
+      }
+    }
+  }
+}

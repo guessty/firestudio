@@ -1,0 +1,24 @@
+$module: 'PrismicLink';
+
+.#{$module} {
+  @apply block text-center uppercase no-underline py-2 px-4 trans;
+  text-shadow: none;
+
+  &--primary {
+    @apply font-bold text-white-full bg-green-base border border-green-base;
+
+    &:hover,
+    &:focus {
+      @apply bg-cyan-base border-cyan-base;
+    }
+  }
+
+  &--secondary {
+    @apply text-black-full bg-white-full border border-grey-darker-20;
+
+    &:hover,
+    &:focus {
+      @apply bg-grey-base;
+    }
+  }
+}
