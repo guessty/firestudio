@@ -27,8 +27,8 @@
   "dependencies": {
     "@babel/polyfill": "7.0.0",
     "@babel/runtime": "^7.4.4",
-    "@firestudio/core": "^0.1.3",
-    "@firestudio/ui": "^0.2.0",
+    "@firestudio/core": "^0.2.3",
+    "@firestudio/ui": "^0.2.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.8",
     "@fortawesome/free-regular-svg-icons": "^5.5.0",
     "@fortawesome/free-solid-svg-icons": "^5.5.0",
@@ -43,6 +43,7 @@
     "firebase": "^5.10.1",
     "firebase-admin": "^7.3.0",
     "next": "7.0.2",
+    "prismic-javascript": "^2.0.3",
     "prop-types": "^15.6.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",

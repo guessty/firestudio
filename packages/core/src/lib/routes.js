@@ -1,15 +1,11 @@
-import getConfig from 'next/config'
-//
-import withRouter from './components/withRouter'
 const buildRoutes = require('./build/routes')
 //
 
-const { publicRuntimeConfig = { routes: [] } } = getConfig() || {};
-const { routes } = publicRuntimeConfig
+const routes = process.env.ROUTES || [];
 const Routes = buildRoutes(routes)
 const Link = Routes.Link
 const Router = Routes.Router
 
-export { Link, Router, withRouter }
+export { Link, Router }
 
 export default Routes

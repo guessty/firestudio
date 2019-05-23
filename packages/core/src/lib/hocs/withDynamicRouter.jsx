@@ -1,6 +1,6 @@
 import * as React from 'react'
 //
-import Loader from './pageLoader'
+import Loader from './../components/pageLoader'
 const buildRoutes = require('./../build/routes')
 //
 

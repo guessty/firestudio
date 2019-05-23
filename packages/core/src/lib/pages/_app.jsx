@@ -1,9 +1,9 @@
 import * as React from 'react'
 import App, { Container } from 'next/app'
 //
-import withRouter from './../components/withRouter'
+import withDynamicRouter from './../hocs/withDynamicRouter'
 
-export default withRouter(
+export default withDynamicRouter(
   class extends App {
     static async getInitialProps({ Component, ctx }) {
       let pageProps = {}

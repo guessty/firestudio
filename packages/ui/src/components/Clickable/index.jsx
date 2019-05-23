@@ -30,7 +30,7 @@ export default class Clickable extends PureComponent {
 
     return classnames(
       'clickable',
-      ...styledAs !== 'none' ? {
+      styledAs !== 'none' ? {
         'clickable--button': styledAs === 'button' || ( isUndefined && as === 'button'),
         'clickable--link': styledAs === 'a' || ( isUndefined && as === 'a'),
       } : {},

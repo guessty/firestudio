@@ -1,5 +1,3 @@
-import { Router, withRouter } from './lib/routes'
-
-export { withRouter }
+import { Router } from './lib/routes'
 
 export default Router

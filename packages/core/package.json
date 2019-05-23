@@ -1,6 +1,6 @@
 {
   "name": "@firestudio/core",
-  "version": "0.1.3",
+  "version": "0.2.3",
   "description": "CLI for developing apps with NextJS and Firebase",
   "keywords": [
     "react",
@@ -13,7 +13,7 @@
     "url": "https://github.com/guessty/firestudio/issues"
   },
   "license": "MIT",
-  "main": "dist/main.js",
+  "main": "dist/index.js",
   "files": [
     "dist"
   ],
