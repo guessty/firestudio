@@ -1,6 +1,6 @@
 {
   "name": "@firestudio/core",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Develop apps with NextJS and Firebase",
   "keywords": [
     "react",
@@ -16,8 +16,8 @@
   "main": "dist/index.js",
   "files": [
     "dist",
-    "store",
-    "prismic"
+    "store.js",
+    "prismic.js"
   ],
   "bin": {
     "firestudio": "./dist/bin/firestudio.js"
