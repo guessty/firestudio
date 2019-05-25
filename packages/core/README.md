@@ -1,10 +1,9 @@
-# @firestudio/ui
-A set of React components to be used with firestudio.
+# @firestudio/core
+The core module for developing apps with NextJS and Firebase
 
 
 
 ## Install
 ```
-npm i --save @firestudio/ui
+npm i --save @firestudio/core
 ```
-
