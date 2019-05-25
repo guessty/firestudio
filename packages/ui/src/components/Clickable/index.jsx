@@ -41,7 +41,7 @@ export default class Clickable extends PureComponent {
 
   renderButton() {
     const {
-      as, styledAs, children, isFlat,
+      as, styledAs, children, isRaised,
       ...props
     } = this.props;
 
@@ -66,7 +66,7 @@ export default class Clickable extends PureComponent {
   render() {
     const {
       as: Component, styledAs, children,
-      isFlat, ...props
+      isRaised, ...props
     } = this.props;
 
     const className = this.getClassName();
