@@ -1,6 +1,6 @@
 {
   "name": "@firestudio/ui",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "A set of ui components for firestudio",
   "keywords": [
     "react",
