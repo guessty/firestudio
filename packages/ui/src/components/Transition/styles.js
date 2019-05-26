@@ -1,10 +1,28 @@
 
 const defaultTransition = 'all 150ms ease-out';
+const slowTransition = 'all 300ms ease-out';
 const sharpTransition = 'all 150ms cubic-bezier(.32,1.03,.53,1.37)';
 
 module.exports = {
   '.transition': {
     overflow: 'hidden',
+
+    '&--slow-fade': {
+      '&-enter': {
+        opacity: '0.01',
+      },
+      '&-enter-active': {
+        opacity: '1',
+        transition: slowTransition,
+      },
+      '&-exit': {
+        opacity: '1',
+      },
+      '&-exit-active': {
+        opacity: '0.01',
+        transition: slowTransition,
+      },
+    },
 
     '&--fade': {
       '&-enter': {
@@ -116,6 +134,40 @@ module.exports = {
       },
       '&-exit-active': {
         transform: 'translateY(-1.25rem)',
+        transition: defaultTransition,
+      },
+    },
+
+    '&--left': {
+      '&-enter': {
+        transform: 'translateX(-1.25rem)',
+      },
+      '&-enter-active': {
+        transform: 'translateX(0)',
+        transition: defaultTransition,
+      },
+      '&-exit': {
+        transform: 'translateX(0)',
+      },
+      '&-exit-active': {
+        transform: 'translateX(1.25rem)',
+        transition: defaultTransition,
+      },
+    },
+
+    '&--right': {
+      '&-enter': {
+        transform: 'translateX(1.25rem)',
+      },
+      '&-enter-active': {
+        transform: 'translateX(0)',
+        transition: defaultTransition,
+      },
+      '&-exit': {
+        transform: 'translateX(0)',
+      },
+      '&-exit-active': {
+        transform: 'translateX(-1.25rem)',
         transition: defaultTransition,
       },
     },

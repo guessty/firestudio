@@ -15,13 +15,13 @@ class Modal extends Component {
       close: PropTypes.func.isRequired,
     }),
     onDismiss: PropTypes.func,
-    className: PropTypes.string,
     children: PropTypes.oneOfType([PropTypes.node, PropTypes.arrayOf(PropTypes.node)]).isRequired,
   };
 
   static defaultProps = {
+    modal: undefined,
+    name: undefined,
     onDismiss: () => {},
-    className: '',
   };
 
   static Base = Base;
@@ -53,7 +53,7 @@ class Modal extends Component {
   render() {
     const {
       name, modal, children,
-      className, onDismiss, isOpen,
+      onDismiss, isOpen,
       ...props
     } = this.props;
 

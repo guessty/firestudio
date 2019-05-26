@@ -10,6 +10,8 @@ export default class Modal extends Component {
     isOpen: PropTypes.bool,
     onDismiss: PropTypes.func,
     className: PropTypes.string,
+    overlayClassName: PropTypes.string,
+    contentClassName: PropTypes.string,
     headComponent: PropTypes.node,
     initialFocusRef: PropTypes.shape({}),
     children: PropTypes.oneOfType([
@@ -28,6 +30,8 @@ export default class Modal extends Component {
     isOpen: false,
     onDismiss: () => {},
     className: '',
+    overlayClassName: '',
+    contentClassName: '',
     headComponent: null,
     initialFocusRef: undefined,
     transitionProps: {
@@ -68,7 +72,7 @@ export default class Modal extends Component {
     }
   }
 
-  bodyRef = React.createRef();
+  contentRef = React.createRef();
 
   state = {
     scrollbarWidth: 0,
@@ -97,7 +101,7 @@ export default class Modal extends Component {
           isMounted: isOpen,
         });
 
-        const initFocus = initialFocusRef || this.bodyRef;
+        const initFocus = initialFocusRef || this.contentRef;
         if (initFocus.current) {
           initFocus.current.focus();
         }
@@ -125,7 +129,10 @@ export default class Modal extends Component {
   }
 
   renderBody() {
-    const { isOpen, transitionProps, children } = this.props;
+    const {
+      isOpen, transitionProps, children,
+      className, contentClassName,
+    } = this.props;
 
     const { isMounted } = this.state;
 
@@ -135,39 +142,43 @@ export default class Modal extends Component {
         {...transitionProps}
         isMounted={isOpen && isMounted}
       >
-        <div className="modal__body" tabIndex="-1" ref={this.bodyRef}>
-          {children}
+        <div className="modal__body">
+          <div className={`modal__main ${className}`}>
+            <div className={`modal__content ${contentClassName}`} tabIndex="-1" ref={this.contentRef}>
+              {children}
+            </div>
+          </div>
         </div>
       </Transition>
     );
   }
 
   renderOverlay() {
-    const { transitionProps, isOpen } = this.props;
+    const { overlayClassName, transitionProps, isOpen } = this.props;
     const { isMounted } = this.state;
 
     return (
       <Transition
-        in={Transition.TRANSITIONS.FADE}
+        in={Transition.TRANSITIONS.SLOW_FADE}
         out={transitionProps.out === Transition.TRANSITIONS.NONE
-          ? Transition.TRANSITIONS.NONE : Transition.TRANSITIONS.FADE}
+          ? Transition.TRANSITIONS.NONE : Transition.TRANSITIONS.SLOW_FADE}
         isMounted={isOpen && isMounted}
+        timeout={300}
       >
-        <div className="modal__overlay" />
+        <div className={`modal__overlay ${overlayClassName}`} />
       </Transition>
     );
   }
 
   render() {
     const {
-      onDismiss, isOpen, className, style,
+      onDismiss, isOpen, style,
     } = this.props;
     const { scrollbarWidth, isMounted } = this.state;
 
     const modalClassName = classnames(
       'modal',
       { 'modal--visible': isOpen || isMounted },
-      [className],
     );
 
     return (
@@ -181,7 +192,7 @@ export default class Modal extends Component {
         }}
       >
         {this.renderOverlay()}
-        <DialogContent className="modal__content">
+        <DialogContent className="modal__window">
           {this.renderHead()}
           {this.renderBody()}
         </DialogContent>

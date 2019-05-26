@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { CSSTransition } from 'react-transition-group';
+import classnames from 'classnames';
 
 export default class Transition extends Component {
   static propTypes = {
@@ -11,6 +12,7 @@ export default class Transition extends Component {
     unmountOnExit: PropTypes.bool,
     onExited: PropTypes.func,
     children: PropTypes.element,
+    timeout: PropTypes.number,
   }
 
   static defaultProps = {
@@ -21,6 +23,7 @@ export default class Transition extends Component {
     unmountOnExit: true,
     onExited: () => {},
     children: undefined,
+    timeout: 150,
   }
 
   static TRANSITIONS = {
@@ -29,8 +32,11 @@ export default class Transition extends Component {
     FADE_DOWN: 'fade-down',
     FADE_UP: 'fade-up',
     FADE_DROP: 'fade-drop',
+    SLOW_FADE: 'slow-fade',
     DOWN: 'down',
     UP: 'up',
+    LEFT: 'left',
+    RIGHT: 'right',
     DROP: 'drop',
   }
 
@@ -57,6 +63,7 @@ export default class Transition extends Component {
 
   constructor(props) {
     super(props);
+    this.getTimeout = this.getTimeout.bind(this);
     this.handleEntered = this.handleEntered.bind(this);
     this.handleExited = this.handleExited.bind(this);
   }
@@ -83,6 +90,17 @@ export default class Transition extends Component {
     }
   }
 
+  getTimeout() {
+    const {
+      isMounted, timeout,
+      in: inTransition, out,
+    } = this.props;
+    const outTransition = out || inTransition;
+    const transition = isMounted ? inTransition : outTransition;
+
+    return transition === Transition.TRANSITIONS.NONE ? 0 : timeout;
+  }
+
   handleEntered() {
     this.setState({
       // eslint-disable-next-line react/no-unused-state
@@ -106,7 +124,7 @@ export default class Transition extends Component {
     } = this.props;
     const { isUpdating, activeChild } = this.state;
     const outTransition = out || inTransition;
-    const timeout = !isMounted && outTransition === Transition.TRANSITIONS.NONE ? 0 : 150;
+    const timeout = this.getTimeout();
 
     return (
       <CSSTransition
