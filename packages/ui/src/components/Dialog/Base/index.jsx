@@ -12,10 +12,7 @@ export default class Base extends Component {
     className: PropTypes.string,
     containerClassName: PropTypes.string,
     overlayClassName: PropTypes.string,
-    children: PropTypes.oneOfType([
-      PropTypes.element,
-      PropTypes.arrayOf(PropTypes.element),
-    ]).isRequired,
+    children: PropTypes.node,
     style: PropTypes.shape({}),
     unmountingDelay: PropTypes.number,
     render: PropTypes.func,
@@ -30,6 +27,7 @@ export default class Base extends Component {
     style: {},
     unmountingDelay: 0,
     render: undefined,
+    children: null,
   }
 
   static sleep(ms) {
@@ -66,8 +64,8 @@ export default class Base extends Component {
     }
   }
 
-  static Overlay = ({ overlayClassName }) => (
-    <div className={`dialog__overlay ${overlayClassName}`} />
+  static Overlay = ({ className }) => (
+    <div className={`dialog__overlay ${className}`} />
   )
 
   static Content = ({
@@ -143,10 +141,13 @@ export default class Base extends Component {
         className={dialogClassName}
         style={{
           ...style,
-          overflowY: scrollbarWidth > 0 ? 'scroll' : 'auto',
+          ...isTransitioning ? {
+            overflow: 'hidden',
+          } : {
+            overflowY: scrollbarWidth > 0 ? 'scroll' : 'auto',
+          }
         }}
       >
-
         <DialogContent>
           {typeof render === 'undefined' ? (
             <>
@@ -155,7 +156,7 @@ export default class Base extends Component {
                 in={{ fade: true, speed: 'slow' }}
                 out={{ fade: true, speed: 'slow' }}
               >
-                <Base.Overlay overlayClassName={overlayClassName} />
+                <Base.Overlay className={overlayClassName} />
               </Transition>
               <Transition
                 isIn={isOpen && isTransitioning}

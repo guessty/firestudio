@@ -15,13 +15,14 @@ class Dialog extends Component {
       close: PropTypes.func.isRequired,
     }),
     onDismiss: PropTypes.func,
-    children: PropTypes.oneOfType([PropTypes.node, PropTypes.arrayOf(PropTypes.node)]).isRequired,
+    children: PropTypes.node,
   };
 
   static defaultProps = {
     dialog: undefined,
     name: undefined,
     onDismiss: () => {},
+    children: null,
   };
 
   static Base = Base;

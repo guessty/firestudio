@@ -120,11 +120,12 @@ export default class Transition extends Component {
     const outTransition = out || inTransition;
     const transition = isIn ? inTransition : outTransition;
 
-    const { fade, type, direction, speed, easing } = transition;
+    const { fade, type, direction, speed, easing, delay } = transition;
 
     const transType = direction && !type ? 'shift' : type;
     const transDirection = type && !direction ? 'down' : direction;
     const transSpeed = speed || 'normal';
+    const transDelay = delay || 'none';
     const transEasing = easing || 'out';
 
     return classnames(
@@ -134,6 +135,7 @@ export default class Transition extends Component {
         [`transition--${transType}-${transDirection}-${stage}`] : Boolean(transType) && Boolean(transDirection),
       },
       [`transition--${transSpeed}`],
+      [`transition--${transDelay}`],
       [`transition--${transEasing}`],
     )
   }

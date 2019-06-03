@@ -5,6 +5,7 @@ import {
 } from '@firestudio/ui';
 //
 import Link from '@elements/Link';
+import Drawer from '@elements/Drawer';
 
 export default class Nav extends PureComponent {
   static renderLink(to, text) {
@@ -43,7 +44,7 @@ export default class Nav extends PureComponent {
             {Nav.renderLink('/about', 'About')}
             {Nav.renderLink('/pre-rendering', 'Static')}
             <div className="flex-grow" />
-            <Dialog.Trigger
+            <Drawer.Trigger
               target="menu"
               render={({ toggleDialog }) => (
                 <Clickable
@@ -56,15 +57,15 @@ export default class Nav extends PureComponent {
             />
           </Flex>
         </div>
-        <Dialog
+        <Drawer
           name="menu"
           // className="p-0 justify-start h-screen"
           // contentClassName="w-full h-full"
         >
-          <div style={{ height: '2000px' }}>
+          <div>
             This is a Dialog
           </div>
-        </Dialog>
+        </Drawer>
       </nav>
     );
   }

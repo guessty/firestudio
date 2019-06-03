@@ -45,7 +45,7 @@ module.exports = {
     '&--short': {
       'transition-delay': short,
     },
-    '&--meduim': {
+    '&--medium': {
       'transition-delay': medium,
     },
     '&--long': {
