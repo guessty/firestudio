@@ -1,4 +1,4 @@
-import Container from '@store/containers/Base';
+import { Container } from '@firestudio/core/store';
 
 export default class Modal extends Container {
   state = {}

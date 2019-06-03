@@ -1,10 +1,10 @@
+import React from 'react';
 import App, { Container } from 'next/app';
 import Head from 'next/head';
 import { withDynamicRouter, withPrismic } from '@firestudio/core';
-import React from 'react';
+import { Loader } from '@firestudio/ui';
 //
 import AppLayout from '@templates/App';
-import Loader from '@elements/Loader';
 import Store from '@store';
 import initIcons from '@config/fontAwesome';
 //

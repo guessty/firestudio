@@ -13,7 +13,6 @@ const Footer = () => (
           href="/"
           as={Link}
           styledAs="none"
-          isFlat
           prefetch
           asNextLink
           className="flex h-full items-center uppercase text-white font-bold mr-4"

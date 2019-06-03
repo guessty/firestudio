@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Flex, Clickable } from '@firestudio/ui';
+import {
+  Flex, Clickable, Dialog,
+} from '@firestudio/ui';
 //
 import Link from '@elements/Link';
 
-export default class Nav extends React.PureComponent {
+export default class Nav extends PureComponent {
   static renderLink(to, text) {
     return (
       <Clickable
@@ -29,7 +31,6 @@ export default class Nav extends React.PureComponent {
               href="/"
               as={Link}
               styledAs="none"
-              isFlat
               prefetch
               asNextLink
               className="flex h-full items-center uppercase text-white font-bold mr-4"
@@ -42,8 +43,28 @@ export default class Nav extends React.PureComponent {
             {Nav.renderLink('/about', 'About')}
             {Nav.renderLink('/pre-rendering', 'Static')}
             <div className="flex-grow" />
+            <Dialog.Trigger
+              target="menu"
+              render={({ toggleDialog }) => (
+                <Clickable
+                  className="flex h-full hover:text-blue"
+                  onClick={toggleDialog}
+                >
+                  Menu
+                </Clickable>
+              )}
+            />
           </Flex>
         </div>
+        <Dialog
+          name="menu"
+          // className="p-0 justify-start h-screen"
+          // contentClassName="w-full h-full"
+        >
+          <div>
+            This is a Dialog
+          </div>
+        </Dialog>
       </nav>
     );
   }

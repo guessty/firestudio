@@ -92,9 +92,7 @@ module.exports = {
   plugins: defaultConfig.plugins.concat([
     ({ addUtilities, addComponents, config }) => {
       const utilitiesExport = {};
-      const componentsExport = {
-        ...firestudioUi(config),
-      };
+      const componentsExport = {};
 
       // Prefixed utilities
       [
@@ -134,6 +132,7 @@ module.exports = {
 
 
       // Components
+      addComponents(firestudioUi(config));
       addComponents({
         '@variants responsive': componentsExport,
       });
