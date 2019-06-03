@@ -1,10 +1,10 @@
 import { Container } from '@firestudio/core/store';
 
-export default class Modal extends Container {
+export default class Dialog extends Container {
   state = {}
 
-  hasOpenModals() {
-    return Object.values(this.state).some(modal => modal && modal.isOpen);
+  hasOpenDialogs() {
+    return Object.values(this.state).some(dialog => dialog && dialog.isOpen);
   }
 
   async deregister(key) {
@@ -34,7 +34,7 @@ export default class Modal extends Container {
   }
 
   async closeAll(excludeKey) {
-    if (this.hasOpenModals()) {
+    if (this.hasOpenDialogs()) {
       await this.setState((state) => {
         const newState = {};
         Object.keys(state).forEach((key) => {

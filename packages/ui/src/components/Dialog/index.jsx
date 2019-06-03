@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Subscribe } from '@firestudio/core/store';
 
-import { Modal as ModalContainer } from '../../containers';
+import { Dialog as DialogContainer } from '../../containers';
 import Base from './Base';
 import Trigger from './Trigger';
 
-class Modal extends Component {
+class Dialog extends Component {
   static propTypes = {
     name: PropTypes.string,
-    modal: PropTypes.shape({
+    dialog: PropTypes.shape({
       register: PropTypes.func.isRequired,
       deregister: PropTypes.func.isRequired,
       close: PropTypes.func.isRequired,
@@ -19,7 +19,7 @@ class Modal extends Component {
   };
 
   static defaultProps = {
-    modal: undefined,
+    dialog: undefined,
     name: undefined,
     onDismiss: () => {},
   };
@@ -29,40 +29,40 @@ class Modal extends Component {
   static Trigger = Trigger;
 
   componentDidMount() {
-    const { modal, name } = this.props;
-    if (modal) {
-      modal.register(name);
+    const { dialog, name } = this.props;
+    if (dialog) {
+      dialog.register(name);
     }
   }
 
   componentWillUnmount() {
-    const { modal, name } = this.props;
-    if (modal) {
-      modal.deregister(name);
+    const { dialog, name } = this.props;
+    if (dialog) {
+      dialog.deregister(name);
     }
   }
 
   handleDismiss = (e) => {
-    const { modal, name, onDismiss } = this.props;
-    if (modal) {
-      modal.close(name);
+    const { dialog, name, onDismiss } = this.props;
+    if (dialog) {
+      dialog.close(name);
     }
     onDismiss(e);
   }
 
   render() {
     const {
-      name, modal, children,
+      name, dialog, children,
       onDismiss, isOpen,
       ...props
     } = this.props;
 
-    const isModalOpen = modal ? modal.isOpen(name) : isOpen;
+    const isDialogOpen = dialog ? dialog.isOpen(name) : isOpen;
 
     return (
       <Base
         {...props}
-        isOpen={isModalOpen}
+        isOpen={isDialogOpen}
         onDismiss={this.handleDismiss}
       >
         {children}
@@ -71,4 +71,4 @@ class Modal extends Component {
   }
 }
 
-export default Subscribe({ modal: ModalContainer })(Modal);
+export default Subscribe({ dialog: DialogContainer })(Dialog);

@@ -1,6 +1,6 @@
 const avatar = require('./Avatar/styles');
 const clickable = require('./Clickable/styles');
-const modal = require('./Modal/styles');
+const dialog = require('./Dialog/styles');
 const transition = require('./Transition/styles');
 const flex = require('./Flex/styles');
 const loader = require('./Loader/styles');
@@ -13,6 +13,6 @@ module.exports = config => Object.assign(
   clickable,
   formfield,
   loader,
-  modal(config),
+  dialog(config),
   transition,
 );

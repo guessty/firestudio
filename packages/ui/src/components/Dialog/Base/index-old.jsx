@@ -19,9 +19,13 @@ export default class Modal extends Component {
       PropTypes.arrayOf(PropTypes.element),
     ]).isRequired,
     transitionProps: PropTypes.shape({
-      in: PropTypes.string,
-      out: PropTypes.string,
+      in: PropTypes.shape({}),
+      out: PropTypes.shape({}),
       update: PropTypes.string,
+    }),
+    overlayTransitionProps: PropTypes.shape({
+      in: PropTypes.shape({}),
+      out: PropTypes.shape({}),
     }),
     style: PropTypes.shape({}),
   }
@@ -35,9 +39,13 @@ export default class Modal extends Component {
     headComponent: null,
     initialFocusRef: undefined,
     transitionProps: {
-      in: Transition.TRANSITIONS.FADE,
-      out: Transition.TRANSITIONS.FADE,
-      update: Transition.TRANSITIONS.FADE,
+      in: Transition.defaultProps.in,
+      out: Transition.defaultProps.in,
+      update: { fade: true },
+    },
+    overlayTransitionProps: {
+      in: { fade: true, speed: 'slow' },
+      out: { fade: true, speed: 'slow' },
     },
     style: {},
   }
@@ -80,20 +88,26 @@ export default class Modal extends Component {
   }
 
   componentDidMount() {
+    const scrollbarWidth = Modal.getScrollbarWidth();
+    console.log('Modal mounted')
+
     this.setState({
-      scrollbarWidth: Modal.getScrollbarWidth(),
+      scrollbarWidth,
     });
   }
 
   componentDidUpdate(prevProps) {
-    const { isOpen, initialFocusRef, transitionProps } = this.props;
+    const { isOpen, initialFocusRef, transitionProps, overlayTransitionProps } = this.props;
     const { scrollbarWidth, isMounted } = this.state;
 
     if (prevProps.isOpen !== isOpen) {
       Modal.toggleBodyLock(isOpen, scrollbarWidth);
     }
 
-    const unmountingDelay = transitionProps.out === Transition.TRANSITIONS.NONE ? 0 : 150;
+    const modalTimeout = Transition.getTimeout(transitionProps.out);
+    const overlayTimout = Transition.getTimeout(overlayTransitionProps.out);
+
+    const unmountingDelay = Math.max(modalTimeout, overlayTimout);
 
     if (isOpen !== prevProps.isOpen && isMounted !== isOpen) {
       setTimeout(() => {
@@ -154,16 +168,14 @@ export default class Modal extends Component {
   }
 
   renderOverlay() {
-    const { overlayClassName, transitionProps, isOpen } = this.props;
+    const { overlayClassName, overlayTransitionProps, isOpen } = this.props;
     const { isMounted } = this.state;
 
     return (
       <Transition
-        in={Transition.TRANSITIONS.SLOW_FADE}
-        out={transitionProps.out === Transition.TRANSITIONS.NONE
-          ? Transition.TRANSITIONS.NONE : Transition.TRANSITIONS.SLOW_FADE}
+        {...Modal.defaultProps.overlayTransitionProps}
+        {...overlayTransitionProps}
         isMounted={isOpen && isMounted}
-        timeout={300}
       >
         <div className={`modal__overlay ${overlayClassName}`} />
       </Transition>

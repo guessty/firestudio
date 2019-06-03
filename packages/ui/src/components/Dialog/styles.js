@@ -4,9 +4,9 @@ module.exports = (config) => {
   const colors = config('colors');
 
   return {
-    '.modal': {
+    '.dialog': {
       'z-index': '30',
-      overflow: 'auto',
+      overflow: 'hidden !important',
       position: 'fixed',
       display: 'none',
       top: '0',
@@ -37,8 +37,9 @@ module.exports = (config) => {
       },
 
       '&__window': {
-        width: '100%',
-        'min-height': '100%',
+        position: 'fixed',
+        width: '100vw',
+        'min-height': '100vh',
         display: 'flex',
         'flex-direction': 'column',
         color: 'initial',
@@ -63,7 +64,6 @@ module.exports = (config) => {
         left: '0',
         right: '0',
         bottom: '0',
-        height: '100%',
         'pointer-events': 'none',
 
         '& > *': {
