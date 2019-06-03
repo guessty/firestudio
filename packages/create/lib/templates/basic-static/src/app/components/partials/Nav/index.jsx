@@ -61,7 +61,7 @@ export default class Nav extends PureComponent {
           // className="p-0 justify-start h-screen"
           // contentClassName="w-full h-full"
         >
-          <div>
+          <div style={{ height: '2000px' }}>
             This is a Dialog
           </div>
         </Dialog>
