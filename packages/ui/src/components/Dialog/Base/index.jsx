@@ -112,7 +112,6 @@ export default class Base extends Component {
 
     if ((isOpen && isOpen !== prevProps.isOpen)
       || (!isOpen && !isTransitioning && isTransitioning !== prevState.isTransitioning )) {
-      console.log('toggling: ', isOpen);
       Base.toggleBodyLock(isOpen, scrollbarWidth);
     }
 
