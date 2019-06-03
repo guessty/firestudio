@@ -10,8 +10,8 @@ export default class Base extends Component {
     isOpen: PropTypes.bool,
     onDismiss: PropTypes.func,
     className: PropTypes.string,
+    containerClassName: PropTypes.string,
     overlayClassName: PropTypes.string,
-    contentClassName: PropTypes.string,
     children: PropTypes.oneOfType([
       PropTypes.element,
       PropTypes.arrayOf(PropTypes.element),
@@ -25,8 +25,8 @@ export default class Base extends Component {
     isOpen: false,
     onDismiss: () => {},
     className: '',
+    containerClassName: '',
     overlayClassName: '',
-    contentClassName: '',
     style: {},
     unmountingDelay: 0,
     render: undefined,
@@ -59,9 +59,9 @@ export default class Base extends Component {
   static toggleBodyLock(isOpen, scrollbarWidth) {
     if (typeof document !== 'undefined') {
       document.body.style.cssText = isOpen ? `
-        margin-right: ${scrollbarWidth}px;
         overflow: hidden;
         height: 100vh;
+        padding-right: ${scrollbarWidth}px;
       ` : '';
     }
   }
@@ -72,12 +72,12 @@ export default class Base extends Component {
 
   static Content = ({
     className,
-    contentClassName,
+    containerClassName,
     children,
   }) => (
-    <div className="dialog__body">
-      <div className={`dialog__main ${className}`}>
-        <div className={`dialog__content ${contentClassName}`}>
+    <div className="dialog__window">
+      <div className={`dialog__container ${containerClassName}`}>
+        <div className={`dialog__content ${className}`}>
           {children}
         </div>
       </div>
@@ -106,11 +106,13 @@ export default class Base extends Component {
     });
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     const { isOpen } = this.props;
     const { scrollbarWidth, isTransitioning, unmountingDelay } = this.state;
 
-    if (isOpen !== prevProps.isOpen) {
+    if ((isOpen && isOpen !== prevProps.isOpen)
+      || (!isOpen && !isTransitioning && isTransitioning !== prevState.isTransitioning )) {
+      console.log('toggling: ', isOpen);
       Base.toggleBodyLock(isOpen, scrollbarWidth);
     }
 
@@ -123,21 +125,10 @@ export default class Base extends Component {
     }
   }
 
-  async componentWillUnmount() {
-    const { isOpen } = this.props;
-    const { scrollbarWidth, unmountingDelay } = this.state;
-
-    await Base.sleep(unmountingDelay);
-
-    if (isOpen) {
-      Base.toggleBodyLock(false, scrollbarWidth);
-    }
-  }
-
   render() {
     const {
       onDismiss, isOpen, style, render, children,
-      className, contentClassName, overlayClassName,
+      className, containerClassName, overlayClassName,
     } = this.props;
     const { scrollbarWidth, isTransitioning } = this.state;
 
@@ -157,7 +148,7 @@ export default class Base extends Component {
         }}
       >
 
-        <DialogContent className="dialog__window">
+        <DialogContent>
           {typeof render === 'undefined' ? (
             <>
               <Transition
@@ -172,7 +163,7 @@ export default class Base extends Component {
                 in={{ fade: true, type: 'shift', direction: 'down', speed: 'fast' }}
                 out={{ fade: true, type: 'shift', direction: 'up', speed: 'fast' }}
               >
-                <Base.Content className={className} contentClassName={contentClassName}>
+                <Base.Content className={className} containerClassName={containerClassName}>
                   {children}
                 </Base.Content>
               </Transition>
