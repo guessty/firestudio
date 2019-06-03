@@ -37,6 +37,7 @@ export default class Transition extends Component {
       type: undefined,
       direction: undefined,
       speed: 'normal',
+      delay: 'none',
       easing: 'out',
     },
     out: undefined,
