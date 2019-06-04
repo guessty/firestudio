@@ -53,7 +53,6 @@ export default class Base extends Component {
   }
 
   static toggleBodyLock(isOpen, scrollbarWidth) {
-    console.log('trying to apply styles');
     if (typeof document !== 'undefined') {
       document.body.style.cssText = isOpen ? `
         overflow: hidden;
@@ -63,14 +62,14 @@ export default class Base extends Component {
     }
   }
 
-  static Overlay = ({ className }) => (
+  static Overlay = ({ className = '' }) => (
     <div className={`dialog__overlay ${className}`} />
   )
 
   static Content = ({
-    className,
-    containerClassName,
-    children,
+    className = '',
+    containerClassName = '',
+    children = null,
   }) => (
     <div className="dialog__window">
       <div className={`dialog__container ${containerClassName}`}>
@@ -81,9 +80,18 @@ export default class Base extends Component {
     </div>
   )
 
+  constructor(props) {
+    super(props);
+    this.handleEnter = this.handleEnter.bind(this);
+    this.handleEntered = this.handleEntered.bind(this);
+    this.handleExit = this.handleExit.bind(this);
+    this.handleExited = this.handleExited.bind(this);
+  }
+
   state = {
     scrollbarWidth: 0,
     isActive: false,
+    transitionCounter: 0,
   }
 
   componentDidMount() {
@@ -108,37 +116,50 @@ export default class Base extends Component {
     }
   }
 
-  handleEnter = () => {
-    console.log('enter');
-    this.setState({
-      isTransitioning: true,
-    })
+  handleEnter() {
+    setTimeout(() => {
+      const { transitionCounter } = this.state;
+      this.setState({
+        transitionCounter: transitionCounter + 1,
+      })
+    }, 0);
   }
 
-  handleEntered = () => {
-    console.log('entered');
-    this.setState({
-      isTransitioning: false,
-    })
+  handleEntered() {
+    setTimeout(() => {
+      const { transitionCounter } = this.state;
+      this.setState({
+        transitionCounter: transitionCounter - 1,
+      })
+    }, 0);
   }
 
-  handleExit = () => {
-    console.log('exit');
-    this.setState({
-      isTransitioning: true,
-    })
+  handleExit() {
+    setTimeout(() => {
+      const { transitionCounter } = this.state;
+      this.setState({
+        transitionCounter: transitionCounter + 1,
+      })
+    }, 0);
   }
 
-  handleExited = () => {
-    console.log('exited');
+  handleExited() {
     const { scrollbarWidth } = this.state;
 
     Base.toggleBodyLock(false, scrollbarWidth);
 
-    this.setState({
-      isActive: false,
-      isTransitioning: false,
-    });
+    setTimeout(() => {
+      const { transitionCounter } = this.state;
+      const count = transitionCounter - 1;
+      this.setState({
+        transitionCounter: count,
+      });
+      if (count === 0) {
+        this.setState({
+          isActive: false,
+        });
+      }
+    }, 0);
   }
 
   render() {
@@ -146,7 +167,7 @@ export default class Base extends Component {
       onDismiss, isOpen, style, render, children,
       className, containerClassName, overlayClassName,
     } = this.props;
-    const { scrollbarWidth, isActive, isTransitioning } = this.state;
+    const { scrollbarWidth, isActive, transitionCounter } = this.state;
 
     const dialogClassName = classnames(
       'dialog',
@@ -160,7 +181,7 @@ export default class Base extends Component {
         className={dialogClassName}
         style={{
           ...style,
-          ...isTransitioning ? {
+          ...transitionCounter > 0 ? {
             overflow: 'hidden',
             paddingRight: `${scrollbarWidth}px`,
           } : {
