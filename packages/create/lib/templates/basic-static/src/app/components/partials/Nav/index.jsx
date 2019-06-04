@@ -47,10 +47,10 @@ export default class Nav extends PureComponent {
               target="menu"
               render={({ toggleDialog }) => (
                 <Clickable
-                  className="flex h-full hover:text-blue"
+                  className="flex h-full text-white hover:text-blue p-3"
                   onClick={toggleDialog}
                 >
-                  Menu
+                  <FontAwesomeIcon icon={['fas', 'bars']} size="2x" />
                 </Clickable>
               )}
             />
@@ -63,10 +63,10 @@ export default class Nav extends PureComponent {
             target="menu"
             render={({ toggleDialog }) => (
               <Clickable
-                className="absolute pin-t pin-l px-8 py-6 hover:text-blue"
+                className="absolute pin-t pin-r px-8 py-6 hover:text-blue"
                 onClick={toggleDialog}
               >
-                Close
+                <FontAwesomeIcon icon={['fas', 'times']} size="2x" />
               </Clickable>
             )}
           />
