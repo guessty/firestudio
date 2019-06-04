@@ -97,7 +97,7 @@ module.exports = {
           transform: 'translateY(100vh)',
         },
       },
-      '&-left': {
+      '&-right': {
         '&-enter': {
           transform: 'translateX(-100vw)',
         },
@@ -108,7 +108,7 @@ module.exports = {
           transform: 'translateX(100vw)',
         },
       },
-      '&-right': {
+      '&-left': {
         '&-enter': {
           transform: 'translateX(100vw)',
         },
@@ -143,7 +143,7 @@ module.exports = {
           transform: 'translateY(1.25rem)',
         },
       },
-      '&-left': {
+      '&-right': {
         '&-enter': {
           transform: 'translateX(-1.25rem)',
         },
@@ -154,7 +154,7 @@ module.exports = {
           transform: 'translateX(1.25rem)',
         },
       },
-      '&-right': {
+      '&-left': {
         '&-enter': {
           transform: 'translateX(1.25rem)',
         },

@@ -14,7 +14,10 @@ module.exports = (config) => {
       bottom: '0',
 
       '& > *': {
+        display: 'flex',
+        'flex-direction': 'column',
         'pointer-events': 'none',
+        height: '100%',
       },
 
       '&__overlay': {
