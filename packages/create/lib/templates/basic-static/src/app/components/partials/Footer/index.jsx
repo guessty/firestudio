@@ -3,11 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Flex, Clickable } from '@firestudio/ui';
 //
 import Link from '@elements/Link';
+import Container from '@elements/Container';
 //
 
 const Footer = () => (
   <footer className="h-full bg-blue-darker text-white">
-    <div className="container mx-auto h-full px-8">
+    <Container className="h-full px-8">
       <Flex className="gap-around-8 justify-center items-center">
         <Clickable
           href="/"
@@ -23,7 +24,7 @@ const Footer = () => (
           </span>
         </Clickable>
       </Flex>
-    </div>
+    </Container>
   </footer>
 );
 

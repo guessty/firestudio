@@ -6,6 +6,7 @@ import {
 //
 import Link from '@elements/Link';
 import Drawer from '@elements/Drawer';
+import Container from '@elements/Container';
 
 export default class Nav extends PureComponent {
   static renderLink(to, text) {
@@ -26,7 +27,7 @@ export default class Nav extends PureComponent {
   render() {
     return (
       <nav className="nav h-full bg-blue-darker text-white font-medium">
-        <div className="mx-auto flex h-full px-8">
+        <Container className="flex h-full px-8">
           <Flex className="flex-row flex-grow items-center gap-between-4" childClassName="h-full">
             <Clickable
               href="/"
@@ -41,8 +42,6 @@ export default class Nav extends PureComponent {
                 FireStudio
               </span>
             </Clickable>
-            {Nav.renderLink('/about', 'About')}
-            {Nav.renderLink('/pre-rendering', 'Static')}
             <div className="flex-grow" />
             <Drawer.Trigger
               target="menu"
@@ -56,15 +55,26 @@ export default class Nav extends PureComponent {
               )}
             />
           </Flex>
-        </div>
+        </Container>
         <Drawer
           name="menu"
-          // className="p-0 justify-start h-screen"
-          // contentClassName="w-full h-full"
         >
-          <div>
-            This is a Dialog
-          </div>
+          <Drawer.Trigger
+            target="menu"
+            render={({ toggleDialog }) => (
+              <Clickable
+                className="absolute pin-t pin-l px-8 py-6 hover:text-blue"
+                onClick={toggleDialog}
+              >
+                Close
+              </Clickable>
+            )}
+          />
+          <Flex className="flex-grow gap-around-6">
+            <hr />
+            {Nav.renderLink('/about', 'About')}
+            {Nav.renderLink('/pre-rendering', 'Static')}
+          </Flex>
         </Drawer>
       </nav>
     );

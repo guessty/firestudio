@@ -7,7 +7,7 @@ export default class Drawer extends PureComponent {
     name: PropTypes.string.isRequired,
     children: PropTypes.node.isRequired,
   }
-  
+
   static Trigger = Dialog.Trigger
 
   render() {
@@ -16,22 +16,24 @@ export default class Drawer extends PureComponent {
     return (
       <Dialog
         name={name}
-        unmountingDelay={500}
-        render={({ Overlay, Content, isOpen }) => (
+        render={({ Overlay, Content, ...transitionProps }) => (
           <>
             <Transition
-              isIn={isOpen}
-              in={{ fade: false, type: 'slide', direction: 'left', speed: 'normal' }}
-              out={{ fade: false, type: 'slide', direction: 'right', speed: 'normal' }}
+              in={{ fade: true, speed: 'normal' }}
+              out={{ fade: true, speed: 'normal' }}
+              {...transitionProps}
             >
-              <Overlay className="w-1/4" />
+              <Overlay />
             </Transition>
             <Transition
-              isIn={isOpen}
-              in={{ fade: false, type: 'slide', direction: 'right', speed: 'normal' }}
-              out={{ fade: false, type: 'slide', direction: 'left', speed: 'normal' }}
+              in={{ fade: true, type: 'slide', direction: 'left', speed: 'normal' }}
+              out={{ fade: true, type: 'slide', direction: 'right', speed: 'normal' }}
+              {...transitionProps}
             >
-              <Content className="w-3/4 h-screen max-w-full" containerClassName="p-0 justify-end">
+              <Content
+                className="max-w-full h-screen w-4/5 md:w-2/3 lg:w-1/2 xl:w-1/3"
+                containerClassName="justify-end p-0"
+              >
                 {children}
               </Content>
             </Transition>

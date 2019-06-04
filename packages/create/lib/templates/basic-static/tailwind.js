@@ -8,13 +8,34 @@ module.exports = {
   ...defaultConfig,
 
   screens: {
+    'xs': '320px',
     'sm': '576px',
     'md': '768px',
     'lg': '992px',
     'xl': '1200px',
+    'max-xs': { max: '319px' },
+    'max-sm': { max: '575px' },
+    'max-md': { max: '767px' },
+    'max-lg': { max: '991px' },
+    'max-xl': { max: '1199px' },
   },
 
   maxWidth: {
+    'xs': '320px',
+    'sm': '576px',
+    'md': '768px',
+    'lg': '992px',
+    'xl': '1200px',
+    '1/4': '25%',
+    '1/2': '50%',
+    '3/4': '75%',
+    'full': '100%',
+    'screen': '100vw',
+  },
+
+  minWidth: {
+    '0': '0px',
+    'xs': '320px',
     'sm': '576px',
     'md': '768px',
     'lg': '992px',
@@ -37,6 +58,26 @@ module.exports = {
     '80': '20rem',
     'full': '100%',
     'screen': '100vh',
+  },
+
+  width: {
+    ...defaultConfig.width,
+    '20': '5rem',
+  },
+
+  height: {
+    ...defaultConfig.height,
+    '20': '5rem',
+    '1/2': '50%',
+    '1/3': '33.33333%',
+    '2/3': '66.66667%',
+    '1/4': '25%',
+    '2/4': '50%',
+    '3/4': '75%',
+    '1/5': '20%',
+    '2/5': '40%',
+    '3/5': '60%',
+    '4/5': '80%',
   },
 
   textSizes: {
