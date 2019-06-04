@@ -27,6 +27,8 @@ export default class Transition extends Component {
     enterOnMount: PropTypes.bool,
     unmountOnExit: PropTypes.bool,
     onEnter: PropTypes.func,
+    onEntered: PropTypes.func,
+    onExit: PropTypes.func,
     onExited: PropTypes.func,
     children: PropTypes.element,
   }
@@ -46,6 +48,8 @@ export default class Transition extends Component {
     enterOnMount: true,
     unmountOnExit: true,
     onEnter: () => {},
+    onEntered: () => {},
+    onExit: () => {},
     onExited: () => {},
     children: undefined,
   }
@@ -64,19 +68,6 @@ export default class Transition extends Component {
     };
   }
 
-  static getTimeout(speed) {
-    switch (speed) {
-      case 'instant':
-        return 0;
-      case 'fast':
-        return 150;
-      case 'slow':
-        return 350;
-      default:
-        return 250;
-    }
-  }
-
   state = {
     isUpdating: false,
     // eslint-disable-next-line react/destructuring-assignment
@@ -86,7 +77,6 @@ export default class Transition extends Component {
 
   constructor(props) {
     super(props);
-    this.getTimeout = this.getTimeout.bind(this);
     this.handleEntered = this.handleEntered.bind(this);
     this.handleExited = this.handleExited.bind(this);
   }
@@ -140,21 +130,13 @@ export default class Transition extends Component {
     )
   }
 
-  getTimeout() {
-    const {
-      isIn, in: inTransition, out,
-    } = this.props;
-    const outTransition = out || inTransition;
-    const transition = isIn ? inTransition : outTransition;
-    
-    return Transition.getTimeout(transition.speed);
-  }
-
-  handleEntered() {
+  handleEntered(node) {
+    const { onEntered } = this.props;
     this.setState({
       // eslint-disable-next-line react/no-unused-state
       isEntered: true,
     });
+    onEntered(node);
   }
 
   handleExited(node) {
@@ -168,16 +150,18 @@ export default class Transition extends Component {
 
   render() {
     const {
-      isIn, enterOnMount, unmountOnExit, onEnter, update,
+      isIn, enterOnMount, unmountOnExit, update,
+      onEnter, onExit,
     } = this.props;
     const { isUpdating, activeChild } = this.state;
-    const timeout = this.getTimeout();
 
     return (
       <CSSTransition
         in={isIn}
         appear={enterOnMount}
-        timeout={timeout}
+        addEndListener={(node, done) => {
+          node.addEventListener('transitionend', done, false);
+        }}
         classNames={{
           enter: this.getStageClassName('enter'),
           enterActive: this.getStageClassName('enter-active'),
@@ -188,6 +172,7 @@ export default class Transition extends Component {
         }}
         onEnter={onEnter}
         onEntered={this.handleEntered}
+        onExit={onExit}
         onExited={this.handleExited}
         unmountOnExit={unmountOnExit}
       >

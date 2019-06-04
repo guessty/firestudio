@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { DialogOverlay, DialogContent } from '@reach/dialog';
+import Dialog, { DialogOverlay, DialogContent } from '@reach/dialog';
 
 import Transition from '../../Transition';
 
@@ -14,7 +14,6 @@ export default class Base extends Component {
     overlayClassName: PropTypes.string,
     children: PropTypes.node,
     style: PropTypes.shape({}),
-    unmountingDelay: PropTypes.number,
     render: PropTypes.func,
   }
 
@@ -25,7 +24,6 @@ export default class Base extends Component {
     containerClassName: '',
     overlayClassName: '',
     style: {},
-    unmountingDelay: 0,
     render: undefined,
     children: null,
   }
@@ -55,11 +53,12 @@ export default class Base extends Component {
   }
 
   static toggleBodyLock(isOpen, scrollbarWidth) {
+    console.log('trying to apply styles');
     if (typeof document !== 'undefined') {
       document.body.style.cssText = isOpen ? `
         overflow: hidden;
         height: 100vh;
-        padding-right: ${scrollbarWidth}px;
+        padding-right: ${scrollbarWidth}px !important;
       ` : '';
     }
   }
@@ -82,18 +81,9 @@ export default class Base extends Component {
     </div>
   )
 
-  static getDerivedStateFromProps(props) {
-    const { render, unmountingDelay } = props;
-
-    return {
-      unmountingDelay: typeof render === 'undefined' ? 350 : unmountingDelay,
-    }
-  }
-
   state = {
     scrollbarWidth: 0,
-    unmountingDelay: 0,
-    isTransitioning: false,
+    isActive: false,
   }
 
   componentDidMount() {
@@ -104,22 +94,51 @@ export default class Base extends Component {
     });
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     const { isOpen } = this.props;
-    const { scrollbarWidth, isTransitioning, unmountingDelay } = this.state;
+    const { scrollbarWidth } = this.state;
 
-    if ((isOpen && isOpen !== prevProps.isOpen)
-      || (!isOpen && !isTransitioning && isTransitioning !== prevState.isTransitioning )) {
-      Base.toggleBodyLock(isOpen, scrollbarWidth);
-    }
-
-    if (isOpen !== prevProps.isOpen && isTransitioning !== isOpen) {
+    if (isOpen && isOpen !== prevProps.isOpen) {
+      Base.toggleBodyLock(true, scrollbarWidth);
       setTimeout(() => {
         this.setState({
-          isTransitioning: isOpen,
+          isActive: true,
         });
-      }, isOpen ? 0 : unmountingDelay);
+      }, 0);
     }
+  }
+
+  handleEnter = () => {
+    console.log('enter');
+    this.setState({
+      isTransitioning: true,
+    })
+  }
+
+  handleEntered = () => {
+    console.log('entered');
+    this.setState({
+      isTransitioning: false,
+    })
+  }
+
+  handleExit = () => {
+    console.log('exit');
+    this.setState({
+      isTransitioning: true,
+    })
+  }
+
+  handleExited = () => {
+    console.log('exited');
+    const { scrollbarWidth } = this.state;
+
+    Base.toggleBodyLock(false, scrollbarWidth);
+
+    this.setState({
+      isActive: false,
+      isTransitioning: false,
+    });
   }
 
   render() {
@@ -127,22 +146,23 @@ export default class Base extends Component {
       onDismiss, isOpen, style, render, children,
       className, containerClassName, overlayClassName,
     } = this.props;
-    const { scrollbarWidth, isTransitioning } = this.state;
+    const { scrollbarWidth, isActive, isTransitioning } = this.state;
 
     const dialogClassName = classnames(
       'dialog',
-      { 'dialog--visible': isOpen || isTransitioning },
+      { 'dialog--visible': isOpen || isActive },
     );
 
     return (
       <DialogOverlay
-        isOpen={isOpen || isTransitioning}
+        isOpen={isOpen || isActive}
         onDismiss={onDismiss}
         className={dialogClassName}
         style={{
           ...style,
           ...isTransitioning ? {
             overflow: 'hidden',
+            paddingRight: `${scrollbarWidth}px`,
           } : {
             overflowY: scrollbarWidth > 0 ? 'scroll' : 'auto',
           }
@@ -152,16 +172,24 @@ export default class Base extends Component {
           {typeof render === 'undefined' ? (
             <>
               <Transition
-                isIn={isOpen && isTransitioning}
+                isIn={isOpen && isActive}
                 in={{ fade: true, speed: 'slow' }}
                 out={{ fade: true, speed: 'slow' }}
+                onEnter={this.handleEnter}
+                onEntered={this.handleEntered}
+                onExit={this.handleExit}
+                onExited={this.handleExited}
               >
                 <Base.Overlay className={overlayClassName} />
               </Transition>
               <Transition
-                isIn={isOpen && isTransitioning}
+                isIn={isOpen && isActive}
                 in={{ fade: true, type: 'shift', direction: 'down', speed: 'fast' }}
                 out={{ fade: true, type: 'shift', direction: 'up', speed: 'fast' }}
+                onEnter={this.handleEnter}
+                onEntered={this.handleEntered}
+                onExit={this.handleExit}
+                onExited={this.handleExited}
               >
                 <Base.Content className={className} containerClassName={containerClassName}>
                   {children}
@@ -171,7 +199,11 @@ export default class Base extends Component {
           ) : render({
             Overlay: Base.Overlay,
             Content: Base.Content,
-            isOpen: isOpen && isTransitioning,
+            isIn: isOpen && isActive,
+            onEnter: this.handleEnter,
+            onEntered: this.handleEntered,
+            onExit: this.handleExit,
+            onExited: this.handleExited,
           })}
         </DialogContent>
       </DialogOverlay>
