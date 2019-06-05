@@ -1,1 +1,0 @@
-# Firestudio Basic Static Site

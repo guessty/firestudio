@@ -16,12 +16,9 @@ const Footer = () => (
           styledAs="none"
           prefetch
           asNextLink
-          className="flex h-full items-center uppercase text-white font-bold mr-4"
+          className="flex h-full items-center text-white text-2xl font-bold mr-4"
         >
-          <span className="mr-4 text-blue"><FontAwesomeIcon icon={['far', 'grin-tongue-squint']} /></span>
-          <span>
-            FireStudio
-          </span>
+          Firestudio
         </Clickable>
       </Flex>
     </Container>

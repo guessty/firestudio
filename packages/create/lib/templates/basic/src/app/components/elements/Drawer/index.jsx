@@ -31,7 +31,7 @@ export default class Drawer extends PureComponent {
               {...transitionProps}
             >
               <Content
-                className="max-w-full h-screen w-4/5 md:w-3/5 lg:w-1/2 xl:w-1/3"
+                className="max-w-full h-screen py-20 w-4/5 md:w-3/5 lg:w-1/2 xl:w-1/3"
                 containerClassName="justify-end p-0"
               >
                 {children}

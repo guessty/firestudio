@@ -1,7 +1,7 @@
 {
-  "name": "basic-static",
+  "name": "basic",
   "version": "1.0.0",
-  "description": "firestudio basic static site",
+  "description": "firestudio basic site",
   "author": "",
   "license": "MIT",
   "main": "index.js",
@@ -28,7 +28,7 @@
     "@babel/polyfill": "7.0.0",
     "@babel/runtime": "^7.4.4",
     "@firestudio/core": "^0.2.5",
-    "@firestudio/ui": "^0.2.6",
+    "@firestudio/ui": "^0.2.7",
     "@fortawesome/fontawesome-svg-core": "^1.2.8",
     "@fortawesome/free-regular-svg-icons": "^5.5.0",
     "@fortawesome/free-solid-svg-icons": "^5.9.0",

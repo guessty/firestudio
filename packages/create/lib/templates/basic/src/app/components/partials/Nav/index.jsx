@@ -1,8 +1,6 @@
 import React, { PureComponent } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Flex, Clickable, Dialog,
-} from '@firestudio/ui';
+import { Flex, Clickable } from '@firestudio/ui';
 //
 import Link from '@elements/Link';
 import Drawer from '@elements/Drawer';
@@ -11,16 +9,22 @@ import Container from '@elements/Container';
 export default class Nav extends PureComponent {
   static renderLink(to, text) {
     return (
-      <Clickable
-        href={to}
-        as={Link}
-        styledAs="a"
-        prefetch
-        asNextLink
-        className="hidden sm:flex h-full items-center mx-4 hover:text-blue"
-      >
-        {text}
-      </Clickable>
+      <Drawer.Trigger
+        target="menu"
+        render={({ toggleDialog }) => (
+          <Clickable
+            href={to}
+            as={Link}
+            styledAs="a"
+            prefetch
+            asNextLink
+            className="hidden sm:flex h-full items-center mx-4 hover:text-blue"
+            onClick={toggleDialog}
+          >
+            {text}
+          </Clickable>
+        )}
+      />
     );
   }
 
@@ -35,12 +39,9 @@ export default class Nav extends PureComponent {
               styledAs="none"
               prefetch
               asNextLink
-              className="flex h-full items-center uppercase text-white font-bold mr-4"
+              className="flex h-full items-center text-white text-2xl font-bold mr-4"
             >
-              <span className="mr-4 text-blue"><FontAwesomeIcon icon={['far', 'grin-tongue-squint']} /></span>
-              <span>
-                FireStudio
-              </span>
+              Firestudio
             </Clickable>
             <div className="flex-grow" />
             <Drawer.Trigger
@@ -63,15 +64,16 @@ export default class Nav extends PureComponent {
             target="menu"
             render={({ toggleDialog }) => (
               <Clickable
-                className="absolute pin-t pin-r px-8 py-6 hover:text-blue"
+                className="absolute pin-t pin-r w-20 h-20 p-0 hover:text-blue"
                 onClick={toggleDialog}
               >
                 <FontAwesomeIcon icon={['fas', 'times']} size="2x" />
               </Clickable>
             )}
           />
-          <Flex className="flex-grow gap-around-6">
+          <Flex className="flex-grow gap-between-6">
             <hr />
+            {Nav.renderLink('/', 'Home')}
             {Nav.renderLink('/about', 'About')}
             {Nav.renderLink('/pre-rendering', 'Static')}
           </Flex>
