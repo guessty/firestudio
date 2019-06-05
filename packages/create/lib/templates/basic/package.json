@@ -1,7 +1,7 @@
 {
   "name": "basic",
   "version": "1.0.0",
-  "description": "firestudio basic site",
+  "description": "firestudio basic template",
   "author": "",
   "license": "MIT",
   "main": "index.js",
