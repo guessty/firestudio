@@ -28,10 +28,6 @@ export default class Base extends Component {
     children: null,
   }
 
-  static sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
   static getScrollbarWidth() {
     if (typeof document === 'undefined') {
       return 0;
@@ -193,9 +189,9 @@ export default class Base extends Component {
           {typeof render === 'undefined' ? (
             <>
               <Transition
-                isIn={isOpen && isActive}
-                in={{ fade: true, speed: 'slow' }}
-                out={{ fade: true, speed: 'slow' }}
+                in={isOpen && isActive}
+                enterTransition={{ fade: true, speed: 'slow' }}
+                exitTransition={{ fade: true, speed: 'slow' }}
                 onEnter={this.handleEnter}
                 onEntered={this.handleEntered}
                 onExit={this.handleExit}
@@ -204,9 +200,9 @@ export default class Base extends Component {
                 <Base.Overlay className={overlayClassName} />
               </Transition>
               <Transition
-                isIn={isOpen && isActive}
-                in={{ fade: true, type: 'shift', direction: 'down', speed: 'fast' }}
-                out={{ fade: true, type: 'shift', direction: 'up', speed: 'fast' }}
+                in={isOpen && isActive}
+                enterTransition={{ fade: true, type: 'shift', direction: 'down', speed: 'fast' }}
+                exitTransition={{ fade: true, type: 'shift', direction: 'up', speed: 'fast' }}
                 onEnter={this.handleEnter}
                 onEntered={this.handleEntered}
                 onExit={this.handleExit}
@@ -220,7 +216,7 @@ export default class Base extends Component {
           ) : render({
             Overlay: Base.Overlay,
             Content: Base.Content,
-            isIn: isOpen && isActive,
+            in: isOpen && isActive,
             onEnter: this.handleEnter,
             onEntered: this.handleEntered,
             onExit: this.handleExit,

@@ -7,7 +7,7 @@ const sharpTransition = 'all 150ms cubic-bezier(.32,1.03,.53,1.37)';
 const slow = '350ms';
 const normal = '250ms';
 const fast = '150ms';
-const instant = '0ms';
+const instant = '1ms';
 
 // delay
 const none = '0ms';
@@ -25,51 +25,75 @@ module.exports = {
     'transition-delay': '0s',
 
     // speeds
-    '&--slow': {
-      'transition-duration': slow,
-    },
-    '&--normal': {
-      'transition-duration': normal,
-    },
-    '&--fast': {
-      'transition-duration': fast,
-    },
-    '&--instant': {
-      'transition-duration': instant,
+    '&-speed': {
+      '&--slow': {
+        'transition-duration': slow,
+      },
+      '&--normal': {
+        'transition-duration': normal,
+      },
+      '&--fast': {
+        'transition-duration': fast,
+      },
+      '&--instant': {
+        'transition-duration': instant,
+      },
     },
 
     // delay
-    '&--none': {
-      'transition-delay': none,
-    },
-    '&--short': {
-      'transition-delay': short,
-    },
-    '&--medium': {
-      'transition-delay': medium,
-    },
-    '&--long': {
-      'transition-delay': long,
+    '&-delay': {
+      '&--none': {
+        'transition-delay': none,
+      },
+      '&--short': {
+        'transition-delay': short,
+      },
+      '&--medium': {
+        'transition-delay': medium,
+      },
+      '&--long': {
+        'transition-delay': long,
+      },
     },
 
     // easing
-    '&--out': {
-      'transition-timing-function': easeOut,
-    },
-    '&--outBack': {
-      'transition-timing-function': easeOutBack,
+    '&-easing': {
+      '&--out': {
+        'transition-timing-function': easeOut,
+      },
+      '&--outBack': {
+        'transition-timing-function': easeOutBack,
+      },
     },
 
     // fade
     '&--fade': {
       '&-enter': {
-        opacity: '0.01',
+        opacity: '0',
       },
       '&-enter-active, &-exit': {
         opacity: '1',
       },
       '&-exit-active': {
-        opacity: '0.01',
+        opacity: '0',
+      },
+    },
+    '&--no-fade': {
+      '&-enter': {
+        opacity: '0.99999',
+      },
+      '&-enter-active, &-exit': {
+        opacity: '1',
+      },
+      '&-exit-active': {
+        opacity: '0.99999',
+      },
+    },
+
+    // absolute
+    '&--absolute': {
+      '&-enter, &-enter-active, &-exit, &-exit-active': {
+        position: 'absolute',
       },
     },
 

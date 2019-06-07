@@ -1,31 +1,32 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { CSSTransition } from 'react-transition-group';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import classnames from 'classnames';
-import { configOptions } from 'final-form';
 
 export default class Transition extends Component {
   static propTypes = {
-    in: PropTypes.shape({
+    enterTransition: PropTypes.shape({
       fade: PropTypes.bool,
+      absolute: PropTypes.bool,
       type: PropTypes.oneOf(['shift', 'slide']),
       direction: PropTypes.oneOf(['up', 'down', 'left', 'right']),
       speed: PropTypes.oneOf(['slow', 'normal', 'fast', 'instant']),
       delay: PropTypes.oneOf(['none', 'short', 'medium', 'long']),
       easing: PropTypes.oneOf(['out', 'outBack'])
     }),
-    out: PropTypes.shape({
+    exitTransition: PropTypes.shape({
       fade: PropTypes.bool,
+      absolute: PropTypes.bool,
       type: PropTypes.oneOf(['shift', 'slide']),
       direction: PropTypes.oneOf(['up', 'down', 'left', 'right']),
       speed: PropTypes.oneOf(['instant', 'slow', 'normal', 'fast']),
       delay: PropTypes.oneOf(['none', 'short', 'medium', 'long']),
       easing: PropTypes.oneOf(['out', 'outBack'])
     }),
-    update: PropTypes.string,
-    isIn: PropTypes.bool,
-    enterOnMount: PropTypes.bool,
+    in: PropTypes.bool,
+    appear: PropTypes.bool,
     unmountOnExit: PropTypes.bool,
+    mountOnEnter: PropTypes.bool,
     onEnter: PropTypes.func,
     onEntered: PropTypes.func,
     onExit: PropTypes.func,
@@ -34,18 +35,19 @@ export default class Transition extends Component {
   }
 
   static defaultProps = {
-    in: {
+    enterTransition: {
       fade: true,
+      absolute: false,
       type: undefined,
       direction: undefined,
       speed: 'normal',
       delay: 'none',
       easing: 'out',
     },
-    out: undefined,
-    update: 'fade',
-    isIn: true,
-    enterOnMount: true,
+    exitTransition: undefined,
+    in: true,
+    appear: true,
+    mountOnEnter: false,
     unmountOnExit: true,
     onEnter: () => {},
     onEntered: () => {},
@@ -54,63 +56,17 @@ export default class Transition extends Component {
     children: undefined,
   }
 
-  static getDerivedStateFromProps(props, state) {
-    if (state.isEntered && props.children.key
-    && props.children.key !== state.activeChild.key) {
-      return {
-        nextChild: props.children,
-      };
-    }
+  static Group = TransitionGroup
 
-    return {
-      nextChild: props.children,
-      activeChild: props.children,
-    };
-  }
-
-  state = {
-    isUpdating: false,
-    // eslint-disable-next-line react/destructuring-assignment
-    activeChild: this.props.children,
-    nextChild: undefined,
-  }
-
-  constructor(props) {
-    super(props);
-    this.handleEntered = this.handleEntered.bind(this);
-    this.handleExited = this.handleExited.bind(this);
-  }
-
-  componentDidUpdate() {
-    const { isUpdating, activeChild, nextChild } = this.state;
-    const { isIn } = this.props;
-
-    if (isIn && !isUpdating && nextChild.key !== activeChild.key) {
-      // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({
-        isUpdating: true,
-      });
-      setTimeout(() => {
-        this.setState({
-          activeChild: nextChild,
-        });
-      }, 100);
-      setTimeout(() => {
-        this.setState({
-          isUpdating: false,
-        });
-      }, 200);
-    }
-  }
+  static Page = TransitionGroup
 
   getStageClassName(stage) {
     const {
-      isIn, in: inTransition, out,
+      in: isIn, enterTransition, exitTransition,
     } = this.props;
-    const outTransition = out || inTransition;
-    const transition = isIn ? inTransition : outTransition;
 
-    const { fade, type, direction, speed, easing, delay } = transition;
+    const transition = isIn ? enterTransition : (exitTransition || enterTransition);
+    const { fade, absolute, type, direction, speed, easing, delay } = transition;
 
     const transType = direction && !type ? 'shift' : type;
     const transDirection = type && !direction ? 'down' : direction;
@@ -122,43 +78,27 @@ export default class Transition extends Component {
       'transition',
       {
         [`transition--fade-${stage}`] : fade,
+        [`transition--no-fade-${stage}`] : !fade,
+        [`transition--absolute-${stage}`] : absolute,
         [`transition--${transType}-${transDirection}-${stage}`] : Boolean(transType) && Boolean(transDirection),
       },
-      [`transition--${transSpeed}`],
-      [`transition--${transDelay}`],
-      [`transition--${transEasing}`],
+      [`transition-speed--${transSpeed}`],
+      [`transition-delay--${transDelay}`],
+      [`transition-easing--${transEasing}`],
     )
-  }
-
-  handleEntered(node) {
-    const { onEntered } = this.props;
-    this.setState({
-      // eslint-disable-next-line react/no-unused-state
-      isEntered: true,
-    });
-    onEntered(node);
-  }
-
-  handleExited(node) {
-    const { onExited } = this.props;
-    this.setState({
-      // eslint-disable-next-line react/no-unused-state
-      isEntered: false,
-    });
-    onExited(node);
   }
 
   render() {
     const {
-      isIn, enterOnMount, unmountOnExit, update,
-      onEnter, onExit,
+      in: isIn, appear, unmountOnExit, update,
+      onEnter, onEntered, onExit, onExited, children,
     } = this.props;
-    const { isUpdating, activeChild } = this.state;
 
     return (
       <CSSTransition
         in={isIn}
-        appear={enterOnMount}
+        appear={appear}
+        unmountOnExit={unmountOnExit}
         addEndListener={(node, done) => {
           node.addEventListener('transitionend', done, false);
         }}
@@ -171,16 +111,11 @@ export default class Transition extends Component {
           exitDone: this.getStageClassName('exit-done'),
         }}
         onEnter={onEnter}
-        onEntered={this.handleEntered}
+        onEntered={onEntered}
         onExit={onExit}
-        onExited={this.handleExited}
-        unmountOnExit={unmountOnExit}
+        onExited={onExited}
       >
-        {isUpdating ? (
-          <div className={`transition--update-${update}`}>
-            {activeChild}
-          </div>
-        ) : activeChild}
+        {children}
       </CSSTransition>
     );
   }
