@@ -18,7 +18,7 @@ export default class Nav extends PureComponent {
             styledAs="a"
             prefetch
             asNextLink
-            className="hidden sm:flex h-full items-center mx-4 hover:text-blue"
+            className="flex h-full items-center mx-4 hover:text-blue"
             onClick={toggleDialog}
           >
             {text}

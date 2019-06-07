@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { withDynamicRouter, withPrismic } from '@firestudio/core';
 import { Loader } from '@firestudio/ui';
 //
-import AppLayout from '@templates/App';
+import Page from '@templates/Page';
 import Store from '@store';
 import initIcons from '@config/fontAwesome';
 //
@@ -32,7 +32,7 @@ class FirestudioApp extends App {
   }
 
   render() {
-    const { Component, pageProps } = this.props;
+    const { Component, pageProps, router } = this.props;
 
     return (
       <Container>
@@ -40,9 +40,9 @@ class FirestudioApp extends App {
           <title>Firestudio</title>
         </Head>
         <Store>
-          <AppLayout>
+          <Page router={router}>
             <Component {...pageProps} />
-          </AppLayout>
+          </Page>
         </Store>
       </Container>
     );
