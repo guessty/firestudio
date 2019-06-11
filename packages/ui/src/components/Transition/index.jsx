@@ -10,26 +10,32 @@ export default class Transition extends Component {
       absolute: PropTypes.bool,
       type: PropTypes.oneOf(['shift', 'slide']),
       direction: PropTypes.oneOf(['up', 'down', 'left', 'right']),
+      custom: PropTypes.string,
       speed: PropTypes.oneOf(['slow', 'normal', 'fast', 'instant']),
       delay: PropTypes.oneOf(['none', 'short', 'medium', 'long']),
-      easing: PropTypes.oneOf(['out', 'outBack'])
+      easing: PropTypes.oneOf(['out', 'outBack']),
+      timeout: PropTypes.number,
     }),
     exitTransition: PropTypes.shape({
       fade: PropTypes.bool,
       absolute: PropTypes.bool,
       type: PropTypes.oneOf(['shift', 'slide']),
       direction: PropTypes.oneOf(['up', 'down', 'left', 'right']),
+      custom: PropTypes.string,
       speed: PropTypes.oneOf(['instant', 'slow', 'normal', 'fast']),
       delay: PropTypes.oneOf(['none', 'short', 'medium', 'long']),
-      easing: PropTypes.oneOf(['out', 'outBack'])
+      easing: PropTypes.oneOf(['out', 'outBack']),
+      timeout: PropTypes.number,
     }),
     in: PropTypes.bool,
     appear: PropTypes.bool,
     unmountOnExit: PropTypes.bool,
     mountOnEnter: PropTypes.bool,
     onEnter: PropTypes.func,
+    onEntering: PropTypes.func,
     onEntered: PropTypes.func,
     onExit: PropTypes.func,
+    onExiting: PropTypes.func,
     onExited: PropTypes.func,
     children: PropTypes.element,
   }
@@ -40,18 +46,22 @@ export default class Transition extends Component {
       absolute: false,
       type: undefined,
       direction: undefined,
+      custom: undefined,
       speed: 'normal',
       delay: 'none',
       easing: 'out',
+      timeout: 0,
     },
     exitTransition: undefined,
     in: true,
-    appear: true,
+    appear: false,
     mountOnEnter: false,
     unmountOnExit: true,
     onEnter: () => {},
+    onEntering: () => {},
     onEntered: () => {},
     onExit: () => {},
+    onExiting: () => {},
     onExited: () => {},
     children: undefined,
   }
@@ -66,7 +76,7 @@ export default class Transition extends Component {
     } = this.props;
 
     const transition = isIn ? enterTransition : (exitTransition || enterTransition);
-    const { fade, absolute, type, direction, speed, easing, delay } = transition;
+    const { fade, absolute, type, direction, custom, speed, easing, delay } = transition;
 
     const transType = direction && !type ? 'shift' : type;
     const transDirection = type && !direction ? 'down' : direction;
@@ -80,7 +90,8 @@ export default class Transition extends Component {
         [`transition--fade-${stage}`] : fade,
         [`transition--no-fade-${stage}`] : !fade,
         [`transition--absolute-${stage}`] : absolute,
-        [`transition--${transType}-${transDirection}-${stage}`] : Boolean(transType) && Boolean(transDirection),
+        [`transition--${transType}-${transDirection}-${stage}`] : !Boolean(custom) && Boolean(transType) && Boolean(transDirection),
+        [`transition--${custom}-${stage}`]: Boolean(custom),
       },
       [`transition-speed--${transSpeed}`],
       [`transition-delay--${transDelay}`],
@@ -90,15 +101,22 @@ export default class Transition extends Component {
 
   render() {
     const {
-      in: isIn, appear, unmountOnExit, update,
-      onEnter, onEntered, onExit, onExited, children,
+      in: isIn, appear, children,
+      mountOnEnter, unmountOnExit,
+      enterTransition, exitTransition,
+      onEnter, onEntering, onEntered,
+      onExit, onExiting, onExited,
     } = this.props;
+
+    const transition = isIn ? enterTransition : (exitTransition || enterTransition);
 
     return (
       <CSSTransition
         in={isIn}
         appear={appear}
+        mountOnEnter={mountOnEnter}
         unmountOnExit={unmountOnExit}
+        timeout={transition.timeout || 600}
         addEndListener={(node, done) => {
           node.addEventListener('transitionend', done, false);
         }}
@@ -111,8 +129,10 @@ export default class Transition extends Component {
           exitDone: this.getStageClassName('exit-done'),
         }}
         onEnter={onEnter}
+        onEntering={onEntering}
         onEntered={onEntered}
         onExit={onExit}
+        onExiting={onExiting}
         onExited={onExited}
       >
         {children}

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 class Flex extends PureComponent {
   static propTypes = {
-    as: PropTypes.oneOf(['div', 'span', 'header', 'nav', 'section', 'article', 'aside', 'footer']),
+    as: PropTypes.oneOf(['div', 'span', 'header', 'nav', 'main', 'section', 'article', 'aside', 'footer']),
     className: PropTypes.string,
     childClassName: PropTypes.string,
   }

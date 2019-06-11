@@ -87,7 +87,8 @@ export default class Base extends Component {
   state = {
     scrollbarWidth: 0,
     isActive: false,
-    transitionCounter: 0,
+    enterTransitionCounter: 0,
+    exitTransitionCounter: 0,
   }
 
   componentDidMount() {
@@ -114,48 +115,45 @@ export default class Base extends Component {
 
   handleEnter() {
     setTimeout(() => {
-      const { transitionCounter } = this.state;
+      const { enterTransitionCounter } = this.state;
       this.setState({
-        transitionCounter: transitionCounter + 1,
+        enterTransitionCounter: enterTransitionCounter + 1,
       })
-    }, 0);
+    }, 0)
   }
 
   handleEntered() {
     setTimeout(() => {
-      const { transitionCounter } = this.state;
+      const { enterTransitionCounter } = this.state;
       this.setState({
-        transitionCounter: transitionCounter - 1,
+        enterTransitionCounter: enterTransitionCounter - 1,
       })
-    }, 0);
+    }, 0)
   }
 
   handleExit() {
     setTimeout(() => {
-      const { transitionCounter } = this.state;
+      const { exitTransitionCounter } = this.state;
       this.setState({
-        transitionCounter: transitionCounter + 1,
+        exitTransitionCounter: exitTransitionCounter + 1,
       })
-    }, 0);
+    }, 0)
   }
 
   handleExited() {
-    const { scrollbarWidth } = this.state;
-
-    Base.toggleBodyLock(false, scrollbarWidth);
-
     setTimeout(() => {
-      const { transitionCounter } = this.state;
-      const count = transitionCounter - 1;
+      const { exitTransitionCounter, scrollbarWidth } = this.state;
+      const count = exitTransitionCounter - 1
       this.setState({
-        transitionCounter: count,
-      });
+        exitTransitionCounter: count,
+      })
       if (count === 0) {
+        Base.toggleBodyLock(false, scrollbarWidth);
         this.setState({
           isActive: false,
         });
       }
-    }, 0);
+    }, 0)
   }
 
   render() {
@@ -163,7 +161,12 @@ export default class Base extends Component {
       onDismiss, isOpen, style, render, children,
       className, containerClassName, overlayClassName,
     } = this.props;
-    const { scrollbarWidth, isActive, transitionCounter } = this.state;
+    const {
+      scrollbarWidth, isActive,
+      enterTransitionCounter, exitTransitionCounter,
+    } = this.state;
+
+    const transitionCount = enterTransitionCounter + exitTransitionCounter;
 
     const dialogClassName = classnames(
       'dialog',
@@ -177,7 +180,7 @@ export default class Base extends Component {
         className={dialogClassName}
         style={{
           ...style,
-          ...transitionCounter > 0 ? {
+          ...transitionCount > 0 ? {
             overflow: 'hidden',
             paddingRight: `${scrollbarWidth}px`,
           } : {
