@@ -1,7 +1,7 @@
 import React from 'react';
-import App from 'next/app';
+import NextApp from 'next/app';
 import Head from 'next/head';
-import { withDynamicRouter, withPrismic } from '@firestudio/core';
+import connectFirestudio from '@firestudio/core';
 import { Loader, PageTransition } from '@firestudio/ui';
 //
 import Store from '@store';
@@ -13,7 +13,7 @@ require('./../styles.scss');
 
 initIcons();
 
-class FirestudioApp extends App {
+class App extends NextApp {
   static async getInitialProps({ Component, ctx }) {
     let pageProps = {};
 
@@ -34,6 +34,8 @@ class FirestudioApp extends App {
   render() {
     const { Component, pageProps: { transitionProps, ...pageProps } } = this.props;
 
+    console.log(pageProps);
+
     return (
       <>
         <Head>
@@ -51,4 +53,4 @@ class FirestudioApp extends App {
   }
 }
 
-export default withPrismic(withDynamicRouter(FirestudioApp));
+export default connectFirestudio(App);

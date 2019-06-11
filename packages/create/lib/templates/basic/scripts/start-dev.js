@@ -1,5 +1,5 @@
 const express = require('express');
-const initFirestudio = require('@firestudio/core').default;
+const initDevEnv = require('@firestudio/core/dev');
 const next = require('next');
 const admin = require('firebase-admin');
 
@@ -20,4 +20,4 @@ admin.initializeApp({
 });
 
 const server = express();
-initFirestudio({ conf })(next)(server);
+initDevEnv({ conf })(next)(server);

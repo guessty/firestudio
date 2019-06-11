@@ -1,4 +1,4 @@
-const { withFirestudio } = require('@firestudio/core');
+const withFirestudio = require('@firestudio/core/config');
 const path = require('path');
 const withCSS = require('@zeit/next-css');
 const withSass = require('@zeit/next-sass');
