@@ -30,7 +30,7 @@ export default class Nav extends PureComponent {
 
   render() {
     return (
-      <nav className="nav h-full bg-blue-darker text-white font-medium">
+      <nav className="nav h-20 bg-blue-darker text-white font-medium">
         <Container className="flex h-full px-8">
           <Flex className="flex-row flex-grow items-center gap-between-4" childClassName="h-full">
             <Clickable

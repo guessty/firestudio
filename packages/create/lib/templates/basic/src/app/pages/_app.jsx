@@ -1,12 +1,12 @@
 import React from 'react';
-import App, { Container } from 'next/app';
+import App from 'next/app';
 import Head from 'next/head';
 import { withDynamicRouter, withPrismic } from '@firestudio/core';
-import { Loader } from '@firestudio/ui';
+import { Loader, PageTransition } from '@firestudio/ui';
 //
-import Page from '@templates/Page';
 import Store from '@store';
 import initIcons from '@config/fontAwesome';
+import Page from '@templates/Page';
 //
 require('sanitize.css');
 require('./../styles.scss');
@@ -32,19 +32,21 @@ class FirestudioApp extends App {
   }
 
   render() {
-    const { Component, pageProps, router } = this.props;
+    const { Component, pageProps: { transitionProps, ...pageProps } } = this.props;
 
     return (
-      <Container>
+      <>
         <Head>
           <title>Firestudio</title>
         </Head>
         <Store>
-          <Page router={router}>
-            <Component {...pageProps} />
+          <Page>
+            <PageTransition transitionProps={transitionProps} className="w-full">
+              <Component {...pageProps} />
+            </PageTransition>
           </Page>
         </Store>
-      </Container>
+      </>
     );
   }
 }

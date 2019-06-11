@@ -20,14 +20,14 @@ export default class Drawer extends PureComponent {
           <>
             <Transition
               enterTransition={{ fade: true, speed: 'normal' }}
-              exitTransition={{ fade: true, speed: 'normal', delay: 'short' }}
+              exitTransition={{ fade: true, speed: 'slow', delay: 'short' }}
               {...transitionProps}
             >
               <Overlay />
             </Transition>
             <Transition
               enterTransition={{ fade: false, type: 'slide', direction: 'left', speed: 'normal', delay: 'short' }}
-              exitTransition={{ fade: false, type: 'slide', direction: 'right', speed: 'normal' }}
+              exitTransition={{ fade: false, type: 'slide', direction: 'right', speed: 'slow' }}
               {...transitionProps}
             >
               <Content

@@ -61,6 +61,98 @@ export default class extends PureComponent {
               </Flex>
             </Flex>
           </Flex>
+          <Flex className="gap-between-12">
+            <Flex className="gap-between-6">
+              <h2>What&apos;s in the box?</h2>
+              <Flex className="gap-between-4">
+                <ol>
+                  <li>
+                    <strong>Linting Support</strong>
+                    - Linting is configured and ready to go.
+                  </li>
+                  <li>
+                    <strong>Static Hosting</strong>
+                    - See
+                    <Clickable
+                      href="/pre-rendering"
+                      as={Link}
+                      styledAs="a"
+                      asNextLink
+                    >
+                      pre-rendering
+                    </Clickable>
+                  </li>
+                  <li>
+                    <strong>Cloud Functions</strong>
+                    - Extend your app further by using Google Cloud Functions.
+                  </li>
+                  <li>
+                    <strong>Unstated (Context API) State Management</strong>
+                    - Simple and straight forward.
+                  </li>
+                </ol>
+              </Flex>
+            </Flex>
+            <Flex className="gap-between-6">
+              <h2>Credit where credit is due</h2>
+              <Flex className="gap-between-4">
+                <p>
+                  At its core Firestudio is essentially a re-packaged NextJS application
+                  that has been configured to work with Googles Firebase platform.
+                </p>
+                <p>
+                  So big thanks go out to the teams behind NextJS and Firebase for
+                  creating such awesome products!
+                </p>
+              </Flex>
+            </Flex>
+          </Flex>
+          <Flex className="gap-between-12">
+            <Flex className="gap-between-6">
+              <h2>What&apos;s in the box?</h2>
+              <Flex className="gap-between-4">
+                <ol>
+                  <li>
+                    <strong>Linting Support</strong>
+                    - Linting is configured and ready to go.
+                  </li>
+                  <li>
+                    <strong>Static Hosting</strong>
+                    - See
+                    <Clickable
+                      href="/pre-rendering"
+                      as={Link}
+                      styledAs="a"
+                      asNextLink
+                    >
+                      pre-rendering
+                    </Clickable>
+                  </li>
+                  <li>
+                    <strong>Cloud Functions</strong>
+                    - Extend your app further by using Google Cloud Functions.
+                  </li>
+                  <li>
+                    <strong>Unstated (Context API) State Management</strong>
+                    - Simple and straight forward.
+                  </li>
+                </ol>
+              </Flex>
+            </Flex>
+            <Flex className="gap-between-6">
+              <h2>Credit where credit is due</h2>
+              <Flex className="gap-between-4">
+                <p>
+                  At its core Firestudio is essentially a re-packaged NextJS application
+                  that has been configured to work with Googles Firebase platform.
+                </p>
+                <p>
+                  So big thanks go out to the teams behind NextJS and Firebase for
+                  creating such awesome products!
+                </p>
+              </Flex>
+            </Flex>
+          </Flex>
         </Flex>
       </Container>
     );
