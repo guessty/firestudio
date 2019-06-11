@@ -1,6 +1,6 @@
 {
   "name": "@firestudio/core",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "Develop apps with NextJS and Firebase",
   "keywords": [
     "react",
@@ -13,9 +13,13 @@
     "url": "https://github.com/guessty/firestudio/issues"
   },
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "index.js",
   "files": [
     "dist",
+    "dev.js",
+    "config.js",
+    "link.js",
+    "router.js",
     "store.js",
     "prismic.js"
   ],
