@@ -1,6 +1,6 @@
-module.exports = (config) => {
+module.exports = (theme) => {
   const styles = {};
-  const padding = config('padding');
+  const padding = theme('padding');
   Object.keys(padding).forEach((variation) => {
     styles[`&.gap-between-${variation}`] = {
       margin: `calc(-${padding[variation]} / 2)`,

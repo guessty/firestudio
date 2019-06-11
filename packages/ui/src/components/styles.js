@@ -6,13 +6,13 @@ const flex = require('./Flex/styles');
 const loader = require('./Loader/styles');
 const formfield = require('./Form/Field/styles');
 
-module.exports = config => Object.assign(
+module.exports = theme => Object.assign(
   {},
-  { '@variants responsive': flex(config) },
+  { '@variants responsive': flex(theme) },
   avatar,
   clickable,
   formfield,
   loader,
-  dialog(config),
+  dialog(theme),
   transition,
 );

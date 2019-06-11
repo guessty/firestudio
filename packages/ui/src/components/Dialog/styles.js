@@ -1,7 +1,7 @@
-module.exports = (config) => {
-  const padding = config('padding');
-  const screens = config('screens');
-  const colors = config('colors');
+module.exports = (theme) => {
+  const padding = theme('padding');
+  const screens = theme('screens');
+  const colors = theme('colors');
 
   return {
     '.dialog': {
