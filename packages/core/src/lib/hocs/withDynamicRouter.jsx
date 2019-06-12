@@ -56,8 +56,6 @@ export default (App) => class _App extends React.Component {
     const { isReady } = this.state
     const isPageLoading = this.isDynamicPath() && !isReady
 
-    console.log(isPageLoading)
-
     const appProps = {
       ...this.props,
       pageProps: {
