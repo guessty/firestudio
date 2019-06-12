@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import Link from '@firestudio/core/link';
 
 export default class Clickable extends PureComponent {
   static propTypes = {
@@ -8,10 +9,17 @@ export default class Clickable extends PureComponent {
     className: PropTypes.string,
     as: PropTypes.oneOfType([
       PropTypes.oneOf(['a', 'button']),
-      PropTypes.func,
     ]),
     styledAs: PropTypes.oneOf(['a', 'button', 'none']),
     isRaised: PropTypes.bool,
+    isExternal: PropTypes.bool,
+    href: PropTypes.string,
+    target: PropTypes.string,
+    rel: PropTypes.string,
+    hrefAs: PropTypes.string,
+    replace: PropTypes.bool,
+    scroll: PropTypes.bool,
+    prefetch: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -19,6 +27,14 @@ export default class Clickable extends PureComponent {
     as: 'button',
     styledAs: undefined,
     isRaised: false,
+    isExternal: false,
+    href: '',
+    target: undefined,
+    rel: undefined,
+    hrefAs: undefined,
+    replace: false,
+    scroll: true,
+    prefetch: true,
   }
 
   getClassName() {
@@ -39,46 +55,70 @@ export default class Clickable extends PureComponent {
     );
   }
 
-  renderButton() {
+  renderLink() {
     const {
-      as, styledAs, children, isRaised,
+      as, styledAs, children, isRaised, isExternal,
+      hrefAs, prefetch, replace, scroll,
+      href, target, rel,
       ...props
     } = this.props;
 
     const className = this.getClassName();
 
-    switch (as) {
-      case ('a'):
-        return (
-          <a {...props} className={className}>
-            {children}
-          </a>
-        );
-      default:
-        return (
-          <button type="button" {...props} className={className}>
-            {children}
-          </button>
-        );
-    }
+    const linkRel = target === '_blank' ? 'noopener noreferrer' : rel;
+
+    const linkJSX = (
+      <a
+        {...props}
+        href={href}
+        target={target}
+        rel={linkRel}
+        className={className}
+      >
+        {children}
+      </a>
+    );
+
+    return !isExternal ? (
+      <Link
+        href={href}
+        as={hrefAs || href}
+        prefetch={prefetch}
+        scroll={scroll}
+        replace={replace}
+      >
+        {linkJSX}
+      </Link>
+    ) : linkJSX;
   }
 
-  render() {
+  renderButton() {
     const {
-      as: Component, styledAs, children,
-      isRaised, ...props
+      as, styledAs, children, isRaised, isExternal,
+      hrefAs, prefetch, replace, scroll,
+      href, target, rel,
+      ...props
     } = this.props;
 
     const className = this.getClassName();
 
-    if (typeof Component === 'string') {
-      return this.renderButton();
-    }
-
     return (
-      <Component {...props} className={className}>
+      <button type="button" {...props} className={className}>
         {children}
-      </Component>
+      </button>
     );
+  }
+
+  render() {
+    const { as: renderAs } = this.props;
+
+    switch (renderAs) {
+      case 'a':
+        return this.renderLink();
+      case 'button':
+        return this.renderButton();
+      default:
+        return this.renderButton();
+    }
   }
 }

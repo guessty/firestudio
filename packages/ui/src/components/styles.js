@@ -1,18 +1,20 @@
 const avatar = require('./Avatar/styles');
 const clickable = require('./Clickable/styles');
 const dialog = require('./Dialog/styles');
-const transition = require('./Transition/styles');
 const flex = require('./Flex/styles');
-const loader = require('./Loader/styles');
 const formfield = require('./Form/Field/styles');
+const hr = require('./Hr/styles');
+const loader = require('./Loader/styles');
+const transition = require('./Transition/styles');
 
 module.exports = theme => Object.assign(
   {},
-  { '@variants responsive': flex(theme) },
   avatar,
   clickable,
-  formfield,
-  loader,
   dialog(theme),
+  { '@variants responsive': flex(theme) },
+  formfield,
+  hr,
+  loader,
   transition,
 );
