@@ -49,7 +49,6 @@
     "react-dom": "^16.8.6",
     "react-firebaseui": "^3.1.2",
     "sanitize.css": "^8.0.0",
-    "tailwindcss": "^0.7.2",
     "tar": "^4.4.8"
   },
   "devDependencies": {
@@ -75,6 +74,8 @@
     "ncp": "^2.0.0",
     "node-sass": "^4.12.0",
     "nodemon": "^1.18.11",
+    "tailwindcss": "^1.0.4",
+    "tailwindcss-interaction-variants": "^2.0.0",
     "url-loader": "^1.1.2"
   }
 }

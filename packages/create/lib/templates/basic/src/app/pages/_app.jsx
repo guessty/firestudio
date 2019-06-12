@@ -34,8 +34,6 @@ class App extends NextApp {
   render() {
     const { Component, pageProps: { transitionProps, ...pageProps } } = this.props;
 
-    console.log(pageProps);
-
     return (
       <>
         <Head>

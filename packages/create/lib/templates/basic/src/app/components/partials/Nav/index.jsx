@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Flex, Clickable } from '@firestudio/ui';
 //
-import Link from '@elements/Link';
 import Drawer from '@elements/Drawer';
 import Container from '@elements/Container';
 
@@ -14,11 +13,9 @@ export default class Nav extends PureComponent {
         render={({ toggleDialog }) => (
           <Clickable
             href={to}
-            as={Link}
-            styledAs="a"
+            as="a"
             prefetch
-            asNextLink
-            className="flex h-full items-center mx-4 hover:text-blue"
+            className="flex h-full items-center mx-4 hover:text-blue-600"
             onClick={toggleDialog}
           >
             {text}
@@ -30,15 +27,14 @@ export default class Nav extends PureComponent {
 
   render() {
     return (
-      <nav className="nav h-20 bg-blue-darker text-white font-medium">
+      <nav className="nav h-20 bg-blue-900 text-white font-medium">
         <Container className="flex h-full px-8">
           <Flex className="flex-row flex-grow items-center gap-between-4" childClassName="h-full">
             <Clickable
               href="/"
-              as={Link}
+              as="a"
               styledAs="none"
               prefetch
-              asNextLink
               className="flex h-full items-center text-white text-2xl font-bold mr-4"
             >
               Firestudio
@@ -48,7 +44,7 @@ export default class Nav extends PureComponent {
               target="menu"
               render={({ toggleDialog }) => (
                 <Clickable
-                  className="flex h-full text-white hover:text-blue p-3"
+                  className="flex h-full text-white hover:text-blue-500 p-3"
                   onClick={toggleDialog}
                 >
                   <FontAwesomeIcon icon={['fas', 'bars']} size="2x" />
@@ -64,7 +60,7 @@ export default class Nav extends PureComponent {
             target="menu"
             render={({ toggleDialog }) => (
               <Clickable
-                className="absolute pin-t pin-r w-20 h-20 p-0 hover:text-blue"
+                className="absolute top-0 right-0 w-20 h-20 p-0 hover:text-blue-500"
                 onClick={toggleDialog}
               >
                 <FontAwesomeIcon icon={['fas', 'times']} size="2x" />
