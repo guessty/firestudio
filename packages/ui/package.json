@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.4.4",
-    "@firestudio/core": "^0.3.0",
+    "@firestudio/core": "^0.3.1",
     "@reach/dialog": "^0.2.8",
     "classnames": "^2.2.6",
     "final-form": "^4.12.0",
