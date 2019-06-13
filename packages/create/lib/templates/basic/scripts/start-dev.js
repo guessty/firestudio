@@ -12,12 +12,12 @@ require('@babel/register')({
   only: ['src/functions', 'src/app/config'],
 });
 
-const firebaseConfig = require('../config/firebase.config');
+// const firebaseConfig = require('../config/firebase.config');
 
-admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
-  authDomain: firebaseConfig.authDomain,
-});
+// admin.initializeApp({
+//   credential: admin.credential.applicationDefault(),
+//   authDomain: firebaseConfig.authDomain,
+// });
 
 const server = express();
 initDevEnv({ conf })(next)(server);
