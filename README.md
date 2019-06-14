@@ -18,76 +18,46 @@ Firestudio is all about using technologies which are:
 2) Have great documentation.
 3) Enable you to develop faster.
 
-Firestudio comes packaged with/support for:
-1) ReactJS (https://reactjs.org/)
-2) NextJS (https://nextjs.org/)
-3) Firebase (https://firebase.google.com/)
+Firestudio is built using:
+1) NextJS (https://nextjs.org/)
+2) Firebase (https://firebase.google.com/)
 4) Tailwindcss (https://tailwindcss.com/)
-5) Prismic (https://prismic.io)
 
-## Set Up - Method 1 (Recommended)
+Firestudio also provides support for connecting to:
+1) Prismic (coming soon)
+2) Disqus (coming soon)
+3) Mailchimp (coming soon)
+
+## Set Up - Method 1 (Recommended).
 
 Ensure you have the following before you get started:
 1) Github Account (https://github.com/)
 2) Gitpod Account (https://www.gitpod.io/) - is free for public repos
-3) Google Firebase Account (https://firebase.google.com/)
-4) Are using Chrome browser and have the Gitpod chrome extension installled (https://chrome.google.com/webstore/detail/gitpod-online-ide/dodmmooeoklaejobgleioelladacbeki?hl=en)
+3) Are using Chrome browser and have the Gitpod chrome extension installled (https://chrome.google.com/webstore/detail/gitpod-online-ide/dodmmooeoklaejobgleioelladacbeki?hl=en)
 
-### Step 1: Create a Repository through Github.
+### Step 1: Create a Repository and open with Gitpod.
 
-Go to you Github Account and create a new repository
+Go to you Github Account and create a new repository.
+Go into your newly created repo and click the "Gitpod" button to open the repo in Gitpod.
 
-### Step 2: Open Repo in Gitpod
+**Note: You need to have the Gitpod Chrome extension installed**
 
-Go into your newly created repo, and if you have the Gitpod chrome extenstion installed click the "Gitpod" button to open the repo in Gitpod.
+### Step 2: Install the App Creator and Initialise a Firestudio App.
 
-### Step 3: Install the Firestudio App Creator globally
+In the Gitpod console run the command `npm i -g @firestudio/create` to install the App Creator.
+Then in the console run the command `firestudio init -t basic` to initsilise your project as a Firestudio App.
+Firestudio's 'basic' template will be installed along with all dependencies.
 
+### Step 3: Run Development Environment.
 
+At this point you can spin up a dev environment and have a play around.
+To start the dev server run the command `npm run dev`.
+Gitpod provides two ways to view your running project:
+1) In a Preview window.
+2) In the Browser.
+A popup should appear allowing to choose a way to view the running project.
+If you loose the popup window there is an 'Open ports' tab in the console window which provides access to the same options. The project will be running on port `3040`.
 
+### Step 4: Read the Firestudio 'Documentation' included with your template.
 
-### Step 1: Install the Firestudio App Creator globally
-
-`npm i -g @firestudio/create`
-
-### Step 2a: Initialise your Firestudio App
-
-If you have an existing repo on Github,
-
-In the console run `firestudio create <your-app-name>`.
-
-This will create a Firestudio project and install all dependencies.
-
-### Step 3: Set up firebase:
-
-You will need to configue firebase to serve the app locally and deploy.
-
-* create a project through the [firebase web console](https://console.firebase.google.com/)
-* grab the project's ID from the web consoles URL: https://console.firebase.google.com/project/<projectId>
-* install Firebase Tools: `npm i -g firebase-tools`
-* login to the Firebase CLI tool with `firebase login`
-
-
-### Step 4: Update you app's next.config.js file with your firebase projectId:
-
-
-```javascript
-withSPA = require('next-spa').withSPA
-
-module.exports = withSPA({
-  nextFire: {
-    projectId: <projectId>
-  }
-})
-
-```
-
-### Step 5: Start developing
-
-The `package.json` file comes with some with all the scripts you need to get started.
-
-- Dev: `npm run dev`
-- Build: `npm run build`
-- Serve Build Locally: `npm run serve`
-- Deploy: `npm run deploy`
-
+Rather than complicating this readme any further, each template comes with its own 'Documentation' which you can use to finish setting up your app and to learn about additional features.
