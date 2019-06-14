@@ -1,6 +1,6 @@
 {
   "name": "@firestudio/ui",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "A set of ui components for firestudio",
   "keywords": [
     "react",
@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.4.4",
-    "@firestudio/core": "^0.3.1",
+    "@firestudio/core": "^0.3.2",
     "@reach/dialog": "^0.2.8",
     "classnames": "^2.2.6",
     "final-form": "^4.12.0",

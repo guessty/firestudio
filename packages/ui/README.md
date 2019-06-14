@@ -1,10 +1,4 @@
 # @firestudio/ui
 A set of React components to be used with firestudio.
 
-
-
-## Install
-```
-npm i --save @firestudio/ui
-```
-
+See https://github.com/guessty/firestudio for details.
