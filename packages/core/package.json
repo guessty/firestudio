@@ -1,6 +1,6 @@
 {
   "name": "@firestudio/core",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Develop apps with NextJS and Firebase",
   "keywords": [
     "react",

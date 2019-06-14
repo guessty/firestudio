@@ -1,9 +1,5 @@
 # @firestudio/core
-The core module for developing apps with NextJS and Firebase
 
+The core package for developing Firestudio Apps.
 
-
-## Install
-```
-npm i --save @firestudio/core
-```
+See https://github.com/guessty/firestudio for details.
