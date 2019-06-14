@@ -1,0 +1,5 @@
+ports:
+- port: 3040
+- port: 9005
+tasks:
+- command: npm install -g firebase-tools

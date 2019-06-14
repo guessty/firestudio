@@ -9,6 +9,6 @@ export default class Main extends PureComponent {
       <Flex as="main" className="flex w-full flex-grow">
         {children}
       </Flex>
-    )
+    );
   }
 }

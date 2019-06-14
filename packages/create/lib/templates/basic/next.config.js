@@ -2,7 +2,14 @@ const withFirestudio = require('@firestudio/core/config');
 const path = require('path');
 const withCSS = require('@zeit/next-css');
 const withSass = require('@zeit/next-sass');
-const firebaseConfig = require('./config/firebase.config');
+
+let firebaseConfig;
+try {
+  firebaseConfig = require('./config/firebase.config');
+} catch {
+  firebaseConfig = {};
+  console.log('You will need to add firebase config to connect to firebase services');
+}
 
 const nextConfig = withSass(withCSS(withFirestudio({
   distDir: './dist/build',

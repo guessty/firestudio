@@ -2,7 +2,6 @@ const { withFirestudio } = require('@firestudio/core');
 const path = require('path');
 const withCSS = require('@zeit/next-css');
 const withSass = require('@zeit/next-sass');
-const firebaseConfig = require('./config/firebase.config');
 
 const nextConfig = withSass(withCSS(withFirestudio({
   distDir: './dist/build',
