@@ -10,7 +10,7 @@ function create() {
     alias: {
       t: 'template',
     },
-    default: { t: 'default' }
+    default: { t: 'basic' }
   });
 
   const projectName = argv._[0]

@@ -40,7 +40,7 @@ function installWithMessageFactory(opts) {
     return install({
       projectName: projectName,
       projectPath: projectPath,
-      packages: ['react', 'react-dom', 'next', 'firebase', 'firestudio']
+      packages: ['react', 'next', 'firebase', 'firestudio']
     })
       .then(function() {
         console.log(messages.start(projectName))

@@ -70,9 +70,6 @@ exports.start = function(projectName) {
   const commands = {
     install: 'npm install',
     dev: 'npm run dev',
-    build:  'npm run build',
-    serve: 'npm run serve',
-    deploy: 'npm run deploy'
   }
 
   return `
@@ -82,26 +79,16 @@ exports.start = function(projectName) {
     commands.install
   )} for you, so your next steps are:
 
+
+  Navigate to your project:
   $ ${output.cmd(`cd ${projectName}`)}
 
-  To start a development environment:
-
+  Start a development environment:
   $ ${output.cmd(commands.dev)}
 
-  To build a version for production:
+  The template you installed comes with all the documentation you need to help you finish setting up your app.
 
-  $ ${output.cmd(commands.build)}
-
-  To serve you production build locally:
-
-  $ ${output.cmd(commands.serve)}
-
-  To deploy your production build to firebase:
-
-  $ ${output.cmd(commands.deploy)}
-
-  Questions? Feedback? Please let us know!
-
+  If you have any problems, do not hesitate to file an issue:
   ${chalk.green('https://github.com/guessty/firstudio/issues')}
 `
 }
