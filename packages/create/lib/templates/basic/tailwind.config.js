@@ -6,12 +6,10 @@ const firestudioUi = require('@firestudio/ui/dist/styles');
 module.exports = {
   theme: {
     screens: {
-      'xs': '320px',
       'sm': '640px',
       'md': '768px',
       'lg': '1024px',
       'xl': '1280px',
-      'max-xs': { max: '319px' },
       'max-sm': { max: '639px' },
       'max-md': { max: '767px' },
       'max-lg': { max: '1023px' },

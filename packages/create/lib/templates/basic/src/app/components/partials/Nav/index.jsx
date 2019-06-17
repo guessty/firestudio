@@ -27,7 +27,7 @@ export default class Nav extends PureComponent {
 
   render() {
     return (
-      <nav className="nav h-20 bg-blue-900 text-white font-medium">
+      <nav className="nav h-20 bg-blue-800 text-white font-medium">
         <Container className="flex h-full px-8">
           <Flex className="flex-row flex-grow items-center gap-between-4" childClassName="h-full">
             <Clickable
@@ -70,8 +70,7 @@ export default class Nav extends PureComponent {
           <Flex className="flex-grow gap-between-6">
             <hr />
             {Nav.renderLink('/', 'Home')}
-            {Nav.renderLink('/about', 'About')}
-            {Nav.renderLink('/pre-rendering', 'Static')}
+            {Nav.renderLink('/documentation', 'Documentation')}
           </Flex>
         </Drawer>
       </nav>

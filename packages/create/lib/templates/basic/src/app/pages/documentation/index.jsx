@@ -1,29 +1,80 @@
+import React, { PureComponent } from 'react';
+import { Flex, Hr, Clickable } from '@firestudio/ui';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+//
+import Container from '@elements/Container';
 
-In order to interact with any of the Firebase services you need to create a Firebase project and add the configuration to your Firestudio App.
-
-Go to your Firebase console (https://console.firebase.google.com/) and click the tile to create a new project.
-This will bring up a dialog window for you to create a new project.
-Enter a "Project name", uncheck the "Use the default settings for sharing Google Analytics for Firebase data" option, and click "Continue".
-If you're creating an app for the first time you probably don't care about any of the Sharing options, so leave all the boxes unchecked and click "Create Project".
-Once you're Firebase app has been created go to your app's dashboard.
-
-
-
-Click the 'Settings' icon (top left), and go to 'Project Settings'.
-On the 'General' tab, you will see the section 'Your apps' which should be empty.
-Select the 'Web' platform (`< />` icon) to register your web app.
-Give your app a 'Nickname' and click 'Register App'.
-You will then be shown your app's config which will look something like:
-```
-firebaseConfig = {
-  apiKey: "<api-key>",
-  authDomain: "<auth-domain>",
-  databaseURL: "<database-url>",
-  projectId: "<project-id>",
-  storageBucket: "<storage-bucket>",
-  messagingSenderId: "<messaging-sender-id>",
-  appId: "<app-id>"
-};
-```
-This is the config that you will need to copy into your Firestudio App.
-In 
+export default class extends PureComponent {
+  render() {
+    return (
+      <Container>
+        <Flex className="gap-around-8">
+          <Flex>
+            <h1 className="text-4xl font-semibold">Documentation</h1>
+          </Flex>
+          <Hr />
+          <Flex className="gap-between-4">
+            <p>This template is designed for simple projects and as an introduction to the Firestudio platform.</p>
+            <p>It is best suited for:</p>
+            <ol className="list-disc pl-4">
+              <li>Informational Websites e.g A small business offering a service.</li>
+              <li>A Professional Portfolio.</li>
+              <li>A Blog.</li>
+            </ol>
+            <p>View the topics below for further guidance.</p>
+          </Flex>
+          <Flex as="nav" className="flex-row flex-wrap gap-between-8" childClassName="w-full sm:w-1/2">
+            <Clickable
+              as="a"
+              styledAs="button"
+              href="/documentation/finish-setup"
+              isRaised
+              className="text-xl text-white bg-blue-800 hocus:bg-blue-900"
+            >
+              <Flex as="span" className="gap-around-2">
+                <FontAwesomeIcon icon={['fas', 'cogs']} size="2x" />
+                Finish Setup
+              </Flex>
+            </Clickable>
+            <Clickable
+              as="a"
+              styledAs="button"
+              href="/documentation/core-features"
+              isRaised
+              className="text-xl text-white bg-blue-800 hocus:bg-blue-900"
+            >
+              <Flex as="span" className="gap-around-2">
+                <FontAwesomeIcon icon={['fas', 'terminal']} size="2x" />
+                Core Features
+              </Flex>
+            </Clickable>
+            <Clickable
+              as="a"
+              styledAs="button"
+              href="/documentation/ui-components"
+              isRaised
+              className="text-xl text-white bg-blue-800 hocus:bg-blue-900"
+            >
+              <Flex as="span" className="gap-around-2">
+                <FontAwesomeIcon icon={['fas', 'shapes']} size="2x" />
+                UI Components
+              </Flex>
+            </Clickable>
+            <Clickable
+              as="a"
+              styledAs="button"
+              href="/documentation/tutorials"
+              isRaised
+              className="text-xl text-white bg-blue-800 hocus:bg-blue-900"
+            >
+              <Flex as="span" className="gap-around-2">
+                <FontAwesomeIcon icon={['fas', 'graduation-cap']} size="2x" />
+                Tutorials
+              </Flex>
+            </Clickable>
+          </Flex>
+        </Flex>
+      </Container>
+    );
+  }
+}

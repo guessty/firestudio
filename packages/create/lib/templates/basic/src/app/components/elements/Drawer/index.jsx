@@ -26,12 +26,23 @@ export default class Drawer extends PureComponent {
               <Overlay />
             </Transition>
             <Transition
-              enterTransition={{ fade: false, type: 'slide', direction: 'left', speed: 'normal', delay: 'short' }}
-              exitTransition={{ fade: false, type: 'slide', direction: 'right', speed: 'slow' }}
+              enterTransition={{
+                fade: false,
+                type: 'slide',
+                direction: 'left',
+                speed: 'normal',
+                delay: 'short',
+              }}
+              exitTransition={{
+                fade: false,
+                type: 'slide',
+                direction: 'right',
+                speed: 'slow',
+              }}
               {...transitionProps}
             >
               <Content
-                className="max-w-full h-screen py-20 w-4/5 md:w-3/5 lg:w-1/2 xl:w-1/3"
+                className="max-w-full h-screen py-20 w-4/5 sm:w-3/5 md:w-1/2 lg:w-2/5 xl:w-1/3"
                 containerClassName="justify-end p-0"
               >
                 {children}
