@@ -1,7 +1,7 @@
 module.exports = {
   '.clickable': {
     position: 'relative',
-    display: 'block',
+    display: 'inline-block',
     cursor: 'pointer',
     transition: 'all 150ms ease-out',
 

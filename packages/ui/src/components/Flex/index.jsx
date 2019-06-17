@@ -32,7 +32,7 @@ class Flex extends PureComponent {
   }
 
   renderChildren() {
-    const { children, childClassName } = this.props;
+    const { as: Component, children, childClassName } = this.props;
 
     return React.Children.map(children, (child) => {
       if (child && ((
@@ -41,8 +41,10 @@ class Flex extends PureComponent {
       ) || (
         child.props && child.props.className && child.props.className !== 'flex-grow'
       ))) {
-        return (
+        return Component !== 'span' ? (
           <div className={childClassName}>{child}</div>
+        ) : (
+          <span className={childClassName}>{child}</span>
         );
       }
 
