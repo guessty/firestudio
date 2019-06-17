@@ -8,7 +8,6 @@ try {
   firebaseConfig = require('./config/firebase.config');
 } catch {
   firebaseConfig = {};
-  console.log('You will need to add firebase config to connect to firebase services');
 }
 
 const nextConfig = withSass(withCSS(withFirestudio({
