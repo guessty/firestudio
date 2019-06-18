@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
-import { Flex, Hr, Clickable } from '@firestudio/ui';
+import {
+  Flex, Hr, Clickable, Container,
+} from '@firestudio/ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //
-import Container from '@elements/Container';
 
 export default class extends PureComponent {
   render() {
@@ -23,13 +24,13 @@ export default class extends PureComponent {
             </ol>
             <p>View the topics below for further guidance.</p>
           </Flex>
-          <Flex as="nav" className="flex-row flex-wrap gap-between-8" childClassName="w-full sm:w-1/2">
+          <Flex as="nav" className="flex-row flex-wrap gap-between-8" childClassName="w-full sm:w-1/2 lg:w-1/4">
             <Clickable
               as="a"
               styledAs="button"
               href="/documentation/finish-setup"
               isRaised
-              className="text-xl text-white bg-blue-800 hocus:bg-blue-900"
+              className="p-4 w-full text-xl text-white bg-blue-800 hocus:bg-blue-900"
             >
               <Flex as="span" className="gap-around-2">
                 <FontAwesomeIcon icon={['fas', 'cogs']} size="2x" />
@@ -41,7 +42,7 @@ export default class extends PureComponent {
               styledAs="button"
               href="/documentation/core-features"
               isRaised
-              className="text-xl text-white bg-blue-800 hocus:bg-blue-900"
+              className="p-4 w-full text-xl text-white bg-blue-800 hocus:bg-blue-900"
             >
               <Flex as="span" className="gap-around-2">
                 <FontAwesomeIcon icon={['fas', 'terminal']} size="2x" />
@@ -53,7 +54,7 @@ export default class extends PureComponent {
               styledAs="button"
               href="/documentation/ui-components"
               isRaised
-              className="text-xl text-white bg-blue-800 hocus:bg-blue-900"
+              className="p-4 w-full text-xl text-white bg-blue-800 hocus:bg-blue-900"
             >
               <Flex as="span" className="gap-around-2">
                 <FontAwesomeIcon icon={['fas', 'shapes']} size="2x" />
@@ -65,7 +66,7 @@ export default class extends PureComponent {
               styledAs="button"
               href="/documentation/tutorials"
               isRaised
-              className="text-xl text-white bg-blue-800 hocus:bg-blue-900"
+              className="p-4 w-full text-xl text-white bg-blue-800 hocus:bg-blue-900"
             >
               <Flex as="span" className="gap-around-2">
                 <FontAwesomeIcon icon={['fas', 'graduation-cap']} size="2x" />

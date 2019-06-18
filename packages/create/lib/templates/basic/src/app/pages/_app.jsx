@@ -2,11 +2,13 @@ import React from 'react';
 import NextApp from 'next/app';
 import Head from 'next/head';
 import connectFirestudio from '@firestudio/core';
-import { Loader, PageTransition } from '@firestudio/ui';
+import { Application, Loader } from '@firestudio/ui';
 //
-import Store from '@store';
+import * as store from '@store';
 import initIcons from '@config/fontAwesome';
-import Page from '@templates/Page';
+import Nav from '@partials/Nav';
+import Main from '@partials/Main';
+import Footer from '@partials/Footer';
 //
 require('sanitize.css');
 require('./../styles.scss');
@@ -14,39 +16,26 @@ require('./../styles.scss');
 initIcons();
 
 class App extends NextApp {
-  static async getInitialProps({ Component, ctx }) {
-    let pageProps = {};
-
-    if (Component.getInitialProps) {
-      pageProps = await Component.getInitialProps(ctx);
-    }
-
-    const propsToReturn = {
-      pageProps: {
-        PageLoader: Loader,
-        ...pageProps,
-      },
-    };
-
-    return propsToReturn;
-  }
+  static PageLoader = Loader
 
   render() {
-    const { Component, pageProps: { transitionProps, ...pageProps } } = this.props;
+    const { Component: Page, pageProps } = this.props;
 
     return (
-      <>
+      <Application store={store}>
         <Head>
           <title>Firestudio</title>
         </Head>
-        <Store>
-          <Page>
-            <PageTransition transitionProps={transitionProps} className="w-full">
-              <Component {...pageProps} />
-            </PageTransition>
-          </Page>
-        </Store>
-      </>
+        <Application.Window>
+          <Nav />
+          <Main>
+            <Application.PageTransition {...pageProps}>
+              <Page {...pageProps} />
+            </Application.PageTransition>
+          </Main>
+        </Application.Window>
+        <Footer />
+      </Application>
     );
   }
 }

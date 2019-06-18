@@ -5,17 +5,6 @@ const firestudioUi = require('@firestudio/ui/dist/styles');
 
 module.exports = {
   theme: {
-    screens: {
-      'sm': '640px',
-      'md': '768px',
-      'lg': '1024px',
-      'xl': '1280px',
-      'max-sm': { max: '639px' },
-      'max-md': { max: '767px' },
-      'max-lg': { max: '1023px' },
-      'max-xl': { max: '1279px' },
-    },
-
     transitions: {
       'default': 'all .14s ease-out',
     },
@@ -35,6 +24,13 @@ module.exports = {
     },
 
     extend: {
+      screens: {
+        'max-sm': { max: '639px' },
+        'max-md': { max: '767px' },
+        'max-lg': { max: '1023px' },
+        'max-xl': { max: '1279px' },
+      },
+
       zIndex: {
         '1': 1,
       },
@@ -45,7 +41,7 @@ module.exports = {
     backgroundColor: ['responsive', 'hover', 'focus', 'hocus'],
     opacity: ['responsive', 'hover', 'focus', 'hocus'],
   },
-  
+
   plugins: [
     require('tailwindcss-interaction-variants')(),
     ({ addUtilities, addComponents, theme }) => {

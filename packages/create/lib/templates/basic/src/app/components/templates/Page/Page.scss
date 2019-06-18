@@ -1,7 +1,0 @@
-.Page {
-  display: grid;
-  grid-template-columns: auto;
-  grid-template-rows: 5rem minmax(calc(100vh - 5rem), auto) auto;
-  grid-template-areas: "nav" "main" "footer";
-  grid-gap: 0px;
-}

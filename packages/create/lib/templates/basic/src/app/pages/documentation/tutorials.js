@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
-import { Flex, Hr } from '@firestudio/ui';
-
-import Container from '@elements/Container';
+import { Flex, Hr, Container } from '@firestudio/ui';
+//
 
 export default class Tutorials extends PureComponent {
   render() {

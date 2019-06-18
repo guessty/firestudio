@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Flex, Clickable } from '@firestudio/ui';
+import { Flex, Clickable, Container } from '@firestudio/ui';
 //
 import Drawer from '@elements/Drawer';
-import Container from '@elements/Container';
 
 export default class Nav extends PureComponent {
   static renderLink(to, text) {

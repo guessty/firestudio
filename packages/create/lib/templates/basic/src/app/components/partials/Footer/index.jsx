@@ -1,7 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Flex, Clickable } from '@firestudio/ui';
-//
-import Container from '@elements/Container';
+import { Flex, Clickable, Container } from '@firestudio/ui';
 //
 
 export default class Footer extends PureComponent {
