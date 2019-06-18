@@ -2,18 +2,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Router from '@firestudio/core/router';
 //
-import Transition from '../Transition';
+import Transition from '../../Transition';
 
 export default class PageTransition extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
-    className: PropTypes.string,
-    transitionProps: PropTypes.shape({}),
+    transition: PropTypes.shape({}),
   }
 
   static defaultProps = {
-    className: '',
-    transitionProps: {
+    transition: {
       enterTransition: {
         fade: true,
         absolute: true,
@@ -77,28 +75,28 @@ export default class PageTransition extends Component {
   }
 
   render() {
-    const { children, className, transitionProps } = this.props;
+    const { children, transition } = this.props;
     const { router, wasTriggeredByBrowser } = this.state;
 
     return router && !wasTriggeredByBrowser ? (
-      <Transition.Group className={className}>
+      <Transition.Group className="application__page-transition">
         <Transition
           key={router.asPath}
-          {...transitionProps}
-          {...transitionProps.enterTransition ? {
+          {...transition}
+          {...transition.enterTransition ? {
             enterTransition: {
-              ...transitionProps.enterTransition,
+              ...transition.enterTransition,
               absolute: true,
             }
           } : {}}
         >
-          <div className={className}>
+          <div className="application__page-transition">
             {children}
           </div>
         </Transition>
       </Transition.Group>
     ) : (
-      <div className={className}>
+      <div className="application__page-transition">
         {children}
       </div>
     );

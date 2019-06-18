@@ -2,7 +2,7 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Subscribe } from '@firestudio/core/store';
 //
-import { Dialog as DialogContainer } from '../../../containers';
+import { Dialog as DialogContainer } from '../../../store';
 
 class Trigger extends Component {
   static propTypes = {

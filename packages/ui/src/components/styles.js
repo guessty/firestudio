@@ -1,3 +1,4 @@
+const application = require('./Application/styles');
 const avatar = require('./Avatar/styles');
 const clickable = require('./Clickable/styles');
 const dialog = require('./Dialog/styles');
@@ -9,6 +10,7 @@ const transition = require('./Transition/styles');
 
 module.exports = theme => Object.assign(
   {},
+  application,
   avatar,
   clickable,
   dialog(theme),
