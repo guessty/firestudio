@@ -27,11 +27,6 @@ Firestudio is built using:
 - Firebase (https://firebase.google.com/)
 - Tailwindcss (https://tailwindcss.com/)
 
-Firestudio also provides support for connecting to:
-- Prismic *(...coming soon...)*
-- Disqus *(...coming soon...)*
-- Mailchimp *(...coming soon...)*
-
 ---
 
 ## Set Up
