@@ -1,9 +1,3 @@
-import { default as connectDynamicRouter } from './lib/hocs/withDynamicRouter';
-import { default as connectPrismic } from './lib/hocs/withPrismic';
+import { default as withFirestudio } from './lib/hocs/withFirestudio';
 
-export {
-  connectDynamicRouter,
-  connectPrismic,
-}
-
-export default (Component) => connectPrismic(connectDynamicRouter(Component));;
+export default (Component) => withFirestudio(Component);
