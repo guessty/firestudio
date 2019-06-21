@@ -17,7 +17,7 @@ export default class Container extends PureComponent {
 
     return (
       <div
-        className={`container mx-auto ${className}`}
+        className={`container ${className}`}
         {...props}
       >
         {children}
