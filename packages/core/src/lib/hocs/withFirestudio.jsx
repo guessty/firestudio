@@ -1,10 +1,16 @@
 import * as React from 'react'
-//
-import Loader from './../components/PageLoader'
+import { parse } from 'node-html-parser';
+import unfetch from 'isomorphic-unfetch';
 const buildRoutes = require('./../build/routes')
 //
 
 export default (App) => class _App extends React.Component {
+  static PageLoader = () => (
+    <h2 style={{ padding: '60px 20px', textAlign: 'center' }}>Loading...</h2>
+  )
+
+  static Routes = buildRoutes(process.env.ROUTES || [])
+
   static async getInitialProps(appContext) {
     const appProps = (typeof App.getInitialProps === 'function') ?
       await App.getInitialProps(appContext) : {}
@@ -13,72 +19,68 @@ export default (App) => class _App extends React.Component {
 
     let pageData;
     const isExport = (!process.browser && !(ctx && ctx.req && ctx.req.headers));
-    if (isExport && typeof Component.getPageData === 'function' && !Component.isDynamic) {
-      pageData = await Component.getPageData();
+    const isClient = (Boolean(process.browser) && !(ctx && ctx.req && ctx.req.headers));
+    const isServer = (!process.browser && Boolean(ctx && ctx.req && ctx.req.headers));
+
+    if (isClient && !Component.isDynamic) {
+      const response = await unfetch(ctx.asPath, {
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+        },
+        credentials: 'include',
+      });
+      const html = await response.text();
+      const root = parse(html, { script: true })
+      const dataNode = root.querySelector('#__NEXT_DATA__');
+      return dataNode.rawText ? JSON.parse(dataNode.rawText).props : {};
     }
+
+    if (typeof Component.getPageData === 'function' && (
+      (isExport && !Component.isDynamic) ||
+      (isServer) || (isClient)
+    )) {
+      pageData = await Component.getPageData(ctx.query);
+
+      if (!pageData) {
+        pageData = null;
+      }
+    }
+
+    const componentNeedsPageData = typeof pageData === 'undefined'
+      && typeof Component.getPageData === 'function' && Component.isDynamic;
+
+    const firestudioProps = {
+      isDynamic: Component.isDynamic || false,
+      pageData,
+      componentNeedsPageData,
+      PageLoader: Component.PageLoader || null,
+      query: ctx.query,
+    };
 
     return {
       ...appProps,
-      isDymanic: Component.isDynamic || false,
-      pageData: pageData || {},
-      PageLoader: Component.PageLoader || App.PageLoader || Loader,
-      Page: Component,
+      firestudioProps,
     }
-  }
-
-  static Routes = buildRoutes(process.env.ROUTES || [])
-
-  state = {
-    ready: this.isReady(),
   }
 
   async componentDidMount() {
-    await this.checkPath();
-  }
-
-  async checkPath() {
-    const { router } = this.props
-    if (this.isDynamicPath()) {
+    const { router, firestudioProps: { componentNeedsPageData } } = this.props;
+    
+    if (componentNeedsPageData) {
       await _App.Routes.Router.pushRoute(router.asPath)
-      this.setState({
-        isReady: true
-      })
     }
   }
 
-  isDynamicPath() {
-    const { router } = this.props
-    const staticRoutes = _App.Routes.routes.filter((route) => !route.pattern.includes('/:'))
-    const potentialStaticMatches = staticRoutes.filter((route) => route.regex.test(router.asPath))
-    if (potentialStaticMatches.length) {
-      return false;
-    }
-    const dynamicRoutes = _App.Routes.routes.filter((route) => route.pattern.includes('/:'))
-    const potentialDynamicMatches = dynamicRoutes.filter((route) => route.regex.test(router.asPath))
-    return !!potentialDynamicMatches.length
-  }
-
-  isReady() {
-    const { router } = this.props
-    return !this.isDynamicPath() && router.pathname !== '/404'
-  }
-  
   render() {
-    const {
-      pageProps, PageLoader, isDymanic, pageData,
-      ...props
-    } = this.props;
-    const { isReady } = this.state
-    const isPageLoading = this.isDynamicPath() && !isReady
+    const { pageProps, firestudioProps, ...props } = this.props;
 
     const appProps = {
       ...props,
       pageProps: {
         ...pageProps,
-        isPageLoading,
-        PageLoader,
-        isDymanic,
-        pageData,
+        ...firestudioProps,
+        isLoadingPage: firestudioProps.componentNeedsPageData,
+        PageLoader: firestudioProps.PageLoader || App.PageLoader || _App.PageLoader,
       }
     }
 

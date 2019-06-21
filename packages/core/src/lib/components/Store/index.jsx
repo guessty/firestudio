@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import * as Unstated from 'unstated';
 //
-
+import { default as Api } from './Api';
 export { default as Container } from './Container';
 export { default as Subscribe } from './Subscribe';
 
@@ -66,7 +66,7 @@ class Store extends PureComponent {
 
   render() {
     const { children, containers, initialData } = this.props;
-    const injectedData = Object.values(Store.getOrCreateStore(containers, initialData));
+    const injectedData = Object.values(Store.getOrCreateStore({ ...containers, Api }, initialData));
 
     return (
       <Unstated.Provider inject={injectedData}>
