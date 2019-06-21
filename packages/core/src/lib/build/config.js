@@ -61,9 +61,7 @@ const generateExportPathMap = (routes, firestudioConfig) => {
     let routeKey = normalisedPattern
 
     if (routeKey.includes('/:')) {
-      if (firestudioConfig.exportDynamicPages) {
-        routeMap[`${routeKey.replace('/:', '/_')}.html`] = { page: route.page }
-      }
+      routeMap[`${routeKey.replace('/:', '/_')}.html`] = { page: route.page }
       return routeMap
     }
 
