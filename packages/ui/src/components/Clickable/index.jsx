@@ -16,7 +16,6 @@ export default class Clickable extends PureComponent {
     href: PropTypes.string,
     target: PropTypes.string,
     rel: PropTypes.string,
-    hrefAs: PropTypes.string,
     replace: PropTypes.bool,
     scroll: PropTypes.bool,
     prefetch: PropTypes.bool,
@@ -31,10 +30,9 @@ export default class Clickable extends PureComponent {
     href: '',
     target: undefined,
     rel: undefined,
-    hrefAs: undefined,
     replace: false,
     scroll: true,
-    prefetch: true,
+    prefetch: false,
   }
 
   getClassName() {
@@ -58,7 +56,7 @@ export default class Clickable extends PureComponent {
   renderLink() {
     const {
       as, styledAs, children, isRaised, isExternal,
-      hrefAs, prefetch, replace, scroll,
+      prefetch, replace, scroll,
       href, target, rel,
       ...props
     } = this.props;
@@ -81,8 +79,7 @@ export default class Clickable extends PureComponent {
 
     return !isExternal ? (
       <Link
-        href={href}
-        as={hrefAs || href}
+        to={href}
         prefetch={prefetch}
         scroll={scroll}
         replace={replace}
@@ -95,7 +92,7 @@ export default class Clickable extends PureComponent {
   renderButton() {
     const {
       as, styledAs, children, isRaised, isExternal,
-      hrefAs, prefetch, replace, scroll,
+      prefetch, replace, scroll,
       href, target, rel,
       ...props
     } = this.props;
