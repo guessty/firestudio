@@ -6,7 +6,7 @@ module.exports = {
     'justify-content': 'center',
     width: '100%',
     height: '100%',
-    color: '#ffffff',
+    color: 'inherit',
 
     '&__spinner, &__spinner:before, &__spinner:after': {
       'border-radius': '50%',
