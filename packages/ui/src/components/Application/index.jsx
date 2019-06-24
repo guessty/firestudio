@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Store from '@firestudio/core/store';
 import * as uiStore from '../../store';
-import PageTransition from './PageTransition';
 
 export default class Application extends Component {
   static propTypes = {
@@ -17,13 +16,11 @@ export default class Application extends Component {
     className: '',
   }
 
-  static Window = ({ children }) => (
-    <div className="application__window">
+  static Screen = ({ children }) => (
+    <div className="application__screen">
       {children}
     </div>
   )
-
-  static PageTransition = PageTransition 
 
   render() {
     const { children, initialStoreData, store } = this.props;
