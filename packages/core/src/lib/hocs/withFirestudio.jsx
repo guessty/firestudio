@@ -143,7 +143,7 @@ export default (App) => class _App extends React.Component {
       Page: ({ children, ...extraProps }) => (
         <div
           id="page"
-          className="application__page-transition"
+          className="flex flex-col flex-grow w-full"
         >
           <Component {...pageProps} {...extraProps} wasLoadedFromCache={wasLoadedFromCache}>
             {children}
