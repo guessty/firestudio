@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { parse } from 'node-html-parser';
 import unfetch from 'isomorphic-unfetch';
+//
 const buildRoutes = require('./../build/routes')
 //
 
@@ -60,28 +61,96 @@ export default (App) => class _App extends React.Component {
     return {
       ...appProps,
       firestudioProps,
+      Test: (<div className="hello-div" />),
     }
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    const router = typeof window !== 'undefined' ? _App.Routes.Router : {
+      router: props.router,
+    };
+    return {
+      router,
+      previousPath: state.currentPath,
+      currentPath: router.router.asPath,
+    };
+  }
+
+  state = {
+    router: undefined,
+    previousPath: undefined,
+    currentPath: undefined,
+    wasLoadedFromCache: false,
   }
 
   async componentDidMount() {
-    const { router, firestudioProps: { componentNeedsPageData } } = this.props;
+    const { firestudioProps: { componentNeedsPageData } } = this.props;
+    const { router } = this.state;
     
     if (componentNeedsPageData) {
-      await _App.Routes.Router.pushRoute(router.asPath)
+      await _App.Routes.Router.pushRoute(router.router.asPath)
+    }
+
+    router.beforePopState(() => {
+      setTimeout(() => {
+        this.setState({
+          wasLoadedFromCache: true,
+        })
+      }, 0)
+      document.getElementById('page').style.cssText = `
+        visibility: hidden;
+      `;
+      return true
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { wasLoadedFromCache, currentPath, previousPath } = this.state;
+
+    if (wasLoadedFromCache && currentPath !== previousPath) {
+      this.setState({
+        wasLoadedFromCache: false,
+      })
+      document.getElementById('page').style.cssText = `
+        visibility: visible;
+      `;
     }
   }
 
-  render() {
-    const { pageProps, firestudioProps, ...props } = this.props;
+  shouldComponentUpdate(nextProps, nextState) {
+    const { currentPath } = this.state;
 
+    if (currentPath !== nextState.currentPath) {
+      return true
+    }
+
+    return false;
+  }
+
+  render() {
+    const { Component, pageProps: componentProps, firestudioProps, ...props } = this.props;
+    const { router, wasLoadedFromCache, currentPath } = this.state;
+    const pageProps = {
+      ...pageProps,
+      ...firestudioProps,
+      isLoadingPage: firestudioProps.componentNeedsPageData,
+      PageLoader: firestudioProps.PageLoader || App.PageLoader || _App.PageLoader,
+    }
     const appProps = {
       ...props,
-      pageProps: {
-        ...pageProps,
-        ...firestudioProps,
-        isLoadingPage: firestudioProps.componentNeedsPageData,
-        PageLoader: firestudioProps.PageLoader || App.PageLoader || _App.PageLoader,
-      }
+      router,
+      Component,
+      Page: ({ children, ...extraProps }) => (
+        <div
+          id="page"
+          className="application__page-transition"
+        >
+          <Component {...pageProps} {...extraProps} wasLoadedFromCache={wasLoadedFromCache}>
+            {children}
+          </Component>
+        </div>
+      ),
+      pageProps,
     }
 
     return <App {...appProps} />
