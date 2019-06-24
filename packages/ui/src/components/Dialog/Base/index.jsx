@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Dialog, { DialogOverlay, DialogContent } from '@reach/dialog';
+import { DialogOverlay, DialogContent } from '@reach/dialog';
 
 import Transition from '../../Transition';
 
@@ -50,9 +50,14 @@ export default class Base extends Component {
 
   static toggleBodyLock(isOpen, scrollbarWidth) {
     if (typeof document !== 'undefined') {
+      if (document.getElementById('firestudioApp')) {
+        document.getElementById('firestudioApp').style.cssText = isOpen ? `
+          overflow: hidden;
+          padding-right: ${scrollbarWidth}px !important;
+        ` : '';
+      }
       document.body.style.cssText = isOpen ? `
         overflow: hidden;
-        height: 100vh;
         padding-right: ${scrollbarWidth}px !important;
       ` : '';
     }

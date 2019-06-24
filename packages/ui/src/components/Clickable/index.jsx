@@ -31,7 +31,7 @@ export default class Clickable extends PureComponent {
     target: undefined,
     rel: undefined,
     replace: false,
-    scroll: true,
+    scroll: false,
     prefetch: false,
   }
 
