@@ -16,6 +16,7 @@ const medium = '250ms';
 const long = '150ms';
 
 // easing
+const ease = 'ease';
 const easeOut = 'ease-out';
 const easeOutBack = 'cubic-bezier(0.175, 0.885, 0.320, 1)';
 
@@ -58,10 +59,13 @@ module.exports = {
 
     // easing
     '&-easing': {
-      '&--out': {
+      '&--ease': {
+        'transition-timing-function': ease,
+      },
+      '&--ease-out': {
         'transition-timing-function': easeOut,
       },
-      '&--outBack': {
+      '&--ease-out-back': {
         'transition-timing-function': easeOutBack,
       },
     },

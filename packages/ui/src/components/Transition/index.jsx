@@ -24,7 +24,7 @@ export default class Transition extends Component {
       custom: PropTypes.string,
       speed: PropTypes.oneOf(['instant', 'slow', 'normal', 'fast']),
       delay: PropTypes.oneOf(['none', 'short', 'medium', 'long']),
-      easing: PropTypes.oneOf(['out', 'outBack']),
+      easing: PropTypes.oneOf(['ease', 'ease-out', 'ease-out-back']),
       timeout: PropTypes.number,
     }),
     in: PropTypes.bool,
@@ -49,7 +49,7 @@ export default class Transition extends Component {
       custom: undefined,
       speed: 'normal',
       delay: 'none',
-      easing: 'out',
+      easing: 'ease',
       timeout: 0,
     },
     exitTransition: undefined,
@@ -82,7 +82,7 @@ export default class Transition extends Component {
     const transDirection = type && !direction ? 'down' : direction;
     const transSpeed = speed || 'normal';
     const transDelay = delay || 'none';
-    const transEasing = easing || 'out';
+    const transEasing = easing || 'ease';
 
     return classnames(
       'transition',
@@ -121,6 +121,9 @@ export default class Transition extends Component {
           node.addEventListener('transitionend', done, false);
         }}
         classNames={{
+          appear: this.getStageClassName('enter'),
+          appearActive: this.getStageClassName('enter-active'),
+          appearDone: this.getStageClassName('enter-done'),
           enter: this.getStageClassName('enter'),
           enterActive: this.getStageClassName('enter-active'),
           enterDone: this.getStageClassName('enter-done'),
