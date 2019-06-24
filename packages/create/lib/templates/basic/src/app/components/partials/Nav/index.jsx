@@ -13,7 +13,6 @@ export default class Nav extends PureComponent {
           <Clickable
             href={to}
             as="a"
-            prefetch
             className="flex h-full items-center mx-4 hover:text-blue-600"
             onClick={toggleDialog}
           >
@@ -33,7 +32,6 @@ export default class Nav extends PureComponent {
               href="/"
               as="a"
               styledAs="none"
-              prefetch
               className="flex h-full items-center text-white text-2xl font-bold mr-4"
             >
               Firestudio
@@ -70,6 +68,8 @@ export default class Nav extends PureComponent {
             <hr />
             {Nav.renderLink('/', 'Home')}
             {Nav.renderLink('/documentation', 'Documentation')}
+            {Nav.renderLink('/documentation/finish-setup', 'Finish Setup')}
+            {Nav.renderLink('/documentation/tutorial-1', 'Tutorial 1')}
           </Flex>
         </Drawer>
       </nav>

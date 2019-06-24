@@ -1,29 +1,51 @@
 import React, { PureComponent } from 'react';
 import {
-  Flex, Hr, Clickable, Container,
+  Flex, Hr, Clickable, Container, Transition,
 } from '@firestudio/ui';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //
 
 export default class extends PureComponent {
   render() {
+    const { wasLoadedFromCache } = this.props;
+
     return (
       <Container>
         <Flex className="gap-around-8">
           <Flex>
-            <h1 className="text-4xl font-semibold">Documentation</h1>
+            <Transition
+              appear={!wasLoadedFromCache}
+              enterTransition={{
+                type: 'shift',
+                direction: 'right',
+                delay: 'short',
+                fade: true,
+              }}
+            >
+              <h1 className="text-4xl font-semibold">Documentation</h1>
+            </Transition>
           </Flex>
           <Hr />
-          <Flex className="gap-between-4">
-            <p>This template is designed for simple projects and as an introduction to the Firestudio platform.</p>
-            <p>It is best suited for:</p>
-            <ol className="list-disc pl-4">
-              <li>Informational Websites e.g A small business offering a service.</li>
-              <li>A Professional Portfolio.</li>
-              <li>A Blog.</li>
-            </ol>
-            <p>View the topics below for further guidance.</p>
-          </Flex>
+          <Transition
+            appear={!wasLoadedFromCache}
+            enterTransition={{
+              type: 'shift',
+              direction: 'right',
+              delay: 'medium',
+              fade: true,
+            }}
+          >
+            <Flex className="gap-between-4">
+              <p>This template is designed for simple projects and as an introduction to the Firestudio platform.</p>
+              <p>It is best suited for:</p>
+              <ol className="list-disc pl-4">
+                <li>Informational Websites e.g A small business offering a service.</li>
+                <li>A Professional Portfolio.</li>
+                <li>A Blog.</li>
+              </ol>
+              <p>View the topics below for further guidance.</p>
+            </Flex>
+          </Transition>
           <Flex as="nav" className="flex-row flex-wrap gap-between-8" childClassName="w-full sm:w-1/2 lg:w-1/4">
             <Clickable
               as="a"

@@ -3,7 +3,15 @@ import { Flex, Hr, Container } from '@firestudio/ui';
 //
 
 export default class FinishSetup extends PureComponent {
+  static async getPageData() {
+    return {
+      name: 'finish setup page',
+    };
+  }
+
   render() {
+    const { pageData } = this.props;
+
     return (
       <Container>
         <Flex className="gap-around-8">

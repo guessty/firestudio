@@ -12,7 +12,6 @@ export default class Footer extends PureComponent {
               href="/"
               as="a"
               styledAs="none"
-              prefetch
               className="flex h-full items-center text-white text-2xl font-bold mr-4"
             >
               Firestudio

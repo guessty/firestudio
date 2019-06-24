@@ -19,21 +19,19 @@ class App extends NextApp {
   static PageLoader = Loader
 
   render() {
-    const { Component: Page, pageProps } = this.props;
+    const { Page } = this.props;
 
     return (
       <Application store={store}>
         <Head>
           <title>Firestudio</title>
         </Head>
-        <Application.Window>
+        <Application.Screen>
           <Nav />
           <Main>
-            <Application.PageTransition {...pageProps}>
-              <Page {...pageProps} />
-            </Application.PageTransition>
+            <Page />
           </Main>
-        </Application.Window>
+        </Application.Screen>
         <Footer />
       </Application>
     );

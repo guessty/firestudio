@@ -16,8 +16,10 @@ class FirestudioDocument extends Document {
           />
         </Head>
         <body>
-          <Main />
-          <NextScript />
+          <div id="firestudioApp">
+            <Main />
+            <NextScript />
+          </div>
         </body>
       </html>
     );
