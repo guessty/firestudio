@@ -44,6 +44,9 @@ const nextConfig = withSass(withCSS(withFirestudio({
 
     return config;
   },
+  sassLoaderOptions: {
+    includePaths: ['node_modules'],
+  },
 })));
 
 module.exports = nextConfig;
