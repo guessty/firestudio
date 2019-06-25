@@ -3,7 +3,7 @@ import unfetch from 'isomorphic-unfetch';
 import Container from '../Container';
 //
 
-class Api extends Container {
+export default class Api extends Container {
   static fetch = async (url, initConfig) => {
     const { method, data, body, headers, ...remainingConfig } = initConfig;
     const csrfToken = cookies.get('XSRF-TOKEN');
