@@ -1,5 +1,7 @@
 export { default as Application } from './Application';
 export { default as Avatar } from './Avatar';
+export { default as BackgroundImage } from './BackgroundImage';
+export { default as Carousel } from './Carousel';
 export { default as Clickable } from './Clickable';
 export { default as Container } from './Container';
 export { default as Dialog } from './Dialog';

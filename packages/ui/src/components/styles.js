@@ -1,5 +1,7 @@
 const application = require('./Application/styles');
 const avatar = require('./Avatar/styles');
+const backgroundImage = require('./BackgroundImage/styles');
+const carousel = require('./Carousel/styles');
 const clickable = require('./Clickable/styles');
 const container = require('./Container/styles');
 const dialog = require('./Dialog/styles');
@@ -13,6 +15,8 @@ module.exports = theme => Object.assign(
   {},
   application,
   avatar,
+  backgroundImage,
+  carousel,
   clickable,
   container,
   dialog(theme),

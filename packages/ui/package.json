@@ -1,6 +1,6 @@
 {
   "name": "@firestudio/ui",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "description": "A set of ui components for firestudio",
   "keywords": [
     "react",
@@ -32,12 +32,14 @@
     "@babel/plugin-transform-runtime": "^7.4.4",
     "@firestudio/core": "^0.3.3",
     "@reach/dialog": "^0.2.9",
+    "@reach/visually-hidden": "^0.1.4",
     "classnames": "^2.2.6",
     "final-form": "^4.12.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-final-form": "^5.0.1",
+    "react-slick": "^0.24.0",
     "react-transition-group": "^4.1.0"
   }
 }
