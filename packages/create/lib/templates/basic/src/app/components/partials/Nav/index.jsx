@@ -67,9 +67,10 @@ export default class Nav extends PureComponent {
           <Flex className="flex-grow gap-between-6">
             <hr />
             {Nav.renderLink('/', 'Home')}
-            {Nav.renderLink('/documentation', 'Documentation')}
-            {Nav.renderLink('/documentation/finish-setup', 'Finish Setup')}
-            {Nav.renderLink('/documentation/tutorial-1', 'Tutorial 1')}
+            {Nav.renderLink('/finish-setup', 'Finish Setup')}
+            {Nav.renderLink('/core-features', 'Core Features')}
+            {Nav.renderLink('/ui-components', 'UI Components')}
+            {Nav.renderLink('/tutorials/1', 'Tutorial 1')}
           </Flex>
         </Drawer>
       </nav>
