@@ -15,6 +15,7 @@ export default class Base extends Component {
     children: PropTypes.node,
     style: PropTypes.shape({}),
     render: PropTypes.func,
+    returnFocus: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -26,6 +27,7 @@ export default class Base extends Component {
     style: {},
     render: undefined,
     children: null,
+    returnFocus: true,
   }
 
   static getScrollbarWidth() {
@@ -97,15 +99,20 @@ export default class Base extends Component {
   }
 
   componentDidMount() {
+    const { returnFocus } = this.props;
     const scrollbarWidth = Base.getScrollbarWidth();
 
     this.setState({
       scrollbarWidth,
     });
+
+    if (!returnFocus) {
+      document.activeElement.focus = undefined;
+    }
   }
 
   componentDidUpdate(prevProps) {
-    const { isOpen } = this.props;
+    const { isOpen, returnFocus } = this.props;
     const { scrollbarWidth } = this.state;
 
     if (isOpen && isOpen !== prevProps.isOpen) {
@@ -115,6 +122,10 @@ export default class Base extends Component {
           isActive: true,
         });
       }, 0);
+    }
+
+    if (!returnFocus) {
+      document.activeElement.focus = undefined;
     }
   }
 
