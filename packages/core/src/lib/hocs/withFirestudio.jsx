@@ -69,6 +69,7 @@ export default (App) => class _App extends React.Component {
     const router = typeof window !== 'undefined' ? _App.Routes.Router : {
       router: props.router,
     };
+
     return {
       router,
       previousPath: state.currentPath,
@@ -107,7 +108,8 @@ export default (App) => class _App extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     const { wasLoadedFromCache, currentPath, previousPath } = this.state;
 
-    if (wasLoadedFromCache && currentPath !== previousPath) {
+    // if (wasLoadedFromCache && currentPath !== previousPath) {
+    if (wasLoadedFromCache) {
       this.setState({
         wasLoadedFromCache: false,
       })
@@ -117,15 +119,15 @@ export default (App) => class _App extends React.Component {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    const { currentPath } = this.state;
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   const { currentPath } = this.state;
 
-    if (currentPath !== nextState.currentPath) {
-      return true
-    }
+  //   if (currentPath !== nextState.currentPath) {
+  //     return true
+  //   }
 
-    return false;
-  }
+  //   return false;
+  // }
 
   render() {
     const { Component, pageProps: componentProps, firestudioProps, ...props } = this.props;
