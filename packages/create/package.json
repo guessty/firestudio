@@ -1,6 +1,6 @@
 {
   "name": "@firestudio/create",
-  "version": "0.15.3",
+  "version": "0.15.4",
   "description": "CLI for creating Firestudio apps",
   "main": "index.js",
   "scripts": {
