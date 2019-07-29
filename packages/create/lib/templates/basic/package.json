@@ -22,13 +22,13 @@
     "dev": "GOOGLE_APPLICATION_CREDENTIALS=$PWD/config/service-account.json npm run dev:start",
     "build": "npm run build:app && npm run build:deployment-config",
     "serve": "npm run firebase:serve",
-    "deploy": "npm run firebase:deploy--hosting"
+    "deploy": "npm run firebase:deploy"
   },
   "dependencies": {
     "@babel/polyfill": "7.0.0",
     "@babel/runtime": "^7.4.4",
-    "@firestudio/core": "^0.3.3",
-    "@firestudio/ui": "^0.2.12",
+    "@firestudio/core": "^0.3.5",
+    "@firestudio/ui": "^0.2.15",
     "@fortawesome/fontawesome-svg-core": "^1.2.8",
     "@fortawesome/free-regular-svg-icons": "^5.5.0",
     "@fortawesome/free-solid-svg-icons": "^5.9.0",
