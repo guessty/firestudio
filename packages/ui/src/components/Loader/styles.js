@@ -7,7 +7,6 @@ module.exports = {
     width: '100%',
     height: '100%',
     color: 'inherit',
-    'min-width': '5rem',
 
     '&__spinner, &__spinner:before, &__spinner:after': {
       'border-radius': '50%',

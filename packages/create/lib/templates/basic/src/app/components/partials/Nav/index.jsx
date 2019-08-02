@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Flex, Clickable, Container } from '@firestudio/ui';
 //
 import Drawer from '@elements/Drawer';
-import SignInButton from '@elements/SignInButton';
 
 export default class Nav extends PureComponent {
   static renderLink(to, text) {
@@ -38,12 +37,6 @@ export default class Nav extends PureComponent {
               Firestudio
             </Clickable>
             <div className="flex-grow" />
-            <div className="flex h-full items-center">
-              <SignInButton />
-            </div>
-            <div className="flex h-full items-center">
-              <div className="block border-r border-white w-1 h-10 m-4" />
-            </div>
             <Drawer.Trigger
               target="menu"
               render={({ toggleDialog }) => (

@@ -3,10 +3,6 @@ import { Flex, Hr, Container } from '@firestudio/ui';
 //
 
 export default class FinishSetup extends PureComponent {
-  static isPrivate = true
-
-  static isDynamic = true
-
   static async getPageData() {
     return {
       name: 'finish setup page',

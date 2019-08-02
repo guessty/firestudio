@@ -39,7 +39,6 @@ module.exports = {
 
   variants: {
     backgroundColor: ['responsive', 'hover', 'focus', 'hocus'],
-    borderColor: ['hocus'],
     opacity: ['responsive', 'hover', 'focus', 'hocus'],
   },
 
