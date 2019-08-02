@@ -16,6 +16,7 @@
   "main": "index.js",
   "files": [
     "dist",
+    "app.js",
     "dev.js",
     "config.js",
     "link.js",

@@ -1,29 +1,23 @@
-import * as React from 'react'
-import App, { Container } from 'next/app'
+import React from 'react';
+import NextApp from 'next/app';
+import Head from 'next/head';
 //
-import withPrismic from './../hocs/withPrismic'
-import withDynamicRouter from './../hocs/withDynamicRouter'
+import Store from '../components/Store';
+import withFirepress from '../hocs/withFirepress';
 
-class FirestudioApp extends App {
-  static async getInitialProps({ Component, ctx }) {
-    let pageProps = {};
-
-    if (Component.getInitialProps) {
-      pageProps = await Component.getInitialProps(ctx);
-    }
-
-    return { pageProps };
-  }
-
+class App extends NextApp {
   render() {
-    const { Component, pageProps } = this.props;
+    const { Page } = this.props;
 
     return (
-      <Container>
-        <Component {...pageProps} />
-      </Container>
+      <Store>
+        <Head>
+          <title>Firepress</title>
+        </Head>
+        <Page />
+      </Store>
     );
   }
 }
 
-export default withPrismic(withDynamicRouter(FirestudioApp));
+export default withFirepress(App);

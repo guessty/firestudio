@@ -2,9 +2,9 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import * as Unstated from 'unstated';
 //
-import { default as Api } from './Api';
+export { default as Api } from './Api';
 export { default as Container } from './Container';
-export { default as Subscribe } from './Subscribe';
+export { default as Subscribe, RawSubscribe } from './Subscribe';
 
 const isServer = typeof window === 'undefined';
 const __FIRESTUDIO_STORE__ = '__FIRESTUDIO_STORE__';
@@ -20,38 +20,40 @@ if (!isServer) {
 
 class Store extends PureComponent {
   static propTypes = {
-    containers: PropTypes.shape({}),
+    stateContainers: PropTypes.shape({}),
     initialData: PropTypes.shape({}),
+    firebaseInstance: PropTypes.shape({}),
   }
 
   static defaultProps = {
-    containers: {},
+    stateContainers: {},
     initialData: {},
+    firebaseInstance: undefined,
   }
 
-  static getOrCreateStore = (containers, initialData) => {
+  static getOrCreateStore = (stateContainers, initialData, firebaseInstance) => {
     if (isServer) {
-      return Store.initStore(containers, initialData);
+      return Store.initStore(stateContainers, initialData, firebaseInstance);
     }
 
     if (!window[__FIRESTUDIO_STORE__]) {
-      window[__FIRESTUDIO_STORE__] = Store.initStore(containers, initialData);
+      window[__FIRESTUDIO_STORE__] = Store.initStore(stateContainers, initialData, firebaseInstance);
     }
 
     return window[__FIRESTUDIO_STORE__];
   }
 
-  static initStore = (containers = {}, initialData = {}) => (
-    Object.keys(containers).reduce((store, container) => {
+  static initStore = (stateContainers = {}, initialData = {}, firebaseInstance) => (
+    Object.keys(stateContainers).reduce((store, container) => {
       if (!initialData[container]) {
         // eslint-disable-next-line no-param-reassign
-        store[container] = new containers[container]();
+        store[container] = new stateContainers[container]({}, firebaseInstance);
       }
 
       return store;
     }, Object.entries(initialData).reduce((initStore, [container, state]) => {
       // eslint-disable-next-line no-param-reassign
-      initStore[container] = new containers[container](state);
+      initStore[container] = new stateContainers[container](state, firebaseInstance);
 
       return initStore;
     }, {})
@@ -65,8 +67,8 @@ class Store extends PureComponent {
   }
 
   render() {
-    const { children, containers, initialData } = this.props;
-    const injectedData = Object.values(Store.getOrCreateStore({ ...containers, Api }, initialData));
+    const { children, stateContainers, initialData, firebaseInstance } = this.props;
+    const injectedData = Object.values(Store.getOrCreateStore(stateContainers, initialData, firebaseInstance));
 
     return (
       <Unstated.Provider inject={injectedData}>

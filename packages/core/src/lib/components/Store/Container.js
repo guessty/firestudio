@@ -4,6 +4,14 @@ import { detailedDiff } from 'deep-object-diff';
 export default class Container extends Unstated.Container {
   state = {}
 
+  firebase
+
+  constructor(state = {}, firebaseInstance) {
+    super();
+    this.state = state;
+    this.firebase = firebaseInstance;
+  }
+
   setState = async (updater, callback) => {
     const { name } = this.constructor;
     const prevState = { ...this.state };

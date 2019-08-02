@@ -1,7 +1,8 @@
-import * as React from 'react'
+import * as React from 'react';
 import { parse } from 'node-html-parser';
 import unfetch from 'isomorphic-unfetch';
 //
+import Store from '../components/Store';
 const buildRoutes = require('./../build/routes')
 //
 
@@ -22,8 +23,10 @@ export default (App) => class _App extends React.Component {
     const isExport = (!process.browser && !(ctx && ctx.req && ctx.req.headers));
     const isClient = (Boolean(process.browser) && !(ctx && ctx.req && ctx.req.headers));
     const isServer = (!process.browser && Boolean(ctx && ctx.req && ctx.req.headers));
+    const isPrivate = Component.isPrivate && (isServer || (App.firebase && App.firebase.auth));
+    const isAuthenticated = isClient && App.firebase && App.firebase.auth && App.firebase.auth().currentUser;
 
-    if (isClient && !Component.isDynamic) {
+    if (isClient && !Component.isDynamic && (!isPrivate || (isPrivate && isAuthenticated))) {
       const response = await unfetch(ctx.asPath, {
         headers: {
           'Content-Type': 'text/html; charset=utf-8',
@@ -36,7 +39,8 @@ export default (App) => class _App extends React.Component {
       return dataNode.rawText ? JSON.parse(dataNode.rawText).props : {};
     }
 
-    if (typeof Component.getPageData === 'function' && (
+    if (typeof Component.getPageData === 'function' && 
+      (!isPrivate || (isPrivate && isAuthenticated)) && (
       (isExport && !Component.isDynamic) ||
       (isServer) || (isClient)
     )) {
@@ -48,10 +52,12 @@ export default (App) => class _App extends React.Component {
     }
 
     const componentNeedsPageData = typeof pageData === 'undefined'
-      && typeof Component.getPageData === 'function' && Component.isDynamic;
+      && typeof Component.getPageData === 'function'
+      && Component.isDynamic;
 
-    const firestudioProps = {
+    const firepressProps = {
       isDynamic: Component.isDynamic || false,
+      isPrivate,
       pageData,
       componentNeedsPageData,
       PageLoader: Component.PageLoader || null,
@@ -60,8 +66,7 @@ export default (App) => class _App extends React.Component {
 
     return {
       ...appProps,
-      firestudioProps,
-      Test: (<div className="hello-div" />),
+      firepressProps,
     }
   }
 
@@ -82,13 +87,22 @@ export default (App) => class _App extends React.Component {
     previousPath: undefined,
     currentPath: undefined,
     wasLoadedFromCache: false,
+    isAuthenticated: undefined,
   }
 
+  unregisterAuthObserver
+
   async componentDidMount() {
-    const { firestudioProps: { componentNeedsPageData } } = this.props;
+    const { firepressProps: { isPrivate, componentNeedsPageData } } = this.props;
     const { router } = this.state;
+
+    if (App.firebase && App.firebase.auth) {
+      this.unregisterAuthObserver = App.firebase.auth().onAuthStateChanged((user) => {
+        this.setState({ isAuthenticated: !!user });
+      });
+    }
     
-    if (componentNeedsPageData) {
+    if (!isPrivate && componentNeedsPageData) {
       await _App.Routes.Router.pushRoute(router.router.asPath)
     }
 
@@ -105,10 +119,18 @@ export default (App) => class _App extends React.Component {
     });
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { wasLoadedFromCache, currentPath, previousPath } = this.state;
+  componentDidUpdate() {
+    const { wasLoadedFromCache, isAuthenticated, router } = this.state;
+    const { firepressProps: { isPrivate, componentNeedsPageData } } = this.props;
 
-    // if (wasLoadedFromCache && currentPath !== previousPath) {
+    if (isPrivate) {
+      if (!isAuthenticated) {
+        _App.Routes.Router.replaceRoute(App.redirectPrivatePagesTo || '/sign-in');
+      } else if (isAuthenticated && componentNeedsPageData) {
+        _App.Routes.Router.pushRoute(router.router.asPath);
+      }
+    }
+
     if (wasLoadedFromCache) {
       this.setState({
         wasLoadedFromCache: false,
@@ -119,25 +141,23 @@ export default (App) => class _App extends React.Component {
     }
   }
 
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   const { currentPath } = this.state;
-
-  //   if (currentPath !== nextState.currentPath) {
-  //     return true
-  //   }
-
-  //   return false;
-  // }
+  componentWillUnmount() {
+    if (App.firebase.auth) {
+      this.unregisterAuthObserver();
+    }
+  }
 
   render() {
-    const { Component, pageProps: componentProps, firestudioProps, ...props } = this.props;
-    const { router, wasLoadedFromCache, currentPath } = this.state;
+    const { Component, pageProps: componentProps, firepressProps, ...props } = this.props;
+    const { router, wasLoadedFromCache, isAuthenticated } = this.state;
+    const PageLoader = firepressProps.PageLoader || App.PageLoader || _App.PageLoader;
     const pageProps = {
       ...pageProps,
-      ...firestudioProps,
-      isLoadingPage: firestudioProps.componentNeedsPageData,
-      PageLoader: firestudioProps.PageLoader || App.PageLoader || _App.PageLoader,
+      ...firepressProps,
+      isLoadingPage: firepressProps.componentNeedsPageData,
+      PageLoader,
     }
+    const canReturnPage = !firepressProps.isPrivate || (firepressProps.isPrivate && isAuthenticated);
     const appProps = {
       ...props,
       router,
@@ -147,14 +167,24 @@ export default (App) => class _App extends React.Component {
           id="page"
           className="flex flex-col flex-grow w-full"
         >
-          <Component {...pageProps} {...extraProps} wasLoadedFromCache={wasLoadedFromCache}>
-            {children}
-          </Component>
+          {canReturnPage ? (
+            <Component {...pageProps} {...extraProps} wasLoadedFromCache={wasLoadedFromCache}>
+              {children}
+            </Component>
+          ) : (
+            <PageLoader />
+          )}
         </div>
       ),
       pageProps,
     }
 
-    return <App {...appProps} />
+    const storeConfig = App.storeConfig || {};
+
+    return (
+      <Store {...storeConfig} firebaseInstance={App.firebase}>
+        <App {...appProps} />
+      </Store>
+    );
   }
-}
+};

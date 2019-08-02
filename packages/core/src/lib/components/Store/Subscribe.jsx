@@ -44,6 +44,8 @@ class Subscribe extends Unstated.Subscribe {
   }
 }
 
+export const RawSubscribe = Subscribe;
+
 export default to => SubscribedComponent => {
   const containers = Object.keys(to).map(key => to[key]);
 
