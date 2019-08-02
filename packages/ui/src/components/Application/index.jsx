@@ -1,18 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Store from '@firestudio/core/store';
-import * as uiStore from '../../store';
 
 export default class Application extends Component {
   static propTypes = {
-    initialStoreData: PropTypes.shape({}),
-    store: PropTypes.shape({}),
     className: PropTypes.string,
   }
 
   static defaultProps = {
-    initialData: {},
-    store: {},
     className: '',
   }
 
@@ -23,14 +17,12 @@ export default class Application extends Component {
   )
 
   render() {
-    const { children, initialStoreData, store } = this.props;
+    const { children } = this.props;
 
     return (
-      <Store containers={{ ...store, ...uiStore }} initialData={initialStoreData}>
-        <div className="application">
-          {children}
-        </div>
-      </Store>
+      <div className="application">
+        {children}
+      </div>
     );
   }
 }

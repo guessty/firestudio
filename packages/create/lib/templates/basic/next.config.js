@@ -15,6 +15,9 @@ const nextConfig = withSass(withCSS(withFirestudio({
   env: {
     FIREBASE: firebaseConfig,
   },
+  publicRuntimeConfig: {
+    FIREBASE: firebaseConfig,
+  },
   firestudio: {
     fallback: '200.html',
     projectId: firebaseConfig.projectId,
@@ -25,7 +28,7 @@ const nextConfig = withSass(withCSS(withFirestudio({
       '@elements': path.resolve(__dirname, './src/app/components/elements'),
       '@partials': path.resolve(__dirname, './src/app/components/partials'),
       '@templates': path.resolve(__dirname, './src/app/components/templates'),
-      '@hocs': path.resolve(__dirname, './src/app/hocs'),
+      '@hocs': path.resolve(__dirname, './src/app/components/hocs'),
       '@config': path.resolve(__dirname, './src/app/config'),
       '@plugins': path.resolve(__dirname, './src/app/plugins'),
       '@store': path.resolve(__dirname, './src/app/store'),
