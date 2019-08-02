@@ -5,8 +5,6 @@ import {
 //
 import firebase from '@config/firebase';
 //
-require('./SignInButton.scss');
-//
 
 class AuthNav extends Component {
   state = {

@@ -1,11 +1,32 @@
 import React, { PureComponent } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Flex, Clickable, Container } from '@firestudio/ui';
+import {
+  Flex, Clickable, Container, Hr,
+} from '@firestudio/ui';
 //
+import firebase from '@config/firebase';
 import Drawer from '@elements/Drawer';
 import SignInButton from '@elements/SignInButton';
 
 export default class Nav extends PureComponent {
+  state = {
+    isReady: false,
+  }
+
+  unregisterAuthObserver = null
+
+  async componentDidMount() {
+    this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(() => {
+      this.setState({
+        isReady: true,
+      });
+    });
+  }
+
+  componentWillUnmount() {
+    this.unregisterAuthObserver();
+  }
+
   static renderLink(to, text) {
     return (
       <Drawer.Trigger
@@ -21,6 +42,35 @@ export default class Nav extends PureComponent {
           </Clickable>
         )}
       />
+    );
+  }
+
+  renderSignOutButton() {
+    const { isReady } = this.state;
+
+    if (!isReady) {
+      return null;
+    }
+
+    return firebase.auth().currentUser && (
+      <Flex className="flex-grow gap-between-6">
+        <Hr />
+        <Drawer.Trigger
+          target="menu"
+          render={({ toggleDialog }) => (
+            <Clickable
+              styledAs="a"
+              className="flex h-full items-center mx-4 hover:text-blue-600"
+              onClick={() => {
+                toggleDialog();
+                firebase.auth().signOut();
+              }}
+            >
+              Sign Out
+            </Clickable>
+          )}
+        />
+      </Flex>
     );
   }
 
@@ -72,12 +122,13 @@ export default class Nav extends PureComponent {
             )}
           />
           <Flex className="flex-grow gap-between-6">
-            <hr />
+            <Hr />
             {Nav.renderLink('/', 'Home')}
             {Nav.renderLink('/finish-setup', 'Finish Setup')}
             {Nav.renderLink('/core-features', 'Core Features')}
             {Nav.renderLink('/ui-components', 'UI Components')}
             {Nav.renderLink('/tutorials/1', 'Tutorial 1')}
+            {this.renderSignOutButton()}
           </Flex>
         </Drawer>
       </nav>
