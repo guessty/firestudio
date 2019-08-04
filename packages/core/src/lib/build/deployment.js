@@ -10,14 +10,20 @@ const getDynamicSource = function(route) {
   }).join('/');
 }
 
+const normaliseRoute = function(route) {
+  return route.replace(/\.[^/.]+$/, '')
+    .replace('/index', '')
+    .replace('/_', '/:');
+}
+
 const buildFirebaserc = function(config) {
-  const fireStudioConfig = Object.assign({}, {
-    cloudRenderedRoutes: [],
-  }, config.firestudio || {});
+  const firepressConfig = Object.assign({}, {
+    cloudRenderedPages: [],
+  }, config.firepress || {});
 
   const firebaserc = JSON.stringify({
     projects: {
-      default: fireStudioConfig.projectId
+      default: firepressConfig.projectId
     }
   }, null, 2);
   
@@ -27,47 +33,33 @@ const buildFirebaserc = function(config) {
 const buildJson = function(outdir, config) {
   let customFunctions = {}
   try {
-    customFunctions = require(`${outdir}/functions/routes`).default;
+    customFunctions = require(`${outdir}/functions/apis`).default;
   } catch {
     console.log('> no custom functions to rewrite')
   }
   const functionRewrites = Object.keys(customFunctions).map((key) => {
     return {
-      source: `/api/functions/${key}`,
+      source: `/api/${key}`,
       function: key,
     }
   })
 
   const routes = config.env.ROUTES
-  const fireStudioConfig = Object.assign({
-    cloudRenderedRoutes: [],
+  const firepressConfig = Object.assign({
+    cloudRenderedPages: [],
     headers: [],
-  }, config.firestudio || {});
+  }, config.firepress || {});
 
-  const { staticRewrites, dynamicRewrites } = getRewrites(routes, config);
-
-  if (fireStudioConfig.cloudRenderAllDynamicRoutes) {
-    dynamicRewrites = dynamicRewrites.map(function(rewrite) {
-      return {
-        source: rewrite.source,
-        function: 'firestudioApp'
-      };
-    });
-  }
-
-  const normalisedCloudRenderedRoutes = fireStudioConfig.cloudRenderedRoutes.map(function(route) {
-    return route.replace(/\.[^/.]+$/, '')
-      .replace('/index', '')
-      .replace('/_', '/:')
-    });
+  const { staticRewrites } = getRewrites(routes, config);
 
   const cloudRewrites = []
-  normalisedCloudRenderedRoutes.forEach(function(route) {
-    if (config.exportPathMap[route]) {
-      const source = getDynamicSource(route)
+  const exportPathMap = config.exportPathMap();
+  firepressConfig.cloudRenderedPages.forEach(function(route) {
+    if (exportPathMap[route + '.html']) {
+      const source = getDynamicSource(normaliseRoute(route))
       cloudRewrites.push({
         source,
-        function: 'firestudioApp',
+        function: 'pageRenderer',
       })
     }
   }) 
@@ -82,14 +74,10 @@ const buildJson = function(outdir, config) {
   functionRewrites.forEach(function(rewrite) {
     combinedRewites.push(rewrite);
   })
-  dynamicRewrites.forEach(function(rewrite) {
-    combinedRewites.push(rewrite);
-  })
-
 
   const firebaseHostingConfig = {
     hosting: {
-      headers: fireStudioConfig.headers,
+      headers: firepressConfig.headers,
       public: 'public',
       ignore: [
         'firebase.json',

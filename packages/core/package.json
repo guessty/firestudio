@@ -19,6 +19,7 @@
     "app.js",
     "dev.js",
     "config.js",
+    "functions.js",
     "link.js",
     "router.js",
     "store.js",

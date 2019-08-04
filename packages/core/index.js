@@ -1,1 +1,1 @@
-module.exports = require('./dist/connect');
+module.exports = require('./dist/app');

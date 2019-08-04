@@ -7,8 +7,8 @@ export default ({
   hostname = 'localhost',
   port = 3040,
   functionRoutes,
-}) => next => server => {
-  const app = buildApp({ dev: true, conf })(next);
+}) => server => {
+  const app = buildApp({ dev: true, conf });
   const handler = app.getRequestHandler();
 
   app.prepare()

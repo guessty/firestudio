@@ -1,3 +1,3 @@
-import { default as initFirestudio } from './lib/init';
+import { default as initDevApp } from './lib/init';
 
-export default initFirestudio;
+export default initDevApp;

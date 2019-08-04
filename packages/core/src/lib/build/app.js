@@ -1,9 +1,10 @@
 const path = require('path');
+const next = require('next');
 const parseArgs = require('minimist');
 
 import buildRoutes from './routes';
 
-const buildApp = (opts) => (next) => {
+const buildApp = (opts) => {
   const argv = parseArgs(process.argv.slice(2), {})
   let dir = argv._[0] || '.'
 

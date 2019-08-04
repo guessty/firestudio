@@ -46,13 +46,10 @@ const generateDirRoutes = (dir, pathString = undefined, routes = []) => {
   return routes
 } 
 
-const generateExportPathMap = (routes, firestudioConfig) => {
+const generateExportPathMap = (routes, firepressConfig) => {
   const allRoutes = [
     { pattern: '/404.html', page: '/_404' },
     ...routes,
-    ...firestudioConfig.fallback
-      ? [{ pattern: `/${firestudioConfig.fallback}`, page: `/${firestudioConfig.fallback.replace('.html', '')}` }]
-      : [] ,
   ]
   
   return allRoutes.reduce((routeMap, route) => {
@@ -71,7 +68,7 @@ const generateExportPathMap = (routes, firestudioConfig) => {
   }, {})
 }
 
-const withFirestudio = (config = {}) => {
+const withFirepress = (config = {}) => {
   const argv = parseArgs(process.argv.slice(2), {})
   let argvPath = argv._[0] || '.'
 
@@ -87,24 +84,19 @@ const withFirestudio = (config = {}) => {
       ? config.distDir : './.next',
   }
 
-  const firestudioConfig = config.firestudio || {}
+  const firepressConfig = config.firepress || {}
 
   let pagesDir = path.join(path.resolve(argvPath), 'pages')
   const isBuild = argvPath === config.distDir
-  if (isBuild || firestudioConfig.generateRoutesFromBuild) {
+  if (isBuild || firepressConfig.generateRoutesFromBuild) {
     const buildId = fs.readFileSync(`${config.distDir}/BUILD_ID`, 'utf8')
     pagesDir = path.join(path.resolve(config.distDir), `static/${buildId}/pages`)
   }
   const routes = generateDirRoutes(pagesDir)
 
-  const exportPathMap = generateExportPathMap(routes, firestudioConfig)
+  const exportPathMap = generateExportPathMap(routes, firepressConfig)
 
-  const firestudioEntries = firestudioConfig.fallback ? {
-    'static/build/pages/_404.js': [ path.join(__dirname, '..', '..', 'lib/pages/_404.js') ],
-    [`static/build/pages/${firestudioConfig.fallback.replace('.html', '')}.js`]: [
-      path.join(__dirname, '..', '..', 'lib/pages/_soft404.js')
-    ],
-  } : {
+  const firepressEntries = {
     'static/build/pages/_404.js': [ path.join(__dirname, '..', '..', 'lib/pages/_soft404.js') ],
   }
 
@@ -125,7 +117,7 @@ const withFirestudio = (config = {}) => {
       const entry = async () => {
         return {
           ...await coreEntry(),
-          ...firestudioEntries,
+          ...firepressEntries,
         }
       }
       config.entry = entry
@@ -137,4 +129,4 @@ const withFirestudio = (config = {}) => {
   return nextConfig
 }
 
-export default withFirestudio
+export default withFirepress
