@@ -92,13 +92,13 @@ export default class Nav extends PureComponent {
               <SignInButton />
             </div>
             <div className="flex h-full items-center">
-              <div className="block border-r border-white w-1 h-10 m-4" />
+              <div className="block border-r border-white w-1 h-10" />
             </div>
             <Drawer.Trigger
               target="menu"
               render={({ toggleDialog }) => (
                 <Clickable
-                  className="flex h-full text-white hover:text-blue-500 p-3"
+                  className="flex h-full text-white hover:text-blue-500 p-0"
                   onClick={toggleDialog}
                 >
                   <FontAwesomeIcon icon={['fas', 'bars']} size="2x" />

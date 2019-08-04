@@ -30,7 +30,13 @@ class SignIn extends PureComponent {
       signInFlow: 'popup',
       // We will display Google and Facebook as auth providers.
       signInOptions: [
+        // Leave the lines as is for the providers you want to offer your users.
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+        firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+        firebase.auth.GithubAuthProvider.PROVIDER_ID,
+        firebase.auth.EmailAuthProvider.PROVIDER_ID,
+        firebase.auth.PhoneAuthProvider.PROVIDER_ID,
       ],
       signInSuccessUrl: '/',
       // callbacks: {
@@ -53,15 +59,17 @@ class SignIn extends PureComponent {
 
   render() {
     return (
-      <Container>
-        <Flex className="gap-around-8">
-          <h1 className="text-4xl text-center font-semibold">Sign In</h1>
-          <Hr />
-          <Flex className="items-center justify-center">
-            {this.renderSignInForm()}
+      <Flex className="flex-grow sm:bg-blue-800">
+        <Container className="items-center sm:pt-8">
+          <Flex className="gap-around-8 w-full sm:max-w-md bg-white">
+            <h1 className="text-4xl text-center font-semibold">Sign In</h1>
+            <Hr />
+            <Flex className="items-center justify-center">
+              {this.renderSignInForm()}
+            </Flex>
           </Flex>
-        </Flex>
-      </Container>
+        </Container>
+      </Flex>
     );
   }
 }
