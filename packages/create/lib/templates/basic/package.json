@@ -27,8 +27,8 @@
   "dependencies": {
     "@babel/polyfill": "7.0.0",
     "@babel/runtime": "^7.4.4",
-    "@firestudio/core": "^0.3.5",
-    "@firestudio/ui": "^0.2.15",
+    "@firestudio/core": "^0.4.0",
+    "@firestudio/ui": "^0.2.16",
     "@fortawesome/fontawesome-svg-core": "^1.2.8",
     "@fortawesome/free-regular-svg-icons": "^5.5.0",
     "@fortawesome/free-solid-svg-icons": "^5.9.0",
