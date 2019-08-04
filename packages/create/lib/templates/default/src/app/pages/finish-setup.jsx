@@ -5,17 +5,7 @@ import { Flex, Hr, Container } from '@firestudio/ui';
 export default class FinishSetup extends PureComponent {
   static isPrivate = true
 
-  static isDynamic = true
-
-  static async getPageData() {
-    return {
-      name: 'finish setup page',
-    };
-  }
-
   render() {
-    const { pageData } = this.props;
-
     return (
       <Container>
         <Flex className="gap-around-8">
@@ -25,7 +15,7 @@ export default class FinishSetup extends PureComponent {
           <Hr />
           <Flex className="gap-between-4">
             <p>
-              In order to interact with any of the Firebase services you need to create a Firebase project and add the configuration to your Firestudio App.
+              In order to interact with any of the Firebase services you need to create a Firebase project and add the configuration to your Firepress App.
             </p>
             <p>
               Go to your Firebase console (https://console.firebase.google.com/) and click the tile to create a new project.
@@ -56,7 +46,7 @@ export default class FinishSetup extends PureComponent {
                 }
               </code>
             </pre>
-            <p>This is the config that you will need to copy into your Firestudio App.</p>
+            <p>This is the config that you will need to copy into your Firepress App.</p>
           </Flex>
         </Flex>
       </Container>

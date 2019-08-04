@@ -1,72 +1,51 @@
-import App, { Container } from 'next/app';
-import Head from 'next/head';
-import { withRouter } from '@firestudio/core';
 import React from 'react';
-import cookies from 'browser-cookies';
-//
-import AppLayout from '@templates/App';
-import Loader from '@elements/Loader';
-import Store from '@store';
-import { Api } from '@store/containers';
+import NextApp from 'next/app';
+import Head from 'next/head';
+import { withFirepress } from '@firestudio/core/app';
+import { Application, Loader } from '@firestudio/ui';
+
+// global styles need to be imported before any project
+// components to ensure component styles have higher priority.
+import '../styles.scss';
+
+import * as projectStore from '@store';
 import initIcons from '@config/fontAwesome';
-//
-require('sanitize.css');
-require('./../styles.scss');
+import firebase from '@config/firebase';
+import Nav from '@partials/Nav';
+import Main from '@partials/Main';
+import Footer from '@partials/Footer';
 
 initIcons();
 
-class FirestudioApp extends App {
-  static async getInitialProps({ Component, ctx }) {
-    const isServer = typeof ctx.req !== 'undefined';
-    let pageProps = {};
+class App extends NextApp {
+  static PageLoader = Loader
 
-    if (Component.getInitialProps) {
-      pageProps = await Component.getInitialProps(ctx);
-    }
+  static firebase = firebase
 
-    if (!isServer) {
-      await FirestudioApp.ensureCSRF();
-    }
-
-    const propsToReturn = {
-      pageProps: {
-        PageLoader: Loader,
-        ...pageProps,
-      },
-    };
-
-    return propsToReturn;
+  static storeConfig = {
+    stateContainers: projectStore,
   }
 
-  static async ensureCSRF() {
-    if (!cookies.get('XSRF-TOKEN')) {
-      await Api.send({
-        url: Api.ROUTES.CSRF,
-        method: 'get',
-      });
-    }
-  }
-
-  async componentDidMount() {
-    await FirestudioApp.ensureCSRF();
-  }
+  // static redirectPrivatePagesTo = '/'
 
   render() {
-    const { Component, pageProps } = this.props;
+    const { Page } = this.props;
 
     return (
-      <Container>
+      <Application>
         <Head>
-          <title>Firestudio</title>
+          <title>Firepress</title>
         </Head>
-        <Store>
-          <AppLayout>
-            <Component {...pageProps} />
-          </AppLayout>
-        </Store>
-      </Container>
+        <Application.Screen>
+          <Nav />
+          <Main>
+            <Page />
+          </Main>
+        </Application.Screen>
+        <Footer />
+      </Application>
     );
   }
 }
 
-export default withRouter(FirestudioApp);
+export default withFirepress(App);

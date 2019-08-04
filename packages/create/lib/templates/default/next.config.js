@@ -1,17 +1,28 @@
-const { withFirestudio } = require('@firestudio/core');
+const withFirepressConfig = require('@firestudio/core/config');
 const path = require('path');
 const withCSS = require('@zeit/next-css');
 const withSass = require('@zeit/next-sass');
 
-const nextConfig = withSass(withCSS(withFirestudio({
+let firebaseConfig;
+try {
+  firebaseConfig = require('./config/firebase.config');
+} catch {
+  firebaseConfig = {};
+}
+
+const nextConfig = withSass(withCSS(withFirepressConfig({
   distDir: './dist/build',
   env: {
     FIREBASE: firebaseConfig,
   },
-  firestudio: {
-    fallback: '200.html',
+  publicRuntimeConfig: {
+    FIREBASE: firebaseConfig,
+  },
+  firepress: {
     projectId: firebaseConfig.projectId,
-    // cloudRenderAllDynamicRoutes: true,
+    cloudRenderedPages: [
+      '/tutorials/_tutorial',
+    ],
   },
   webpack(config) {
     config.resolve.alias = { // eslint-disable-line no-param-reassign
@@ -19,8 +30,9 @@ const nextConfig = withSass(withCSS(withFirestudio({
       '@elements': path.resolve(__dirname, './src/app/components/elements'),
       '@partials': path.resolve(__dirname, './src/app/components/partials'),
       '@templates': path.resolve(__dirname, './src/app/components/templates'),
-      '@hocs': path.resolve(__dirname, './src/app/hocs'),
+      '@hocs': path.resolve(__dirname, './src/app/components/hocs'),
       '@config': path.resolve(__dirname, './src/app/config'),
+      '@plugins': path.resolve(__dirname, './src/app/plugins'),
       '@store': path.resolve(__dirname, './src/app/store'),
     };
 
@@ -36,6 +48,9 @@ const nextConfig = withSass(withCSS(withFirestudio({
     );
 
     return config;
+  },
+  sassLoaderOptions: {
+    includePaths: ['node_modules'],
   },
 })));
 

@@ -1,53 +1,136 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Flex, Clickable } from '@firestudio/ui';
+import {
+  Flex, Clickable, Container, Hr,
+} from '@firestudio/ui';
 //
-import Link from '@elements/Link';
-import AuthNav from '@elements/AuthNav';
+import firebase from '@config/firebase';
+import Drawer from '@elements/Drawer';
+import SignInButton from '@elements/SignInButton';
 
-export default class Nav extends React.PureComponent {
+export default class Nav extends PureComponent {
+  state = {
+    isReady: false,
+  }
+
+  unregisterAuthObserver = null
+
+  async componentDidMount() {
+    this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(() => {
+      this.setState({
+        isReady: true,
+      });
+    });
+  }
+
+  componentWillUnmount() {
+    this.unregisterAuthObserver();
+  }
+
   static renderLink(to, text) {
     return (
-      <Clickable
-        href={to}
-        as={Link}
-        styledAs="a"
-        prefetch
-        asNextLink
-        className="hidden sm:flex h-full items-center mx-4 hover:text-blue"
-      >
-        {text}
-      </Clickable>
+      <Drawer.Trigger
+        target="menu"
+        render={({ toggleDialog }) => (
+          <Clickable
+            href={to}
+            as="a"
+            className="flex h-full items-center mx-4 hover:text-blue-600"
+            onClick={toggleDialog}
+          >
+            {text}
+          </Clickable>
+        )}
+      />
+    );
+  }
+
+  renderSignOutButton() {
+    const { isReady } = this.state;
+
+    if (!isReady) {
+      return null;
+    }
+
+    return firebase.auth().currentUser && (
+      <Flex className="flex-grow gap-between-6">
+        <Hr />
+        <Drawer.Trigger
+          target="menu"
+          render={({ toggleDialog }) => (
+            <Clickable
+              styledAs="a"
+              className="flex h-full items-center mx-4 hover:text-blue-600"
+              onClick={() => {
+                toggleDialog();
+                firebase.auth().signOut();
+              }}
+            >
+              Sign Out
+            </Clickable>
+          )}
+        />
+      </Flex>
     );
   }
 
   render() {
     return (
-      <nav className="nav h-full bg-blue-darker text-white font-medium">
-        <div className="mx-auto flex h-full px-8">
+      <nav className="nav h-20 bg-blue-800 text-white font-medium">
+        <Container className="flex h-full px-8">
           <Flex className="flex-row flex-grow items-center gap-between-4" childClassName="h-full">
             <Clickable
               href="/"
-              as={Link}
+              as="a"
               styledAs="none"
-              isFlat
-              prefetch
-              asNextLink
-              className="flex h-full items-center uppercase text-white font-bold mr-4"
+              className="flex h-full items-center text-white text-2xl font-bold mr-4"
             >
-              <span className="mr-4 text-blue"><FontAwesomeIcon icon={['far', 'grin-tongue-squint']} /></span>
-              <span>
-                FireStudio
-              </span>
+              Firepress
             </Clickable>
-            {Nav.renderLink('/about', 'About')}
-            {Nav.renderLink('/pre-rendering', 'Static')}
-            {Nav.renderLink('/cloud-rendering', 'SSR')}
-            {Nav.renderLink('/cloud-functions', 'Functions')}
             <div className="flex-grow" />
-            <AuthNav />
+            <div className="flex h-full items-center">
+              <SignInButton />
+            </div>
+            <div className="flex h-full items-center">
+              <div className="block border-r border-white w-1 h-10" />
+            </div>
+            <Drawer.Trigger
+              target="menu"
+              render={({ toggleDialog }) => (
+                <Clickable
+                  className="flex h-full text-white hover:text-blue-500 p-0"
+                  onClick={toggleDialog}
+                >
+                  <FontAwesomeIcon icon={['fas', 'bars']} size="2x" />
+                </Clickable>
+              )}
+            />
           </Flex>
-        </div>
+        </Container>
+        <Drawer
+          name="menu"
+        >
+          <Drawer.Trigger
+            target="menu"
+            render={({ toggleDialog }) => (
+              <Clickable
+                className="absolute top-0 right-0 w-20 h-20 p-0 hover:text-blue-500"
+                onClick={toggleDialog}
+              >
+                <FontAwesomeIcon icon={['fas', 'times']} size="2x" />
+              </Clickable>
+            )}
+          />
+          <Flex className="flex-grow gap-between-6">
+            <Hr />
+            {Nav.renderLink('/', 'Home')}
+            {Nav.renderLink('/finish-setup', 'Finish Setup')}
+            {Nav.renderLink('/core-features', 'Core Features')}
+            {Nav.renderLink('/ui-components', 'UI Components')}
+            {Nav.renderLink('/tutorials/1', 'Tutorial 1')}
+            {this.renderSignOutButton()}
+          </Flex>
+        </Drawer>
       </nav>
     );
   }

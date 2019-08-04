@@ -63,16 +63,18 @@ npm i -g @firestudio/create
 Use the create command in the following format to create a Firestudio App:
 ```
 firestudio create <directory> -t <template>
+
+e.g firestudio create ./my-test-app -t default
 ```
 
 **Note for Gitpod users**
 
 As you will already be in your project's root directory run the following command to initialise Firestudio:
 ```
-firestudio create . -t basic
+firestudio create . -t default
 ```
 
-Firestudio's 'basic' template will be installed along with all dependencies.
+Firestudio's 'default' template will be installed along with all dependencies.
 
 ---
 
