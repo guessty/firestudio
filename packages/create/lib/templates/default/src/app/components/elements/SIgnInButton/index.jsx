@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
   Flex, Clickable, Avatar, Loader,
-} from '@firestudio/ui';
+} from '@firepress/ui';
 //
 import firebase from '@config/firebase';
 //
@@ -43,7 +43,7 @@ class AuthNav extends Component {
         as="a"
         styledAs="button"
         href="/sign-in"
-        className="text-white border rounded border-white bg-blue-800 hocus:bg-blue-700 px-6"
+        className="text-white border rounded border-white bg-gray-800 hocus:bg-gray-700 px-6"
       >
         Sign In
       </Clickable>

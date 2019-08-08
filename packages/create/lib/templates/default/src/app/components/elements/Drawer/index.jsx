@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Dialog, Transition } from '@firestudio/ui';
+import { Dialog, Transition } from '@firepress/ui';
 
 export default class Drawer extends PureComponent {
   static propTypes = {

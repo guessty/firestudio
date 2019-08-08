@@ -1,5 +1,5 @@
 const express = require('express');
-const initDevEnv = require('@firestudio/core/dev');
+const initDevEnv = require('@firepress/core/dev');
 const admin = require('firebase-admin');
 
 const conf = require('../next.config');

@@ -1,3 +1,3 @@
 # Default Template for Firestudio
 
-See https://github.com/guessty/firestudio for installation details.
+See https://github.com/guessty/firepress for installation details.

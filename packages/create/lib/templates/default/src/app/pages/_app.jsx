@@ -1,8 +1,8 @@
 import React from 'react';
 import NextApp from 'next/app';
 import Head from 'next/head';
-import { withFirepress } from '@firestudio/core/app';
-import { Application, Loader } from '@firestudio/ui';
+import { withFirepress } from '@firepress/core/app';
+import { Application, Loader } from '@firepress/ui';
 
 // global styles need to be imported before any project
 // components to ensure component styles have higher priority.

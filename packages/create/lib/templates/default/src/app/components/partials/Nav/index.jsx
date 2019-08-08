@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Flex, Clickable, Container, Hr,
-} from '@firestudio/ui';
+} from '@firepress/ui';
 //
 import firebase from '@config/firebase';
 import Drawer from '@elements/Drawer';
@@ -27,12 +27,13 @@ export default class Nav extends PureComponent {
     this.unregisterAuthObserver();
   }
 
-  static renderLink(to, text) {
+  static renderLink(to, text, options) {
     return (
       <Drawer.Trigger
         target="menu"
         render={({ toggleDialog }) => (
           <Clickable
+            {...options}
             href={to}
             as="a"
             className="flex h-full items-center mx-4 hover:text-blue-600"
@@ -76,14 +77,14 @@ export default class Nav extends PureComponent {
 
   render() {
     return (
-      <nav className="nav h-20 bg-blue-800 text-white font-medium">
+      <nav className="nav h-20 bg-white text-black font-medium">
         <Container className="flex h-full px-8">
           <Flex className="flex-row flex-grow items-center gap-between-4" childClassName="h-full">
             <Clickable
               href="/"
               as="a"
               styledAs="none"
-              className="flex h-full items-center text-white text-2xl font-bold mr-4"
+              className="flex h-full items-center text-2xl font-bold mr-4"
             >
               Firepress
             </Clickable>
@@ -92,13 +93,13 @@ export default class Nav extends PureComponent {
               <SignInButton />
             </div>
             <div className="flex h-full items-center">
-              <div className="block border-r border-white w-1 h-10" />
+              <div className="block border-r border-black w-1 h-10" />
             </div>
             <Drawer.Trigger
               target="menu"
               render={({ toggleDialog }) => (
                 <Clickable
-                  className="flex h-full text-white hover:text-blue-500 p-0"
+                  className="flex h-full text-black hover:text-gray-500 p-0"
                   onClick={toggleDialog}
                 >
                   <FontAwesomeIcon icon={['fas', 'bars']} size="2x" />
@@ -114,7 +115,7 @@ export default class Nav extends PureComponent {
             target="menu"
             render={({ toggleDialog }) => (
               <Clickable
-                className="absolute top-0 right-0 w-20 h-20 p-0 hover:text-blue-500"
+                className="absolute top-0 right-0 w-20 h-20 p-0 hover:text-gray-500"
                 onClick={toggleDialog}
               >
                 <FontAwesomeIcon icon={['fas', 'times']} size="2x" />
@@ -124,10 +125,10 @@ export default class Nav extends PureComponent {
           <Flex className="flex-grow gap-between-6">
             <Hr />
             {Nav.renderLink('/', 'Home')}
-            {Nav.renderLink('/finish-setup', 'Finish Setup')}
-            {Nav.renderLink('/core-features', 'Core Features')}
-            {Nav.renderLink('/ui-components', 'UI Components')}
-            {Nav.renderLink('/tutorials/1', 'Tutorial 1')}
+            {Nav.renderLink('https://firepress.gitbook.io/documentation/', 'Documentation', {
+              isExternal: true,
+              target: '_blank',
+            })}
             {this.renderSignOutButton()}
           </Flex>
         </Drawer>

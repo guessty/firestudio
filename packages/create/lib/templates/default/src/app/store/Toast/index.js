@@ -1,4 +1,4 @@
-import { Container } from '@firestudio/core/store';
+import { Container } from '@firepress/core/store';
 //
 
 export default class Toast extends Container {

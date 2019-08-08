@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Container, Flex, Hr } from '@firestudio/ui';
+import { Container, Flex, Hr } from '@firepress/ui';
 
 export default class extends PureComponent {
   render() {

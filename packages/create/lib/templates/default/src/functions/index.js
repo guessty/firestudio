@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import coreFunctions from '@firestudio/core/functions';
+import coreFunctions from '@firepress/core/functions';
 //
 import apiFunctions from './apis';
 

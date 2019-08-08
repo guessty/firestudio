@@ -13,7 +13,7 @@ class FirepressDocument extends Document {
           <link href="https://fonts.googleapis.com/css?family=Exo+2:400,500,600&display=swap" rel="stylesheet" />
         </Head>
         <body>
-          <div id="firestudioApp">
+          <div id="firepressApp">
             <Main />
             <NextScript />
           </div>

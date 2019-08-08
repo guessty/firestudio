@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-import { Container, Flex, Hr } from '@firestudio/ui';
+import { Container, Flex, Hr } from '@firepress/ui';
 //
 import firebase from '@config/firebase';
 
@@ -59,7 +59,7 @@ class SignIn extends PureComponent {
 
   render() {
     return (
-      <Flex className="flex-grow sm:bg-blue-800">
+      <Flex className="flex-grow sm:bg-gray-800">
         <Container className="items-center sm:pt-8">
           <Flex className="gap-around-8 w-full sm:max-w-md bg-white">
             <h1 className="text-4xl text-center font-semibold">Sign In</h1>

@@ -1,7 +1,7 @@
 // See https://tailwindcss.com
 /* eslint-disable quote-props */
 
-const firestudioUi = require('@firestudio/ui/dist/styles');
+const firepressUi = require('@firepress/ui/dist/styles');
 
 module.exports = {
   theme: {
@@ -77,7 +77,7 @@ module.exports = {
       });
 
       // Components
-      addComponents(firestudioUi(theme));
+      addComponents(firepressUi(theme));
     },
   ],
 };
