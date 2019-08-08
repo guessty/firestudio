@@ -22,7 +22,7 @@ export default class extends PureComponent {
               href="https://firepress.gitbook.io/documentation/"
               isExternal
               target="_blank"
-              className="text-xl text-white rounded bg-grey-900 hocus:bg-gray-800"
+              className="text-xl text-white rounded bg-gray-900 hocus:bg-gray-800"
             >
               Read Documentation
             </Clickable>
