@@ -18,7 +18,7 @@ export default class Container extends Unstated.Container {
     await super.setState(updater, callback);
     const newState = { ...this.state };
 
-    if (typeof window !== 'undefined' && window.__FIRESTUDIO_STORE_DEBUGGER__.isEnabled) {
+    if (typeof window !== 'undefined' && window.__FIREPRESS_STORE_DEBUGGER__.isEnabled) {
       const diff = detailedDiff(prevState, newState);
 
       console.groupCollapsed(name);

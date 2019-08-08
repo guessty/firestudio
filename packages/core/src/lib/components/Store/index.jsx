@@ -7,14 +7,14 @@ export { default as Container } from './Container';
 export { default as Subscribe, RawSubscribe } from './Subscribe';
 
 const isServer = typeof window === 'undefined';
-const __FIRESTUDIO_STORE__ = '__FIRESTUDIO_STORE__';
+const __FIREPRESS_STORE__ = '__FIREPRESS_STORE__';
 
 const StoreDebugger = {
   isEnabled: false,
 };
 
 if (!isServer) {
-  window.__FIRESTUDIO_STORE_DEBUGGER__ = StoreDebugger;
+  window.__FIREPRESS_STORE_DEBUGGER__ = StoreDebugger;
 }
 
 
@@ -36,11 +36,11 @@ class Store extends PureComponent {
       return Store.initStore(stateContainers, initialData, firebaseInstance);
     }
 
-    if (!window[__FIRESTUDIO_STORE__]) {
-      window[__FIRESTUDIO_STORE__] = Store.initStore(stateContainers, initialData, firebaseInstance);
+    if (!window[__FIREPRESS_STORE__]) {
+      window[__FIREPRESS_STORE__] = Store.initStore(stateContainers, initialData, firebaseInstance);
     }
 
-    return window[__FIRESTUDIO_STORE__];
+    return window[__FIREPRESS_STORE__];
   }
 
   static initStore = (stateContainers = {}, initialData = {}, firebaseInstance) => (
