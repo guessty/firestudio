@@ -1,16 +1,16 @@
 {
-  "name": "@firestudio/core",
-  "version": "0.5.0",
-  "description": "Develop apps with NextJS and Firebase",
+  "name": "@firepress/core",
+  "version": "0.1.0",
+  "description": "Core package for creating Firepress apps",
   "keywords": [
     "react",
-    "next.js",
-    "firestudio"
+    "Firepress",
+    "Firebase"
   ],
   "author": "guessty",
-  "repository": "guessty/firestudio",
+  "repository": "guessty/firepress",
   "bugs": {
-    "url": "https://github.com/guessty/firestudio/issues"
+    "url": "https://github.com/guessty/firepress/issues"
   },
   "license": "MIT",
   "main": "index.js",
@@ -26,7 +26,7 @@
     "prismic.js"
   ],
   "bin": {
-    "firestudio": "./dist/bin/firestudio.js"
+    "firepress": "./dist/bin/firepress.js"
   },
   "scripts": {
     "test": "node test/test.js",

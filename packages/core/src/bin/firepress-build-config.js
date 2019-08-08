@@ -16,7 +16,7 @@ function build () {
 
   const dir = path.resolve(argv._[0] || '.');
   const config = loadConfig(dir);
-  const outdir = argv.outdir ? path.resolve(argv.outdir) : path.resolve(config.distDir, '..', '/.firestudio');
+  const outdir = argv.outdir ? path.resolve(argv.outdir) : path.resolve(config.distDir, '..', '/.firepress');
 
   console.log('|---- Generating Firebase Deployment Config...');
   buildDeploymentConfig(outdir, config);

@@ -1,5 +1,5 @@
-# @firestudio/core
+# @firepress/core
 
-The core package for developing Firestudio Apps.
+The core package for developing Firepress Apps.
 
-See https://github.com/guessty/firestudio for details.
+See https://github.com/guessty/firepress for details.
