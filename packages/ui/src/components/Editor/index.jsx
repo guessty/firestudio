@@ -1,7 +1,7 @@
 import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html';
-import { Subscribe } from '@firestudio/core/store';
+import { Subscribe } from '@firepress/core/store';
 
 import { Cms as CmsContainer } from '../../store';
 

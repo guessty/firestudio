@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Subscribe } from '@firestudio/core/store';
+import { Subscribe } from '@firepress/core/store';
 
 import { Dialog as DialogContainer } from '../../store';
 import Base from './Base';

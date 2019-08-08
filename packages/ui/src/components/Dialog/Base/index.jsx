@@ -52,8 +52,8 @@ export default class Base extends Component {
 
   static toggleBodyLock(isOpen, scrollbarWidth) {
     if (typeof document !== 'undefined') {
-      if (document.getElementById('firestudioApp')) {
-        document.getElementById('firestudioApp').style.cssText = isOpen ? `
+      if (document.getElementById('firepressApp')) {
+        document.getElementById('firepressApp').style.cssText = isOpen ? `
           overflow: hidden;
           padding-right: ${scrollbarWidth}px !important;
         ` : '';

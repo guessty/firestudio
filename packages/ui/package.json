@@ -1,11 +1,11 @@
 {
-  "name": "@firestudio/ui",
-  "version": "0.2.16",
-  "description": "A set of ui components for firestudio",
+  "name": "@firepress/ui",
+  "version": "0.1.0",
+  "description": "A set of UI components for Firepress",
   "keywords": [
-    "react",
-    "ui",
-    "firestudio"
+    "React",
+    "UI",
+    "Firepress"
   ],
   "author": "guessty",
   "license": "MIT",
@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.4.4",
-    "@firestudio/core": "^0.4.0",
+    "@firepress/core": "^0.1.1",
     "@reach/dialog": "^0.2.9",
     "@reach/visually-hidden": "^0.1.4",
     "classnames": "^2.2.6",

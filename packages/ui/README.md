@@ -1,4 +1,4 @@
-# @firestudio/ui
-A set of React components to be used with firestudio.
+# @firepress/ui
+A set of React components to be used with firepress.
 
-See https://github.com/guessty/firestudio for details.
+See https://github.com/guessty/firepress for details.

@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Link from '@firestudio/core/link';
+import Link from '@firepress/core/link';
 
 export default class Clickable extends PureComponent {
   static propTypes = {
