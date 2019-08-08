@@ -3,7 +3,7 @@
 const parseArgs = require('minimist')
 const lib = require('./..')
 
-const createFirestudioApp = lib.createFirestudioApp
+const createApp = lib.createApp
 
 function create() {
   const argv = parseArgs(process.argv.slice(2), {
@@ -15,7 +15,7 @@ function create() {
 
   const projectName = argv._[0]
 
-  createFirestudioApp({
+  createApp({
     projectName,
     templateName: argv.template
   })

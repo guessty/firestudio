@@ -4,7 +4,7 @@ const copyDir = require('./utils/copy-dir')
 const install = require('./utils/install')
 const messages = require('./messages')
 
-module.exports = function createFirestudioApp(opts) {
+module.exports = function createApp(opts) {
   const projectName = opts.projectName
 
   if (!projectName) {

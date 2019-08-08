@@ -10,7 +10,7 @@ const messages = lib.messages
 commander
   .version(pkg.version)
   .description(pkg.description)
-  .command('create', 'create a new firestudio app')
+  .command('create', 'create a new firepress app')
   .arguments('<project-directory>')
   .usage(`${chalk.green('<project-directory>')} [options]`)
   .allowUnknownOption()
