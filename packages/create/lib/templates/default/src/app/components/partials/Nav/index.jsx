@@ -77,7 +77,7 @@ export default class Nav extends PureComponent {
 
   render() {
     return (
-      <nav className="nav h-20 bg-white text-black font-medium">
+      <nav className="nav h-20 bg-white text-black font-medium border-b">
         <Container className="flex h-full px-8">
           <Flex className="flex-row flex-grow items-center gap-between-4" childClassName="h-full">
             <Clickable

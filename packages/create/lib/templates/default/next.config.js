@@ -20,9 +20,7 @@ const nextConfig = withSass(withCSS(withFirepressConfig({
   },
   firepress: {
     projectId: firebaseConfig.projectId,
-    cloudRenderedPages: [
-      '/tutorials/_tutorial',
-    ],
+    cloudRenderedPages: [],
   },
   webpack(config) {
     config.resolve.alias = { // eslint-disable-line no-param-reassign
