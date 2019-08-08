@@ -8,4 +8,4 @@ It provides a configuration free approach to web development that enables you to
 
 ---
 
-For more info please see go to https://firepress.dev
+For documentation go to https://firepress.gitbook.io/documentation/
