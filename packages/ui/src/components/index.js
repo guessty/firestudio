@@ -9,4 +9,5 @@ export { default as Flex } from './Flex';
 export { default as Form, Field } from './Form';
 export { default as Hr } from './Hr';
 export { default as Loader } from './Loader';
+export { default as Menu } from './Menu';
 export { default as Transition } from './Transition';

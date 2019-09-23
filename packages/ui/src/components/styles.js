@@ -9,6 +9,7 @@ const flex = require('./Flex/styles');
 const formfield = require('./Form/Field/styles');
 const hr = require('./Hr/styles');
 const loader = require('./Loader/styles');
+const menu = require('./Menu/styles');
 const transition = require('./Transition/styles');
 
 module.exports = theme => Object.assign(
@@ -24,5 +25,6 @@ module.exports = theme => Object.assign(
   formfield,
   hr,
   loader,
+  menu,
   transition,
 );
