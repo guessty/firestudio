@@ -66,7 +66,9 @@ export default class MenuButton extends Component {
         ambManager.handleButtonNonArrowKey(event);
     }
 
-    onKeyDown(event);
+    if (typeof onKeyDown === 'function') {
+      onKeyDown(event);
+    }
   }
 
   handleClick(event) {
@@ -76,7 +78,10 @@ export default class MenuButton extends Component {
     if (disabled) return;
 
     ambManager.toggleMenu({}, { focusMenu: false });
-    onClick(event);
+    
+    if (typeof onClick === 'function') {
+      onClick(event);
+    }
   }
 
   render() {
