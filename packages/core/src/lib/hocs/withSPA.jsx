@@ -1,13 +1,19 @@
 import * as React from 'react';
 import { parse } from 'node-html-parser';
 import unfetch from 'isomorphic-unfetch';
+import getConfig from 'next/config'
+const { publicRuntimeConfig } = getConfig();
 //
 const buildRoutes = require('./../build/routes')
 //
 
 export default (App) => class _App extends React.Component {
+  static AppLoader = () => (
+    <h2 style={{ padding: '60px 20px', textAlign: 'center' }}>Loading App...</h2>
+  )
+
   static PageLoader = () => (
-    <h2 style={{ padding: '60px 20px', textAlign: 'center' }}>Loading...</h2>
+    <h2 style={{ padding: '60px 20px', textAlign: 'center' }}>Loading Page...</h2>
   )
 
   static Routes = buildRoutes(process.env.ROUTES || [])
@@ -21,11 +27,10 @@ export default (App) => class _App extends React.Component {
     const isExporting = (!process.browser && !(ctx && ctx.req && ctx.req.headers));
     const isClient = (Boolean(process.browser) && !(ctx && ctx.req && ctx.req.headers));
     const isServer = (!process.browser && Boolean(ctx && ctx.req && ctx.req.headers));
-    const isPrivate = Page.isPrivate && (isServer || (App.firebase && App.firebase.auth));
-    const isAuthenticated = isClient && App.firebase && App.firebase.auth && App.firebase.auth().currentUser;
+    const { IS_SPA: isSPA } = publicRuntimeConfig;
 
     if (Page.redirectTo) {
-      if (isServer) {
+      if (isServer && !isSPA) {
         ctx.res.writeHead(302, {
           Location: Page.redirectTo,
         });
@@ -35,7 +40,7 @@ export default (App) => class _App extends React.Component {
       }
     }
 
-    if (isClient && !Page.isDynamic && (!isPrivate || (isPrivate && isAuthenticated))) {
+    if (!isSPA && isClient && !Page.isDynamic) {
       const response = await unfetch(ctx.asPath, {
         headers: {
           'Content-Type': 'text/html; charset=utf-8',
@@ -52,8 +57,7 @@ export default (App) => class _App extends React.Component {
     let pageNeedsProps = typeof Page.getInitialProps === 'function';
     let pageProps = {};
     if (pageNeedsProps
-      && (!isPrivate || (isPrivate && isAuthenticated))
-      && ((isExporting && !Page.isDynamic) || (isServer) || (isClient))) {
+      && ((isExporting && !Page.isDynamic) || (isServer && !isSPA) || (isClient))) {
       pageProps = await Page.getInitialProps(ctx);
       if (!pageProps) {
         pageProps = {};
@@ -65,7 +69,8 @@ export default (App) => class _App extends React.Component {
       ...appProps,
       needsPageProps: pageNeedsProps,
       redirectTo: Page.redirectTo,
-      isPrivate: Page.isPrivate,
+      isClient,
+      isSPA,
       PageLoader: Page.Loader,
       pageProps,
     };
@@ -88,26 +93,17 @@ export default (App) => class _App extends React.Component {
     previousPath: undefined,
     currentPath: undefined,
     wasLoadedFromCache: false,
-    isAuthenticated: undefined,
   }
 
-  unregisterAuthObserver
-
   async componentDidMount() {
-    const { needsPageProps, redirectTo, isPrivate } = this.props;
+    const { needsPageProps, redirectTo, isSPA, isClient } = this.props;
     const { router } = this.state;
-
-    if (App.firebase && App.firebase.auth) {
-      this.unregisterAuthObserver = App.firebase.auth().onAuthStateChanged((user) => {
-        this.setState({ isAuthenticated: !!user });
-      });
-    }
 
     if (redirectTo) {
       _App.Routes.Router.replaceRoute(redirectTo);
     }
     
-    if (!isPrivate && needsPageProps) {
+    if (needsPageProps || (isSPA && !isClient)) {
       await _App.Routes.Router.pushRoute(router.router.asPath)
     }
 
@@ -125,19 +121,15 @@ export default (App) => class _App extends React.Component {
   }
 
   componentDidUpdate() {
-    const { wasLoadedFromCache, isAuthenticated, router } = this.state;
-    const { needsPageProps, redirectTo, isPrivate } = this.props;
+    const { wasLoadedFromCache, router } = this.state;
+    const { needsPageProps, redirectTo } = this.props;
 
     if (redirectTo) {
       _App.Routes.Router.replaceRoute(redirectTo);
     }
 
-    if (isPrivate) {
-      if (!isAuthenticated) {
-        _App.Routes.Router.replaceRoute(App.redirectPrivatePagesTo || '/sign-in');
-      } else if (isAuthenticated && needsPageProps) {
-        _App.Routes.Router.pushRoute(router.router.asPath);
-      }
+    if (needsPageProps) {
+      _App.Routes.Router.pushRoute(router.router.asPath);
     }
 
     if (wasLoadedFromCache) {
@@ -150,17 +142,11 @@ export default (App) => class _App extends React.Component {
     }
   }
 
-  componentWillUnmount() {
-    if (App.firebase.auth) {
-      this.unregisterAuthObserver();
-    }
-  }
-
   render() {
     const {
-      Component: Page, PageLoader, isPrivate, needsPageProps, pageProps, ...props
+      Component: Page, PageLoader, needsPageProps, isClient, isSPA, pageProps, ...props
     } = this.props;
-    const { router, wasLoadedFromCache, isAuthenticated } = this.state;
+    const { router, wasLoadedFromCache } = this.state;
 
     const isLoadingPage = needsPageProps;
     const Loader = PageLoader || App.PageLoader || _App.PageLoader;
@@ -170,7 +156,6 @@ export default (App) => class _App extends React.Component {
       Loader,
       wasLoadedFromCache,
     };
-    const canReturnPage = !isPrivate || (isPrivate && isAuthenticated);
   
     const appProps = {
       ...props,
@@ -180,20 +165,21 @@ export default (App) => class _App extends React.Component {
           id="page"
           className="flex flex-col flex-grow w-full"
         >
-          {canReturnPage ? (
-            <Page {..._pageProps} {...extraProps}>
-              {children}
-            </Page>
-          ) : (
-            <PageLoader />
-          )}
+          <Page {..._pageProps} {...extraProps}>
+            {children}
+          </Page>
         </div>
       ),
       pageProps: _pageProps,
     };
 
-    return (
+    const canRenderApp = !isSPA || (isSPA && isClient);
+    const AppLoader = App.AppLoader || _App.AppLoader;
+
+    return canRenderApp ? (
       <App {...appProps} />
+    ) : (
+      <AppLoader />
     );
   }
 };

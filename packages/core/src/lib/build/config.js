@@ -9,7 +9,7 @@ const generateDirRoutes = (dir, pathString = undefined, routes = []) => {
   const normalizedPath = normalizePath(dir)
   const stats = fs.statSync(normalizedPath);
   const baseName = path.basename(dir)
-  if (stats.isDirectory()) {
+  if (stats.isDirectory() && baseName !== '__tests__') {
     let nextPathString = ''
     if (pathString !== undefined) {
       nextPathString = `${pathString}/${baseName}`;
@@ -46,11 +46,13 @@ const generateDirRoutes = (dir, pathString = undefined, routes = []) => {
   return routes
 } 
 
-const generateExportPathMap = (routes, firepressConfig) => {
-  const allRoutes = [
+const generateExportPathMap = (routes, { isSPA }) => {
+  const allRoutes = isSPA ? [
+    { pattern: '/', page: '/' }
+  ] : [
     { pattern: '/404.html', page: '/_404' },
     ...routes,
-  ]
+  ];
   
   return allRoutes.reduce((routeMap, route) => {
     const normalisedPattern = route.pattern.replace('.html', '')
@@ -94,7 +96,7 @@ const withFirepress = (config = {}) => {
   }
   const routes = generateDirRoutes(pagesDir)
 
-  const exportPathMap = generateExportPathMap(routes, firepressConfig)
+  const exportPathMap = config.exportPathMap || generateExportPathMap(routes, firepressConfig)
 
   const firepressEntries = {
     'static/build/pages/_404.js': [ path.join(__dirname, '..', '..', 'lib/pages/_soft404.js') ],
@@ -106,7 +108,14 @@ const withFirepress = (config = {}) => {
     exportPathMap: () => exportPathMap,
     env: {
       ...baseNextConfig.env,
+      FIREBASE: firepressConfig.firebaseConfig || {},
       ROUTES: routes,
+      IS_SPA: firepressConfig.isSPA,
+    },
+    publicRuntimeConfig: {
+      ...baseNextConfig.publicRuntimeConfig,
+      FIREBASE: firepressConfig.firebaseConfig || {},
+      IS_SPA: firepressConfig.isSPA,
     },
     generateBuildId: async () => {
       return 'build'

@@ -19,11 +19,12 @@ const normaliseRoute = function(route) {
 const buildFirebaserc = function(config) {
   const firepressConfig = Object.assign({}, {
     cloudRenderedPages: [],
+    firebaseConfig: {},
   }, config.firepress || {});
 
   const firebaserc = JSON.stringify({
     projects: {
-      default: firepressConfig.projectId
+      default: firepressConfig.firebaseConfig.projectId
     }
   }, null, 2);
   
