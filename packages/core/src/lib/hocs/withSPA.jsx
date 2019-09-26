@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { parse } from 'node-html-parser';
 import unfetch from 'isomorphic-unfetch';
-import getConfig from 'next/config'
-const { publicRuntimeConfig } = getConfig();
+import getConfig from 'next/config';
 //
-const buildRoutes = require('./../build/routes')
+const { publicRuntimeConfig } = getConfig();
+const buildRoutes = require('../build/routes');
 //
 
-export default (App) => class _App extends React.Component {
+export default App => class _App extends React.Component {
   static AppLoader = () => (
     <h2 style={{ padding: '60px 20px', textAlign: 'center' }}>Loading App...</h2>
   )
@@ -19,9 +19,9 @@ export default (App) => class _App extends React.Component {
   static Routes = buildRoutes(process.env.ROUTES || [])
 
   static async getInitialProps(appContext) {
-    const initialProps = (typeof App.getInitialProps === 'function') ?
-      await App.getInitialProps(appContext) : {}
-    
+    // const initialProps = (typeof App.getInitialProps === 'function')
+    //   ? await App.getInitialProps(appContext) : {};
+
     const { Component: Page, ctx } = appContext;
 
     const isExporting = (!process.browser && !(ctx && ctx.req && ctx.req.headers));
@@ -48,7 +48,7 @@ export default (App) => class _App extends React.Component {
         credentials: 'include',
       });
       const html = await response.text();
-      const root = parse(html, { script: true })
+      const root = parse(html, { script: true });
       const dataNode = root.querySelector('#__NEXT_DATA__');
 
       return dataNode.rawText ? JSON.parse(dataNode.rawText).props : {};
@@ -65,11 +65,22 @@ export default (App) => class _App extends React.Component {
       pageNeedsProps = false;
     }
 
+    const {
+      query, req, res, err,
+      pathname, asPath, isServer: isCtxServer,
+      ...extraCtx
+    } = ctx;
+    const appCtx = {
+      query,
+      pathname,
+      asPath,
+      ...extraCtx,
+    };
     let appNeedsProps = typeof App.getAppProps === 'function';
-    let appProps = {};
+    let appProps;
     if (appNeedsProps
       && (isServer && !isSPA)) {
-      appProps = await App.getAppProps();
+      appProps = await App.getAppProps(appCtx);
       if (!appProps) {
         appProps = {};
       }
@@ -77,7 +88,9 @@ export default (App) => class _App extends React.Component {
     }
 
     return {
-      ...initialProps,
+      // ...initialProps,
+      ...appCtx,
+      ctxKeys: Object.keys(appCtx),
       appProps,
       appNeedsProps,
       pageNeedsProps,
@@ -111,11 +124,20 @@ export default (App) => class _App extends React.Component {
   }
 
   async componentDidMount() {
-    const { appNeedsProps, pageNeedsProps, redirectTo, isSPA, isClient } = this.props;
+    const {
+      appNeedsProps, pageNeedsProps,
+      redirectTo, isSPA, isClient, ctxKeys,
+    } = this.props;
     const { router } = this.state;
 
+    const allProps = this.props;
+    const appCtx = ctxKeys.reduce((ctx, key) => ({
+      ...ctx,
+      [key]: allProps[key],
+    }), {});
+
     if (appNeedsProps) {
-      const appProps = await App.getAppProps();
+      const appProps = await App.getAppProps(appCtx);
       this.setState({
         appProps,
       });
@@ -124,21 +146,22 @@ export default (App) => class _App extends React.Component {
     if (redirectTo) {
       _App.Routes.Router.replaceRoute(redirectTo);
     }
-    
+
     if (pageNeedsProps || (isSPA && !isClient)) {
-      await _App.Routes.Router.pushRoute(router.router.asPath)
+      await _App.Routes.Router.pushRoute(router.router.asPath);
     }
 
     router.beforePopState(() => {
       setTimeout(() => {
         this.setState({
           wasLoadedFromCache: true,
-        })
-      }, 0)
+        });
+      }, 0);
       document.getElementById('page').style.cssText = `
         visibility: hidden;
       `;
-      return true
+
+      return true;
     });
   }
 
@@ -155,9 +178,10 @@ export default (App) => class _App extends React.Component {
     }
 
     if (wasLoadedFromCache) {
+      // eslint-disable-next-line react/no-did-update-set-state
       this.setState({
         wasLoadedFromCache: false,
-      })
+      });
       document.getElementById('page').style.cssText = `
         visibility: visible;
       `;
@@ -166,7 +190,10 @@ export default (App) => class _App extends React.Component {
 
   render() {
     const {
-      Component: Page, PageLoader, pageNeedsProps, isClient, isSPA, pageProps,
+      Component: Page, PageLoader,
+      appNeedsProps, appProps: propsAppProps,
+      pageNeedsProps, isClient, isSPA, pageProps,
+      ...props
     } = this.props;
     const { appProps, router, wasLoadedFromCache } = this.state;
 
@@ -178,8 +205,9 @@ export default (App) => class _App extends React.Component {
       Loader,
       wasLoadedFromCache,
     };
-  
+
     const _appProps = {
+      ...props,
       ...typeof appProps !== 'undefined' ? appProps : {},
       router,
       Page: ({ children, ...extraProps }) => (
@@ -195,7 +223,10 @@ export default (App) => class _App extends React.Component {
       pageProps: _pageProps,
     };
 
-    const canRenderApp = !isSPA || (isSPA && isClient);
+    const canRenderApp = (
+      (!appNeedsProps || (appNeedsProps && typeof appProps !== 'undefined'))
+      && (!isSPA || (isSPA && isClient))
+    );
     const AppLoader = App.AppLoader || _App.AppLoader;
 
     return canRenderApp ? (
