@@ -19,9 +19,9 @@ export default (App) => class _App extends React.Component {
   static Routes = buildRoutes(process.env.ROUTES || [])
 
   static async getInitialProps(appContext) {
-    const appProps = (typeof App.getInitialProps === 'function') ?
+    const initialProps = (typeof App.getInitialProps === 'function') ?
       await App.getInitialProps(appContext) : {}
-
+    
     const { Component: Page, ctx } = appContext;
 
     const isExporting = (!process.browser && !(ctx && ctx.req && ctx.req.headers));
@@ -65,9 +65,22 @@ export default (App) => class _App extends React.Component {
       pageNeedsProps = false;
     }
 
+    let appNeedsProps = typeof App.getAppProps === 'function';
+    let appProps = {};
+    if (appNeedsProps
+      && (isServer && !isSPA)) {
+      appProps = await App.getAppProps();
+      if (!appProps) {
+        appProps = {};
+      }
+      appNeedsProps = false;
+    }
+
     return {
-      ...appProps,
-      needsPageProps: pageNeedsProps,
+      ...initialProps,
+      appProps,
+      appNeedsProps,
+      pageNeedsProps,
       redirectTo: Page.redirectTo,
       isClient,
       isSPA,
@@ -82,6 +95,7 @@ export default (App) => class _App extends React.Component {
     };
 
     return {
+      appProps: state.appProps || props.appProps,
       router,
       previousPath: state.currentPath,
       currentPath: router.router.asPath,
@@ -93,17 +107,25 @@ export default (App) => class _App extends React.Component {
     previousPath: undefined,
     currentPath: undefined,
     wasLoadedFromCache: false,
+    appProps: undefined,
   }
 
   async componentDidMount() {
-    const { needsPageProps, redirectTo, isSPA, isClient } = this.props;
+    const { appNeedsProps, pageNeedsProps, redirectTo, isSPA, isClient } = this.props;
     const { router } = this.state;
+
+    if (appNeedsProps) {
+      const appProps = await App.getAppProps();
+      this.setState({
+        appProps,
+      });
+    }
 
     if (redirectTo) {
       _App.Routes.Router.replaceRoute(redirectTo);
     }
     
-    if (needsPageProps || (isSPA && !isClient)) {
+    if (pageNeedsProps || (isSPA && !isClient)) {
       await _App.Routes.Router.pushRoute(router.router.asPath)
     }
 
@@ -122,13 +144,13 @@ export default (App) => class _App extends React.Component {
 
   componentDidUpdate() {
     const { wasLoadedFromCache, router } = this.state;
-    const { needsPageProps, redirectTo } = this.props;
+    const { pageNeedsProps, redirectTo } = this.props;
 
     if (redirectTo) {
       _App.Routes.Router.replaceRoute(redirectTo);
     }
 
-    if (needsPageProps) {
+    if (pageNeedsProps) {
       _App.Routes.Router.pushRoute(router.router.asPath);
     }
 
@@ -144,11 +166,11 @@ export default (App) => class _App extends React.Component {
 
   render() {
     const {
-      Component: Page, PageLoader, needsPageProps, isClient, isSPA, pageProps, ...props
+      Component: Page, PageLoader, pageNeedsProps, isClient, isSPA, pageProps,
     } = this.props;
-    const { router, wasLoadedFromCache } = this.state;
+    const { appProps, router, wasLoadedFromCache } = this.state;
 
-    const isLoadingPage = needsPageProps;
+    const isLoadingPage = pageNeedsProps;
     const Loader = PageLoader || App.PageLoader || _App.PageLoader;
     const _pageProps = {
       ...pageProps,
@@ -157,8 +179,8 @@ export default (App) => class _App extends React.Component {
       wasLoadedFromCache,
     };
   
-    const appProps = {
-      ...props,
+    const _appProps = {
+      ...typeof appProps !== 'undefined' ? appProps : {},
       router,
       Page: ({ children, ...extraProps }) => (
         <div
@@ -177,7 +199,7 @@ export default (App) => class _App extends React.Component {
     const AppLoader = App.AppLoader || _App.AppLoader;
 
     return canRenderApp ? (
-      <App {...appProps} />
+      <App {..._appProps} />
     ) : (
       <AppLoader />
     );

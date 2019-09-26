@@ -1,6 +1,6 @@
 {
   "name": "@firepress/core",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "Core package for creating Firepress apps",
   "keywords": [
     "react",
