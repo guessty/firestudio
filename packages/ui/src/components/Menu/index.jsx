@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Wrapper, Menu } from 'react-aria-menubutton';
-import classnames from 'classnames';
 
 import MenuButton from './MenuButton';
 import MenuItem from './MenuItem';
@@ -9,26 +8,48 @@ import MenuHover from './MenuHover';
 
 export default class _Menu extends PureComponent {
   static propTypes = {
-    alignRight: PropTypes.bool,
     enableHoverEvents: PropTypes.bool,
     disabled: PropTypes.bool,
     className: PropTypes.string,
     listClassName: PropTypes.string,
     popupClassName: PropTypes.string,
-    style: PropTypes.shape({}),
     buttonComponent: PropTypes.element.isRequired,
     children: PropTypes.node.isRequired,
+    render: PropTypes.func,
   };
 
   static defaultProps = {
-    alignRight: false,
     enableHoverEvents: false,
     disabled: false,
     className: '',
     listClassName: '',
     popupClassName: '',
-    style: {},
+    render: undefined,
   };
+
+  static ItemList = ({ children, className }) => {
+    const childArray = Array.isArray(children) ? children : [children];
+
+    return (
+      <ul
+        className={`menu__list ${className}`}
+        role="none"
+        style={style}
+      >
+        {childArray.map((child, i) => {
+          const key = `menu-item-${i}`;
+
+          return (
+            <li key={key} role="none">
+              <MenuItem className="menu__item">
+                {child}
+              </MenuItem>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
 
   renderChildren() {
     const { children } = this.props;
@@ -49,15 +70,9 @@ export default class _Menu extends PureComponent {
 
   render() {
     const {
-      className, listClassName, popupClassName, disabled,
-      style, buttonComponent, alignRight, enableHoverEvents,
+      className, popupClassName, containerClassName, listClassName,
+      disabled, buttonComponent, enableHoverEvents, render,
     } = this.props;
-
-    const menuClassName = classnames(
-      'menu__popup',
-      { 'menu__popup--align-right': alignRight },
-      'pt-1 -mt-1',
-    );
 
     return (
       <Wrapper
@@ -71,17 +86,13 @@ export default class _Menu extends PureComponent {
             {buttonComponent}
           </MenuButton>
           <Menu
-            className={menuClassName}
+            className={`menu__popup ${popupClassName}`}
           >
             {menuState => ((!menuState.isOpen) ? false : (
-              <div className={`relative ${popupClassName}`}>
-                <ul
-                  className={`menu__list ${listClassName}`}
-                  role="none"
-                  style={style}
-                >
-                  {this.renderChildren()}
-                </ul>
+              <div className={`relative ${containerClassName}`}>
+                {typeof render === 'function' ? render({ ItemList }) : (
+                  <ItemList className={listClassName} children={children} />
+                )}
               </div>
             ))}
           </Menu>

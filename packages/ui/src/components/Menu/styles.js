@@ -7,10 +7,10 @@ module.exports = {
 
     '&__popup': {
       position: 'absolute',
+    },
 
-      '&--align-right': {
-        right: '0',
-      }
+    '&__container': {
+      position: 'relative',
     },
 
     '&__list': {
