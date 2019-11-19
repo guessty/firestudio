@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { Wrapper, Menu } from 'react-aria-menubutton';
 
 import MenuButton from './MenuButton';
-import MenuItem from './MenuItem';
 import MenuHover from './MenuHover';
+import MenuList from './MenuList';
 
 export default class _Menu extends PureComponent {
   static propTypes = {
@@ -14,7 +14,7 @@ export default class _Menu extends PureComponent {
     listClassName: PropTypes.string,
     popupClassName: PropTypes.string,
     buttonComponent: PropTypes.element.isRequired,
-    children: PropTypes.node.isRequired,
+    children: PropTypes.node,
     render: PropTypes.func,
   };
 
@@ -24,54 +24,14 @@ export default class _Menu extends PureComponent {
     className: '',
     listClassName: '',
     popupClassName: '',
+    children: null,
     render: undefined,
   };
-
-  static ItemList = ({ children, className }) => {
-    const childArray = Array.isArray(children) ? children : [children];
-
-    return (
-      <ul
-        className={`menu__list ${className}`}
-        role="none"
-        style={style}
-      >
-        {childArray.map((child, i) => {
-          const key = `menu-item-${i}`;
-
-          return (
-            <li key={key} role="none">
-              <MenuItem className="menu__item">
-                {child}
-              </MenuItem>
-            </li>
-          );
-        })}
-      </ul>
-    );
-  }
-
-  renderChildren() {
-    const { children } = this.props;
-    const childArray = Array.isArray(children) ? children : [children];
-
-    return childArray.map((child, i) => {
-      const key = `menu-item-${i}`;
-
-      return (
-        <li key={key} role="none">
-          <MenuItem className="menu__item">
-            {child}
-          </MenuItem>
-        </li>
-      );
-    });
-  }
 
   render() {
     const {
       className, popupClassName, containerClassName, listClassName,
-      disabled, buttonComponent, enableHoverEvents, render,
+      disabled, buttonComponent, enableHoverEvents, children, render,
     } = this.props;
 
     return (
@@ -90,8 +50,10 @@ export default class _Menu extends PureComponent {
           >
             {menuState => ((!menuState.isOpen) ? false : (
               <div className={`relative ${containerClassName}`}>
-                {typeof render === 'function' ? render({ ItemList }) : (
-                  <ItemList className={listClassName} children={children} />
+                {typeof render === 'function' ? render({ List: MenuList }) : (
+                  <MenuList className={listClassName}>
+                    {children}
+                  </MenuList>
                 )}
               </div>
             ))}
