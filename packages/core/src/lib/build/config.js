@@ -37,7 +37,7 @@ const generateDirRoutes = (dir, pathString = undefined, routes = []) => {
       routes.push(route)
     } else if (page !== '/_app' && page !== '/_document' && page !== '/_error') {
       const route = {
-        pattern: page.replace('/index', '').replace('/_', '/:'),
+        pattern: page.replace('/index', '').replace(/\/_/g, '/:'),
         page: page.replace('/index', ''),
       }
       routes.push(route)
@@ -60,7 +60,7 @@ const generateExportPathMap = (routes, { isSPA }) => {
     let routeKey = normalisedPattern
 
     if (routeKey.includes('/:')) {
-      routeMap[`${routeKey.replace('/:', '/_')}.html`] = { page: route.page }
+      routeMap[`${routeKey.replace(/\/:/g, '/_')}.html`] = { page: route.page }
       return routeMap
     }
 
