@@ -148,25 +148,19 @@ export default App => class _App extends Component {
 
     const isClient = Boolean(process.browser) && typeof window !== 'undefined';
 
-    let pageConfig;
+    let pageConfig = {};
 
     if (Page.redirectTo) {
       Routes.Router.replaceRoute(Page.redirectTo);
     }
 
-    const isAuthenticated = _App.isAuthenticated();
+    if (isClient && Page.exportPageConfig) {
+      pageConfig = await _App.getExportedPageConfig(ctx);
 
-    if (Page.isPrivate && typeof isAuthenticated !== 'undefined' && !isAuthenticated) {
-      _App.redirectPrivatePage(Routes.Router, ctx.asPath);
+      return pageConfig;
     }
 
-    if (!Page.isPrivate || (Page.isPrivate && isAuthenticated)) {
-      if (isClient && Page.exportPageConfig) {
-        pageConfig = await _App.getExportedPageConfig(ctx);
-  
-        return pageConfig;
-      }
-
+    if (typeof Page.getPageConfig === 'function') {
       try {
         pageConfig = await Page.getPageConfig(ctx);
         if (!pageConfig) pageConfig = {};
@@ -204,16 +198,23 @@ export default App => class _App extends Component {
       res.end();
     }
 
-    let appConfig = _App.getNextDataFirepressProps().appConfig;
+    const NEXT_DATA_FIREPRESS_PROPS = _App.getNextDataFirepressProps();
+    let appConfig = NEXT_DATA_FIREPRESS_PROPS.appConfig;
     let pageConfig = (typeof Page.getPageConfig === 'function' || Page.isPrivate) ? undefined : {};
     let Routes = _App.getRoutes(appConfig && appConfig.routes ? appConfig.routes : []);
     let ctx = _App.getCtx(newBaseCtx, Routes);
+    const isFirebaseAuthEnabled = Boolean(App.firebase && App.firebase.auth);
+    const isFirebaseAuthLoaded = NEXT_DATA_FIREPRESS_PROPS.isFirebaseAuthLoaded || false;
 
     let firepressProps = {
       ctx,
       Routes,
       appConfig,
       pageConfig,
+      isFirebaseAuthEnabled,
+      ...isFirebaseAuthEnabled ? {
+        isFirebaseAuthLoaded,
+      } : {},
       Page: {
         Loader: Page.Loader,
         isPrivate: Page.isPrivate,
@@ -242,16 +243,15 @@ export default App => class _App extends Component {
         Routes,
       };
     }
-    
-    if (isClient && Page.isPrivate) {
-      const isAuthenticated = _App.isAuthenticated();
-      if (typeof isAuthenticated !== 'undefined' && !isAuthenticated) {
+
+    if (Page.isPrivate && isFirebaseAuthEnabled && isFirebaseAuthLoaded) {
+      if (!App.firebase.auth().currentUser) {
         _App.redirectPrivatePage(Routes.Router, asPath);
+      } else {
+        pageConfig = await _App.getPageConfig(firepressProps);
       }
-    }
-    
-    if (
-      typeof Page.getPageConfig === 'function'
+    } else if (
+      !Page.isPrivate
       && (
         (serverCtx.isDevServer && App.exportAppConfig)
         || (serverCtx.isExporting && Page.exportPageConfig)
@@ -260,14 +260,13 @@ export default App => class _App extends Component {
       )
     ) {
       pageConfig = await _App.getPageConfig(firepressProps);
-      firepressProps = {
-        ...firepressProps,
-        pageConfig,
-      };
    }
 
     return {
-      firepressProps,
+      firepressProps: {
+        ...firepressProps,
+        pageConfig,
+      },
     };
   }
 
@@ -300,12 +299,17 @@ export default App => class _App extends Component {
   async componentDidMount () {
     const {
       Routes, appConfig, pageConfig, hasPageFullLoaded,
+      isFirebaseAuthEnabled,
     } = this.state;
 
-    if (_App.isFirebaseAuthEnabled) {
+    if (isFirebaseAuthEnabled) {
+      _App.setNextDataFirepressProps({
+        isFirebaseAuthEnabled: true,
+        isFirebaseAuthLoaded: false,
+      });
       this.unregisterAuthObserver = App.firebase.auth().onAuthStateChanged((user) => {
         _App.setNextDataFirepressProps({ isFirebaseAuthLoaded: true });
-        this.getPageConfig()
+        Routes.Router.pushRoute(Routes.Router.asPath);
       });
     }
 
@@ -313,9 +317,11 @@ export default App => class _App extends Component {
       const newAppConfig = await _App.getAppConfig(this.state);
       this.setState({
         appConfig: newAppConfig,
-      }, () => this.getPageConfig())
+      }, () => {
+        Routes.Router.pushRoute(Routes.Router.asPath);
+      })
     } else if (appConfig && !pageConfig) {
-      this.getPageConfig();
+      Routes.Router.pushRoute(Routes.Router.asPath);
     }
 
     if (!hasPageFullLoaded) {
@@ -348,20 +354,6 @@ export default App => class _App extends Component {
   componentWillUnmount() {
     if (App.firebase.auth) {
       this.unregisterAuthObserver();
-    }
-  }
-
-  getPageConfig() {
-    let { appConfig, pageConfig, Routes, Page } = this.state;
-    const isAuthenticated = _App.isAuthenticated();
-    if (appConfig && !pageConfig) {
-      if (Page.isPrivate && typeof isAuthenticated !== 'undefined' && !isAuthenticated) {
-        _App.redirectPrivatePage(Routes.Router, Routes.Router.asPath);
-        
-        return;
-      }
-
-      Routes.Router.pushRoute(Routes.Router.asPath);
     }
   }
 
