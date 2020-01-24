@@ -200,7 +200,7 @@ export default App => class _App extends Component {
     }
 
     let appConfig = _App.getNextDataFirepressProps().appConfig;
-    let pageConfig = typeof Page.getPageConfig === 'function' ? undefined : {};
+    let pageConfig = (typeof Page.getPageConfig === 'function' || Page.isPrivate) ? undefined : {};
     let Routes = _App.getRoutes(appConfig && appConfig.routes ? appConfig.routes : []);
     let ctx = _App.getCtx(newBaseCtx, Routes);
 
@@ -236,6 +236,13 @@ export default App => class _App extends Component {
         ctx,
         Routes,
       };
+    }
+    
+    if (isClient && Page.isPrivate) {
+      const isAuthenticated = _App.isAuthenticated();
+      if (typeof isAuthenticated !== 'undefined' && !isAuthenticated) {
+        Routes.Router.replaceRoute(App.redirectPrivatePagesTo || '/');
+      }
     }
     
     if (
