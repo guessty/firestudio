@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Link from '@firepress/core/link';
 
 export default class Clickable extends PureComponent {
   static propTypes = {
@@ -12,13 +11,9 @@ export default class Clickable extends PureComponent {
     ]),
     styledAs: PropTypes.oneOf(['a', 'button', 'none']),
     isRaised: PropTypes.bool,
-    isExternal: PropTypes.bool,
     href: PropTypes.string,
     target: PropTypes.string,
     rel: PropTypes.string,
-    replace: PropTypes.bool,
-    scroll: PropTypes.bool,
-    prefetch: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -26,13 +21,9 @@ export default class Clickable extends PureComponent {
     as: 'button',
     styledAs: undefined,
     isRaised: false,
-    isExternal: false,
     href: '',
     target: undefined,
     rel: undefined,
-    replace: false,
-    scroll: false,
-    prefetch: false,
   }
 
   getClassName() {
@@ -55,8 +46,7 @@ export default class Clickable extends PureComponent {
 
   renderLink() {
     const {
-      as, styledAs, children, isRaised, isExternal,
-      prefetch, replace, scroll,
+      as, styledAs, children, isRaised,
       href, target, rel,
       ...props
     } = this.props;
@@ -65,7 +55,7 @@ export default class Clickable extends PureComponent {
 
     const linkRel = target === '_blank' ? 'noopener noreferrer' : rel;
 
-    const linkJSX = (
+    return (
       <a
         {...props}
         href={href}
@@ -76,23 +66,11 @@ export default class Clickable extends PureComponent {
         {children}
       </a>
     );
-
-    return !isExternal ? (
-      <Link
-        to={href}
-        prefetch={prefetch}
-        scroll={scroll}
-        replace={replace}
-      >
-        {linkJSX}
-      </Link>
-    ) : linkJSX;
   }
 
   renderButton() {
     const {
-      as, styledAs, children, isRaised, isExternal,
-      prefetch, replace, scroll,
+      as, styledAs, children, isRaised,
       href, target, rel,
       ...props
     } = this.props;

@@ -1,6 +1,6 @@
 {
   "name": "@firepress/ui",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "A set of UI components for Firepress",
   "keywords": [
     "React",
@@ -11,8 +11,7 @@
   "license": "MIT",
   "main": "dist/main.js",
   "files": [
-    "dist",
-    "store.js"
+    "dist"
   ],
   "scripts": {
     "test": "node test/test.js",
@@ -30,7 +29,6 @@
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.4.4",
-    "@firepress/core": "^0.1.1",
     "@reach/dialog": "^0.2.9",
     "@reach/visually-hidden": "^0.1.4",
     "classnames": "^2.2.6",

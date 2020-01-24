@@ -1,75 +1,248 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Subscribe } from '@firepress/core/store';
+import classnames from 'classnames';
+import { DialogOverlay, DialogContent } from '@reach/dialog';
 
-import { Dialog as DialogContainer } from '../../store';
-import Base from './Base';
-import Trigger from './Trigger';
+import Transition from '../../Transition';
 
-class Dialog extends Component {
+export default class Base extends Component {
   static propTypes = {
-    name: PropTypes.string,
-    dialog: PropTypes.shape({
-      register: PropTypes.func.isRequired,
-      deregister: PropTypes.func.isRequired,
-      close: PropTypes.func.isRequired,
-    }),
+    isOpen: PropTypes.bool,
     onDismiss: PropTypes.func,
+    className: PropTypes.string,
+    containerClassName: PropTypes.string,
+    overlayClassName: PropTypes.string,
     children: PropTypes.node,
-  };
+    style: PropTypes.shape({}),
+    render: PropTypes.func,
+    returnFocus: PropTypes.bool,
+  }
 
   static defaultProps = {
-    dialog: undefined,
-    name: undefined,
+    isOpen: false,
     onDismiss: () => {},
+    className: '',
+    containerClassName: '',
+    overlayClassName: '',
+    style: {},
+    render: undefined,
     children: null,
-  };
+    returnFocus: true,
+  }
 
-  static Base = Base;
+  static getScrollbarWidth() {
+    if (typeof document === 'undefined') {
+      return 0;
+    }
 
-  static Trigger = Trigger;
+    const scrollDiv = document.createElement('div');
+    scrollDiv.style.cssText = `
+      width: 100px;
+      height: 100px;
+      overflow: scroll;
+      position: absolute;
+      top: -9999px;
+    `;
+    document.body.appendChild(scrollDiv);
+    const scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+    document.body.removeChild(scrollDiv);
+
+    return scrollbarWidth;
+  }
+
+  static toggleBodyLock(isOpen, scrollbarWidth) {
+    if (typeof document !== 'undefined') {
+      if (document.getElementById('firepressApp')) {
+        document.getElementById('firepressApp').style.cssText = isOpen ? `
+          overflow: hidden;
+          padding-right: ${scrollbarWidth}px !important;
+        ` : '';
+      }
+      document.body.style.cssText = isOpen ? `
+        overflow: hidden;
+        padding-right: ${scrollbarWidth}px !important;
+      ` : '';
+    }
+  }
+
+  static Overlay = ({ className = '' }) => (
+    <div className={`dialog__overlay ${className}`} />
+  )
+
+  static Content = ({
+    className = '',
+    containerClassName = '',
+    children = null,
+  }) => (
+    <div className="dialog__window">
+      <div className={`dialog__container ${containerClassName}`}>
+        <div className={`dialog__content ${className}`}>
+          {children}
+        </div>
+      </div>
+    </div>
+  )
+
+  constructor(props) {
+    super(props);
+    this.handleEnter = this.handleEnter.bind(this);
+    this.handleEntered = this.handleEntered.bind(this);
+    this.handleExit = this.handleExit.bind(this);
+    this.handleExited = this.handleExited.bind(this);
+  }
+
+  state = {
+    scrollbarWidth: 0,
+    isActive: false,
+    enterTransitionCounter: 0,
+    exitTransitionCounter: 0,
+  }
 
   componentDidMount() {
-    const { dialog, name } = this.props;
-    if (dialog) {
-      dialog.register(name);
+    const { returnFocus } = this.props;
+    const scrollbarWidth = Base.getScrollbarWidth();
+
+    this.setState({
+      scrollbarWidth,
+    });
+
+    if (!returnFocus) {
+      document.activeElement.focus = undefined;
     }
   }
 
-  componentWillUnmount() {
-    const { dialog, name } = this.props;
-    if (dialog) {
-      dialog.deregister(name);
+  componentDidUpdate(prevProps) {
+    const { isOpen, returnFocus } = this.props;
+    const { scrollbarWidth } = this.state;
+
+    if (isOpen && isOpen !== prevProps.isOpen) {
+      Base.toggleBodyLock(true, scrollbarWidth);
+      setTimeout(() => {
+        this.setState({
+          isActive: true,
+        });
+      }, 0);
+    }
+
+    if (!returnFocus) {
+      document.activeElement.focus = undefined;
     }
   }
 
-  handleDismiss = (e) => {
-    const { dialog, name, onDismiss } = this.props;
-    if (dialog) {
-      dialog.close(name);
-    }
-    onDismiss(e);
+  handleEnter() {
+    setTimeout(() => {
+      const { enterTransitionCounter } = this.state;
+      this.setState({
+        enterTransitionCounter: enterTransitionCounter + 1,
+      })
+    }, 0)
+  }
+
+  handleEntered() {
+    setTimeout(() => {
+      const { enterTransitionCounter } = this.state;
+      this.setState({
+        enterTransitionCounter: enterTransitionCounter - 1,
+      })
+    }, 0)
+  }
+
+  handleExit() {
+    setTimeout(() => {
+      const { exitTransitionCounter } = this.state;
+      this.setState({
+        exitTransitionCounter: exitTransitionCounter + 1,
+      })
+    }, 0)
+  }
+
+  handleExited() {
+    setTimeout(() => {
+      const { exitTransitionCounter, scrollbarWidth } = this.state;
+      const count = exitTransitionCounter - 1
+      this.setState({
+        exitTransitionCounter: count,
+      })
+      if (count === 0) {
+        Base.toggleBodyLock(false, scrollbarWidth);
+        this.setState({
+          isActive: false,
+        });
+      }
+    }, 0)
   }
 
   render() {
     const {
-      name, dialog, children,
-      onDismiss, isOpen,
-      ...props
+      onDismiss, isOpen, style, render, children,
+      className, containerClassName, overlayClassName,
     } = this.props;
+    const {
+      scrollbarWidth, isActive,
+      enterTransitionCounter, exitTransitionCounter,
+    } = this.state;
 
-    const isDialogOpen = dialog ? dialog.isOpen(name) : isOpen;
+    const transitionCount = enterTransitionCounter + exitTransitionCounter;
+
+    const dialogClassName = classnames(
+      'dialog',
+      { 'dialog--visible': isOpen || isActive },
+    );
 
     return (
-      <Base
-        {...props}
-        isOpen={isDialogOpen}
-        onDismiss={this.handleDismiss}
+      <DialogOverlay
+        isOpen={isOpen || isActive}
+        onDismiss={onDismiss}
+        className={dialogClassName}
+        style={{
+          ...style,
+          ...transitionCount > 0 ? {
+            overflow: 'hidden',
+            paddingRight: `${scrollbarWidth}px`,
+          } : {
+            overflowY: scrollbarWidth > 0 ? 'scroll' : 'auto',
+          }
+        }}
       >
-        {children}
-      </Base>
+        <DialogContent>
+          {typeof render === 'undefined' ? (
+            <>
+              <Transition
+                in={isOpen && isActive}
+                enterTransition={{ fade: true, speed: 'slow' }}
+                exitTransition={{ fade: true, speed: 'slow' }}
+                onEnter={this.handleEnter}
+                onEntered={this.handleEntered}
+                onExit={this.handleExit}
+                onExited={this.handleExited}
+              >
+                <Base.Overlay className={overlayClassName} />
+              </Transition>
+              <Transition
+                in={isOpen && isActive}
+                enterTransition={{ fade: true, type: 'shift', direction: 'down', speed: 'fast' }}
+                exitTransition={{ fade: true, type: 'shift', direction: 'up', speed: 'fast' }}
+                onEnter={this.handleEnter}
+                onEntered={this.handleEntered}
+                onExit={this.handleExit}
+                onExited={this.handleExited}
+              >
+                <Base.Content className={className} containerClassName={containerClassName}>
+                  {children}
+                </Base.Content>
+              </Transition>
+            </>
+          ) : render({
+            Overlay: Base.Overlay,
+            Content: Base.Content,
+            in: isOpen && isActive,
+            onEnter: this.handleEnter,
+            onEntered: this.handleEntered,
+            onExit: this.handleExit,
+            onExited: this.handleExited,
+          })}
+        </DialogContent>
+      </DialogOverlay>
     );
   }
 }
-
-export default Subscribe({ dialog: DialogContainer })(Dialog);
