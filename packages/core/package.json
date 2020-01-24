@@ -61,6 +61,7 @@
     "next-routes": "^1.4.2",
     "node-html-parser": "^1.1.15",
     "prop-types": "^15.7.2",
+    "query-string": "^6.10.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "require-fool-webpack": "^2.0.0",

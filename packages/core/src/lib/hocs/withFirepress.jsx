@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { parse } from 'node-html-parser';
 import parseUrl from 'url-parse';
+import queryString from 'query-string';
 import unfetch from 'isomorphic-unfetch';
 import getConfig from 'next/config';
 
@@ -26,6 +27,10 @@ export default App => class _App extends Component {
     }
 
     return isFirebaseAuthenticated && isCustomAuthenticated;
+  }
+
+  static redirectPrivatePage(Router, redirect) {
+    Router.replaceRoute(`${App.redirectPrivatePagesTo || '/'}?${queryString.stringify({ redirect })}`);
   }
 
   static AppLoader = () => (
@@ -152,7 +157,7 @@ export default App => class _App extends Component {
     const isAuthenticated = _App.isAuthenticated();
 
     if (Page.isPrivate && typeof isAuthenticated !== 'undefined' && !isAuthenticated) {
-      Routes.Router.replaceRoute(App.redirectPrivatePagesTo || '/');
+      _App.redirectPrivatePage(Routes.Router, ctx.asPath);
     }
 
     if (!Page.isPrivate || (Page.isPrivate && isAuthenticated)) {
@@ -241,7 +246,7 @@ export default App => class _App extends Component {
     if (isClient && Page.isPrivate) {
       const isAuthenticated = _App.isAuthenticated();
       if (typeof isAuthenticated !== 'undefined' && !isAuthenticated) {
-        Routes.Router.replaceRoute(App.redirectPrivatePagesTo || '/');
+        _App.redirectPrivatePage(Routes.Router, asPath);
       }
     }
     
@@ -351,7 +356,7 @@ export default App => class _App extends Component {
     const isAuthenticated = _App.isAuthenticated();
     if (appConfig && !pageConfig) {
       if (Page.isPrivate && typeof isAuthenticated !== 'undefined' && !isAuthenticated) {
-        Routes.Router.replaceRoute(App.redirectPrivatePagesTo || '/');
+        _App.redirectPrivatePage(Routes.Router, Routes.Router.asPath);
         
         return;
       }
