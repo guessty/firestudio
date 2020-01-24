@@ -88,6 +88,7 @@ export default App => class _App extends Component {
 
   static getCtx(ctx, Routes) {
     const { asPath, pathname: page } = ctx;
+
     if (!page.includes('*')) return ctx;
     
     const { pathname, query } = parseUrl(asPath, true);
@@ -263,6 +264,7 @@ export default App => class _App extends Component {
    }
 
     return {
+      ...newBaseCtx,
       firepressProps: {
         ...firepressProps,
         pageConfig,
@@ -358,11 +360,16 @@ export default App => class _App extends Component {
   }
 
   render() {
-    const { Component: PageComponent, firepressProps: { Page } } = this.props;
+    const {
+      Component: PageComponent,
+      firepressProps: { Page },
+      firepressProps,
+      ...props
+    } = this.props;
     const {
       wasLoadedFromCache,
       appConfig, pageConfig,
-      Routes, ctx: { pathname },
+      Routes, ctx, ctx: { pathname },
       hasPageFullLoaded,
     } = this.state;
 
@@ -384,6 +391,7 @@ export default App => class _App extends Component {
     const canReturnPage = typeof pageConfig !== 'undefined' && hasPageFullLoaded;
 
     const appProps = {
+      ...props,
       Page: ({ children, ...extraProps }) => (
         <div
           id="page"
@@ -391,7 +399,7 @@ export default App => class _App extends Component {
         >
           {canReturnPage ? (
             doesPageExist ? (
-              <PageComponent {...pageProps} {...extraProps}>
+              <PageComponent {...pageProps} {...extraProps} {...ctx}>
                 {children}
               </PageComponent>
             ) : (
