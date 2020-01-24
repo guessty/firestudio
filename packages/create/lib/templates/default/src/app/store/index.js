@@ -1,9 +1,12 @@
-import Toast from './Toast';
 
-export { Api } from '@firepress/core/store';
-export * from '@firepress/ui/store';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension/developmentOnly';
+import thunk from 'redux-thunk';
+import * as reducers from './reducers/index';
 
-export {
-  // Auth,
-  Toast,
+export const initStore = (initialState = {}) => {
+  const combinedReducers = combineReducers(reducers || {});
+  const composeEnhancers = () => composeWithDevTools();
+
+  return createStore(combinedReducers, initialState, composeEnhancers(applyMiddleware(thunk)));
 };

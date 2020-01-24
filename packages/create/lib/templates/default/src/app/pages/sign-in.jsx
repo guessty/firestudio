@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+import Router from '@firepress/core/router';
 import { Container, Flex, Hr } from '@firepress/ui';
 //
 import firebase from '@config/firebase';
@@ -16,12 +17,12 @@ class SignIn extends PureComponent {
   }
 
   renderSignInForm() {
-    const { PageLoader } = this.props;
+    const { Loader } = this.props;
     const { isMounted } = this.state;
 
     if (!isMounted) {
       return (
-        <PageLoader />
+        <Loader />
       );
     }
 
@@ -38,7 +39,7 @@ class SignIn extends PureComponent {
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
         firebase.auth.PhoneAuthProvider.PROVIDER_ID,
       ],
-      signInSuccessUrl: '/',
+      signInSuccessUrl: Router.router.query.redirect || '/',
       // callbacks: {
       //   // Avoid redirects after sign-in.
       //   signInSuccessWithAuthResult: () => false,

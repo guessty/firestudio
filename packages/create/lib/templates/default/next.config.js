@@ -1,7 +1,8 @@
 const withFirepressConfig = require('@firepress/core/config');
 const path = require('path');
-const withCSS = require('@zeit/next-css');
-const withSass = require('@zeit/next-sass');
+const DirectoryNamedWebpackPlugin = require('directory-named-webpack-plugin'); // eslint-disable-line import/no-extraneous-dependencies
+const withCSS = require('@zeit/next-css'); // eslint-disable-line import/no-extraneous-dependencies
+const withSass = require('@zeit/next-sass'); // eslint-disable-line import/no-extraneous-dependencies
 
 let firebaseConfig;
 try {
@@ -12,15 +13,11 @@ try {
 
 const nextConfig = withSass(withCSS(withFirepressConfig({
   distDir: './dist/build',
-  env: {
-    FIREBASE: firebaseConfig,
-  },
-  publicRuntimeConfig: {
-    FIREBASE: firebaseConfig,
-  },
   firepress: {
     projectId: firebaseConfig.projectId,
     cloudRenderedPages: [],
+    firebaseConfig,
+    // isSPA: true,
   },
   webpack(config) {
     config.resolve.alias = { // eslint-disable-line no-param-reassign
@@ -33,6 +30,14 @@ const nextConfig = withSass(withCSS(withFirepressConfig({
       '@plugins': path.resolve(__dirname, './src/app/plugins'),
       '@store': path.resolve(__dirname, './src/app/store'),
     };
+
+    config.resolve.plugins = [ // eslint-disable-line no-param-reassign
+      ...config.resolve.plugins || [],
+      new DirectoryNamedWebpackPlugin({
+        honorIndex: true,
+        exclude: /node_modules/,
+      }),
+    ];
 
     config.module.rules.push(
       {

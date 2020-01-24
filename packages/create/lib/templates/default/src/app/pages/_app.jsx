@@ -1,6 +1,7 @@
 import React from 'react';
 import NextApp from 'next/app';
 import Head from 'next/head';
+import withRedux from 'next-redux-wrapper';
 import { withFirepress } from '@firepress/core/app';
 import { Application, Loader } from '@firepress/ui';
 
@@ -8,25 +9,39 @@ import { Application, Loader } from '@firepress/ui';
 // components to ensure component styles have higher priority.
 import '../styles.scss';
 
-import * as projectStore from '@store';
+// import * as projectStore from '@store';
 import initIcons from '@config/fontAwesome';
 import firebase from '@config/firebase';
 import Nav from '@partials/Nav';
 import Main from '@partials/Main';
 import Footer from '@partials/Footer';
+import { initStore } from '@store';
 
 initIcons();
 
 class App extends NextApp {
-  static PageLoader = Loader
+  static redirectPrivatePagesTo = '/sign-in';
 
-  static firebase = firebase
+  static PageLoader = () => (
+    <div className="flex flex-col flex-grow items-center justify-center">
+      <Loader />
+    </div>
+  );
 
-  static storeConfig = {
-    stateContainers: projectStore,
+  static firebase = firebase;
+
+  static exportAppConfig = true
+
+  static async getAppConfig(ctx) {
+    console.log(ctx);
+
+    return {
+      routes: [
+        { pattern: '/extra-route', page: '_*' },
+        { pattern: '/route-with-dynamic-prop/:prop', page: '_*' },
+      ],
+    };
   }
-
-  // static redirectPrivatePagesTo = '/'
 
   render() {
     const { Page } = this.props;

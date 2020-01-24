@@ -1,14 +1,16 @@
 import React, { PureComponent } from 'react';
 import { Container, Flex, Hr } from '@firepress/ui';
 
-export default class PrivacyPage extends PureComponent {
+export default class PrivatePage extends PureComponent {
+  static isPrivate = true;
+
   render() {
     return (
       <Container>
         <Flex className="gap-around-8">
-          <h1 className="text-4xl font-semibold">Privacy Policy</h1>
+          <h1 className="text-4xl font-semibold">Private Page</h1>
           <Hr />
-          <p>To Do: Add Privacy Policy</p>
+          <p>This page will only be accessible once you have been authentcated.</p>
         </Flex>
       </Container>
     );
