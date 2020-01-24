@@ -46,28 +46,28 @@ const generateDirRoutes = (dir, pathString = undefined, routes = []) => {
   return routes
 } 
 
-const generateExportPathMap = (routes, { isSPA }) => {
-  const allRoutes = isSPA ? [
-    { pattern: '/', page: '/' }
-  ] : [
+const generateExportPathMap = (routes) => {
+  const allRoutes = [
     { pattern: '/404.html', page: '/_404' },
     ...routes,
   ];
-  
-  return allRoutes.reduce((routeMap, route) => {
+
+  const exportPathMap = allRoutes.reduce((routeMap, route) => {
     const normalisedPattern = route.pattern.replace('.html', '')
 
     let routeKey = normalisedPattern
 
     if (routeKey.includes('/:')) {
-      routeMap[`${routeKey.replace(/\/:/g, '/_')}.html`] = { page: route.page }
+      routeMap[`${routeKey.replace(/\/:\*/g, '/_').replace(/\/:/g, '/_').replace(/\*/g, '')}.html`] = { page: route.page }
       return routeMap
     }
 
     routeMap[`${routeKey === '/' ? '/index.html' : `${routeKey}.html`}`] = { page: route.page }
 
     return routeMap
-  }, {})
+  }, {});
+  
+  return exportPathMap;
 }
 
 const withFirepress = (config = {}) => {
@@ -100,6 +100,7 @@ const withFirepress = (config = {}) => {
 
   const firepressEntries = {
     'static/build/pages/_404.js': [ path.join(__dirname, '..', '..', 'lib/pages/_soft404.js') ],
+    // 'static/build/pages/_page*': [ path.join(__dirname, '..', '..', 'lib/pages/_page*.js') ],
   }
 
   const nextConfig = {
@@ -110,12 +111,10 @@ const withFirepress = (config = {}) => {
       ...baseNextConfig.env,
       FIREBASE: firepressConfig.firebaseConfig || {},
       ROUTES: routes,
-      IS_SPA: firepressConfig.isSPA,
     },
     publicRuntimeConfig: {
       ...baseNextConfig.publicRuntimeConfig,
       FIREBASE: firepressConfig.firebaseConfig || {},
-      IS_SPA: firepressConfig.isSPA,
     },
     generateBuildId: async () => {
       return 'build'

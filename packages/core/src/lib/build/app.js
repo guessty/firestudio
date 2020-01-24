@@ -19,10 +19,9 @@ const buildApp = (opts) => {
 
   const app = next({ ...opts, dir, conf, });
 
-  const { env: { ROUTES, IS_SPA } } = conf || {};
-  const routes = IS_SPA ? ROUTES.map(({ pattern }) => ({ pattern, page: '/' })) : ROUTES;
+  const { env: { ROUTES } } = conf || {};
 
-  const Routes = buildRoutes(routes)
+  const Routes = buildRoutes(ROUTES)
   const handler = Routes.getRequestHandler(app)
 
   app.getRequestHandler = () => handler

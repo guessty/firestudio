@@ -51,7 +51,7 @@ const buildJson = function(outdir, config) {
     headers: [],
   }, config.firepress || {});
 
-  const { staticRewrites } = getRewrites(routes, config);
+  const pageRewrites = getRewrites(routes, config);
 
   const cloudRewrites = []
   const exportPathMap = config.exportPathMap();
@@ -65,15 +65,15 @@ const buildJson = function(outdir, config) {
     }
   }) 
 
-  const combinedRewites = [];
-  staticRewrites.forEach(function(rewrite) {
-    combinedRewites.push(rewrite);
+  const combinedRewrites = [];
+  pageRewrites.forEach(function(rewrite) {
+    combinedRewrites.push(rewrite);
   })
   cloudRewrites.forEach(function(rewrite) {
-    combinedRewites.push(rewrite);
+    combinedRewrites.push(rewrite);
   })
   functionRewrites.forEach(function(rewrite) {
-    combinedRewites.push(rewrite);
+    combinedRewrites.push(rewrite);
   })
 
   const firebaseHostingConfig = {
@@ -85,7 +85,7 @@ const buildJson = function(outdir, config) {
         '**/.*',
         '**/node_nodules/**'
       ],
-      rewrites: combinedRewites,
+      rewrites: combinedRewrites,
     }
   }
   const firebaseFunctionsConfig = cloudRewrites.length || functionRewrites.length ? { functions: { source: 'functions' } } : {}

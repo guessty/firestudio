@@ -1,149 +1,330 @@
-import * as React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { parse } from 'node-html-parser';
+import parseUrl from 'url-parse';
 import unfetch from 'isomorphic-unfetch';
-//
-const buildRoutes = require('./../build/routes')
-//
 
-export default (App) => class _App extends React.Component {
+const buildRoutes = require('./../build/routes');
+
+export default App => class _App extends Component {
+  static isFirebaseAuthEnabled = Boolean(App.firebase && App.firebase.auth);
+
+  static isAuthenticated() {
+    let isFirebaseAuthenticated = true;
+    if (_App.isFirebaseAuthEnabled) {
+      const isClient = Boolean(process.browser) && typeof window !== 'undefined';
+      const isFirebaseAuthLoaded = isClient ? _App.getNextDataFirepressProps().isFirebaseAuthLoaded : false;
+      isFirebaseAuthenticated = isClient ? Boolean(isFirebaseAuthLoaded && App.firebase.auth().currentUser) : undefined;
+
+      if (typeof isFirebaseAuthenticated === 'undefined') return undefined;
+    } 
+
+    let isCustomAuthenticated = true;
+    if (typeof App.isAuthenticated === 'function') {
+      isCustomAuthenticated = App.isAuthenticated();
+    }
+
+    return isFirebaseAuthenticated && isCustomAuthenticated;
+  }
+
+  static AppLoader = () => (
+    <h1 style={{ padding: '60px 20px', textAlign: 'center' }}>Loading App...</h1>
+  );
+
   static PageLoader = () => (
-    <h2 style={{ padding: '60px 20px', textAlign: 'center' }}>Loading...</h2>
-  )
+    <h1 style={{ padding: '60px 20px', textAlign: 'center' }}>Loading Page...</h1>
+  );
 
-  static Routes = buildRoutes(process.env.ROUTES || [])
+  static Soft404Page = () => (
+    <div className="flex flex-col flex-grow justify-center items-center">
+      <h1 style={{ padding: '60px 20px', textAlign: 'center' }}>404 | Page Not Found</h1>
+    </div>
+  );
 
-  static async getInitialProps(appContext) {
-    const appProps = (typeof App.getInitialProps === 'function') ?
-      await App.getInitialProps(appContext) : {}
-
-    const { Component: Page, ctx } = appContext;
-
+  static getServerCtx(ctx) {
     const isExporting = (!process.browser && !(ctx && ctx.req && ctx.req.headers));
     const isClient = (Boolean(process.browser) && !(ctx && ctx.req && ctx.req.headers));
     const isServer = (!process.browser && Boolean(ctx && ctx.req && ctx.req.headers));
-    const isPrivate = Page.isPrivate && (isServer || (App.firebase && App.firebase.auth));
-    const isAuthenticated = isClient && App.firebase && App.firebase.auth && App.firebase.auth().currentUser;
-
-    if (Page.redirectTo) {
-      if (isServer) {
-        ctx.res.writeHead(302, {
-          Location: Page.redirectTo,
-        });
-        ctx.res.end();
-      } else if (isClient) {
-        _App.Routes.Router.replaceRoute(Page.redirectTo);
-      }
-    }
-
-    if (isClient && !Page.isDynamic && (!isPrivate || (isPrivate && isAuthenticated))) {
-      const response = await unfetch(ctx.asPath, {
-        headers: {
-          'Content-Type': 'text/html; charset=utf-8',
-        },
-        credentials: 'include',
-      });
-      const html = await response.text();
-      const root = parse(html, { script: true })
-      const dataNode = root.querySelector('#__NEXT_DATA__');
-
-      return dataNode.rawText ? JSON.parse(dataNode.rawText).props : {};
-    }
-
-    let pageNeedsProps = typeof Page.getInitialProps === 'function';
-    let pageProps = {};
-    if (pageNeedsProps
-      && (!isPrivate || (isPrivate && isAuthenticated))
-      && ((isExporting && !Page.isDynamic) || (isServer) || (isClient))) {
-      pageProps = await Page.getInitialProps(ctx);
-      if (!pageProps) {
-        pageProps = {};
-      }
-      pageNeedsProps = false;
-    }
+    const isDevServer = process.env.NODE_ENV === 'development' && isServer;
 
     return {
-      ...appProps,
-      needsPageProps: pageNeedsProps,
-      redirectTo: Page.redirectTo,
-      isPrivate: Page.isPrivate,
-      PageLoader: Page.Loader,
-      pageProps,
+      isExporting,
+      isClient,
+      isServer,
+      isDevServer,
+    };
+  }
+
+  static getRoutes(routes) {
+    return buildRoutes([
+      ...process.env.ROUTES || [],
+      ...routes || [],
+    ]);
+  }
+
+  static setNextDataFirepressProps(props) {
+    if (Boolean(process.browser) && typeof window !== 'undefined') {
+      window.__NEXT_DATA__.props.firepressProps = {
+        ...window.__NEXT_DATA__.props.firepressProps,
+        ...props,
+      };
+    }
+  }
+
+  static getNextDataFirepressProps() {
+    if (Boolean(process.browser) && typeof window !== 'undefined') {
+      return window.__NEXT_DATA__.props.firepressProps || {};
+    }
+
+    return {};
+  }
+
+  static getCtx(ctx, Routes) {
+    const { asPath, pathname: page } = ctx;
+    if (!page.includes('*')) return ctx;
+    
+    const { pathname, query } = parseUrl(asPath, true);
+    const params = Routes.routes
+      .filter(route => route.page === page)
+      .map(route => route.match(pathname))
+      .find(route => route !== undefined) || {};
+
+    return {
+      ...ctx,
+      pathname,
+      query: {
+        ...params,
+        ...query,
+      }
+    };
+  }
+
+  static async getAppConfig(props) {
+    const { ctx, Page, Routes } = props;
+    let appConfig;
+
+    if (Page.redirectTo) {
+      Routes.Router.replaceRoute(Page.redirectTo);
+    }
+
+    try {
+      appConfig = await App.getAppConfig(ctx);
+      if (!appConfig) appConfig = {};
+    } catch {
+      appConfig = {};
+    }
+
+    _App.setNextDataFirepressProps({ appConfig })
+
+    return appConfig;
+  }
+
+  static async getExportedPageConfig(ctx) {
+    const { asPath } = ctx;
+    const response = await unfetch(asPath, {
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+      },
+      credentials: 'include',
+    });
+    const html = await response.text();
+    const root = parse(html, { script: true })
+    const dataNode = root.querySelector('#__NEXT_DATA__');
+    const exportedProps = dataNode.rawText ? JSON.parse(dataNode.rawText).props : {};
+    const exportedPageConfig = exportedProps.firepressProps.pageConfig || {};
+
+    return exportedPageConfig;
+  }
+
+  static async getPageConfig(props) {
+    const { ctx, Page, Routes } = props;
+
+    const isClient = Boolean(process.browser) && typeof window !== 'undefined';
+
+    let pageConfig;
+
+    if (Page.redirectTo) {
+      Routes.Router.replaceRoute(Page.redirectTo);
+    }
+
+    const isAuthenticated = _App.isAuthenticated();
+
+    if (Page.isPrivate && typeof isAuthenticated !== 'undefined' && !isAuthenticated) {
+      Routes.Router.replaceRoute(App.redirectPrivatePagesTo || '/');
+    }
+
+    if (!Page.isPrivate || (Page.isPrivate && isAuthenticated)) {
+      if (isClient && Page.exportPageConfig) {
+        pageConfig = await _App.getExportedPageConfig(ctx);
+  
+        return pageConfig;
+      }
+
+      try {
+        pageConfig = await Page.getPageConfig(ctx);
+        if (!pageConfig) pageConfig = {};
+      } catch (e) {
+        console.warn('failed to getPageConfig', e);
+        pageConfig = {};
+      }
+    }
+
+    return pageConfig;
+  }
+
+  static async getInitialProps(appContext) {
+    const { Component: Page, ctx: baseCtx } = appContext;
+    const serverCtx = _App.getServerCtx(baseCtx);
+    const isClient = Boolean(process.browser) && typeof window !== 'undefined';
+
+    const {
+      query, req, res, err, AppTree,
+      pathname, asPath, isServer,
+      ...extraCtx
+    } = baseCtx;
+
+    const newBaseCtx = {
+      query,
+      pathname,
+      asPath,
+      ...extraCtx,
+    };
+
+    const redirectPath = typeof Page.redirectTo === 'function' ? Page.redirectTo(newBaseCtx) : Page.redirectTo;
+    if (redirectPath && serverCtx.isServer) {
+      const { res } = baseCtx;
+      res.writeHead(302, { Location: redirectPath });
+      res.end();
+    }
+
+    let appConfig = _App.getNextDataFirepressProps().appConfig;
+    let pageConfig = typeof Page.getPageConfig === 'function' ? undefined : {};
+    let Routes = _App.getRoutes(appConfig && appConfig.routes ? appConfig.routes : []);
+    let ctx = _App.getCtx(newBaseCtx, Routes);
+
+    let firepressProps = {
+      ctx,
+      Routes,
+      appConfig,
+      pageConfig,
+      Page: {
+        Loader: Page.Loader,
+        isPrivate: Page.isPrivate,
+        redirectTo: redirectPath,
+        getPageConfig: Page.getPageConfig,
+        exportPageConfig: Page.exportPageConfig,
+      },
+    }
+
+    if (
+      typeof appConfig === 'undefined'
+      && typeof App.getAppConfig === 'function'
+      && (
+        (serverCtx.isDevServer && App.exportAppConfig)
+        || (serverCtx.isExporting && App.exportAppConfig)
+        || (serverCtx.isServer && !serverCtx.isDevServer && !App.exportAppConfig)
+      )
+    ) {
+      appConfig = await _App.getAppConfig(firepressProps);
+      Routes = _App.getRoutes(appConfig && appConfig.routes ? appConfig.routes : []);
+      ctx = _App.getCtx(newBaseCtx, Routes);
+      firepressProps = {
+        ...firepressProps,
+        appConfig,
+        ctx,
+        Routes,
+      };
+    }
+    
+    if (
+      typeof Page.getPageConfig === 'function'
+      && (
+        (serverCtx.isDevServer && App.exportAppConfig)
+        || (serverCtx.isExporting && Page.exportPageConfig)
+        || (serverCtx.isServer && !serverCtx.isDevServer && !Page.exportPageConfig)
+        || (isClient)
+      )
+    ) {
+      pageConfig = await _App.getPageConfig(firepressProps);
+      firepressProps = {
+        ...firepressProps,
+        pageConfig,
+      };
+   }
+
+    return {
+      firepressProps,
     };
   }
 
   static getDerivedStateFromProps(props, state) {
-    const router = typeof window !== 'undefined' ? _App.Routes.Router : {
-      router: props.router,
-    };
+    const { firepressProps } = props;
+    const appConfig = state.appConfig || firepressProps.appConfig;
+    const pageConfig = firepressProps.pageConfig;
+    const Routes = _App.getRoutes(appConfig ? appConfig.routes : []);
+    const hasPageFullLoaded = !firepressProps.ctx.pathname.includes('/_');
 
     return {
-      router,
-      previousPath: state.currentPath,
-      currentPath: router.router.asPath,
+      ...firepressProps,
+      appConfig,
+      pageConfig,
+      Routes,
+      hasPageFullLoaded,
     };
   }
 
   state = {
-    router: undefined,
-    previousPath: undefined,
-    currentPath: undefined,
+    appConfig: undefined,
+    pageConfig: undefined,
+    Routes: undefined,
     wasLoadedFromCache: false,
-    isAuthenticated: undefined,
-  }
+    hasPageFullLoaded: undefined,
+  };
 
-  unregisterAuthObserver
+  unregisterAuthObserver;
 
-  async componentDidMount() {
-    const { needsPageProps, redirectTo, isPrivate } = this.props;
-    const { router } = this.state;
+  async componentDidMount () {
+    const {
+      Routes, appConfig, pageConfig, hasPageFullLoaded,
+    } = this.state;
 
-    if (App.firebase && App.firebase.auth) {
+    if (_App.isFirebaseAuthEnabled) {
       this.unregisterAuthObserver = App.firebase.auth().onAuthStateChanged((user) => {
-        this.setState({ isAuthenticated: !!user });
+        _App.setNextDataFirepressProps({ isFirebaseAuthLoaded: true });
+        this.getPageConfig()
       });
     }
 
-    if (redirectTo) {
-      _App.Routes.Router.replaceRoute(redirectTo);
-    }
-    
-    if (!isPrivate && needsPageProps) {
-      await _App.Routes.Router.pushRoute(router.router.asPath)
+    if (!appConfig) {
+      const newAppConfig = await _App.getAppConfig(this.state);
+      this.setState({
+        appConfig: newAppConfig,
+      }, () => this.getPageConfig())
+    } else if (appConfig && !pageConfig) {
+      this.getPageConfig();
     }
 
-    router.beforePopState(() => {
+    if (!hasPageFullLoaded) {
+      Routes.Router.pushRoute(Routes.Router.asPath);
+    }
+
+    Routes.Router.beforePopState(() => {
       setTimeout(() => {
-        this.setState({
-          wasLoadedFromCache: true,
-        })
-      }, 0)
+        this.setState({ wasLoadedFromCache: true });
+      }, 0);
       document.getElementById('page').style.cssText = `
         visibility: hidden;
       `;
-      return true
+      return true;
     });
   }
 
   componentDidUpdate() {
-    const { wasLoadedFromCache, isAuthenticated, router } = this.state;
-    const { needsPageProps, redirectTo, isPrivate } = this.props;
-
-    if (redirectTo) {
-      _App.Routes.Router.replaceRoute(redirectTo);
-    }
-
-    if (isPrivate) {
-      if (!isAuthenticated) {
-        _App.Routes.Router.replaceRoute(App.redirectPrivatePagesTo || '/sign-in');
-      } else if (isAuthenticated && needsPageProps) {
-        _App.Routes.Router.pushRoute(router.router.asPath);
-      }
-    }
+    const { wasLoadedFromCache } = this.state;
 
     if (wasLoadedFromCache) {
-      this.setState({
-        wasLoadedFromCache: false,
-      })
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({ wasLoadedFromCache: false });
       document.getElementById('page').style.cssText = `
         visibility: visible;
       `;
@@ -156,44 +337,74 @@ export default (App) => class _App extends React.Component {
     }
   }
 
-  render() {
-    const {
-      Component: Page, PageLoader, isPrivate, needsPageProps, pageProps, ...props
-    } = this.props;
-    const { router, wasLoadedFromCache, isAuthenticated } = this.state;
+  getPageConfig() {
+    let { appConfig, pageConfig, Routes, Page } = this.state;
+    const isAuthenticated = _App.isAuthenticated();
+    if (appConfig && !pageConfig) {
+      if (Page.isPrivate && typeof isAuthenticated !== 'undefined' && !isAuthenticated) {
+        Routes.Router.replaceRoute(App.redirectPrivatePagesTo || '/');
+        
+        return;
+      }
 
-    const isLoadingPage = needsPageProps;
-    const Loader = PageLoader || App.PageLoader || _App.PageLoader;
-    const _pageProps = {
-      ...pageProps,
-      isLoadingPage,
-      Loader,
+      Routes.Router.pushRoute(Routes.Router.asPath);
+    }
+  }
+
+  render() {
+    const { Component: PageComponent, firepressProps: { Page } } = this.props;
+    const {
       wasLoadedFromCache,
+      appConfig, pageConfig,
+      Routes, ctx: { pathname },
+      hasPageFullLoaded,
+    } = this.state;
+
+    const pageMatches = Routes.routes
+    .filter(route => !route.pattern.match(/:(?<=:)(.*)(?=\*)/g))
+    .filter(route => route.regex.test(pathname));
+    const doesPageExist = Boolean(pageMatches.length);
+
+    const Soft404Page = App.Soft404Page || _App.Soft404Page;
+
+    const Loader = Page.Loader || App.PageLoader || _App.PageLoader;
+
+    const pageProps = {
+      pageConfig,
+      wasLoadedFromCache,
+      Loader,
     };
-    const canReturnPage = !isPrivate || (isPrivate && isAuthenticated);
-  
+
+    const canReturnPage = typeof pageConfig !== 'undefined' && hasPageFullLoaded;
+
     const appProps = {
-      ...props,
-      router,
       Page: ({ children, ...extraProps }) => (
         <div
           id="page"
           className="flex flex-col flex-grow w-full"
         >
           {canReturnPage ? (
-            <Page {..._pageProps} {...extraProps}>
-              {children}
-            </Page>
+            doesPageExist ? (
+              <PageComponent {...pageProps} {...extraProps}>
+                {children}
+              </PageComponent>
+            ) : (
+              <Soft404Page />
+            )
           ) : (
-            <PageLoader />
+            <Loader />
           )}
         </div>
       ),
-      pageProps: _pageProps,
-    };
+    }
 
-    return (
+    const canRenderApp = (typeof appConfig !== 'undefined');
+    const AppLoader = App.AppLoader || _App.AppLoader;
+
+    return canRenderApp ? (
       <App {...appProps} />
+    ) : (
+      <AppLoader />
     );
   }
-};
+}

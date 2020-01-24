@@ -18,11 +18,12 @@ const buildRoutes = (routes = []) => {
       appRoutes.add({ pattern: route.pattern, page: route.page });
     })
 
-    routes.filter(route => (route.pattern.includes('*')))
+  routes.filter(route => (route.pattern.includes('*')))
     .sort((routeA, routeB) => routeA.pattern.split('/').length - routeB.pattern.split('/').length)
     .reverse()
     .forEach((route) => {
-      appRoutes.add({ pattern: route.pattern, page: route.page });
+      const pattern = route.pattern.replace(/\:\*/g, ':_params*')
+      appRoutes.add({ pattern, page: route.page });
     })
 
   return appRoutes
