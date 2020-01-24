@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { parse } from 'node-html-parser';
 import parseUrl from 'url-parse';
 import unfetch from 'isomorphic-unfetch';
+import getConfig from 'next/config';
 
 const buildRoutes = require('./../build/routes');
 
@@ -56,8 +57,9 @@ export default App => class _App extends Component {
   }
 
   static getRoutes(routes) {
+    const { publicRuntimeConfig: { ROUTES } } = getConfig();
     return buildRoutes([
-      ...process.env.ROUTES || [],
+      ...ROUTES || [],
       ...routes || [],
     ]);
   }

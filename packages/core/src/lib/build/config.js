@@ -115,6 +115,7 @@ const withFirepress = (config = {}) => {
     publicRuntimeConfig: {
       ...baseNextConfig.publicRuntimeConfig,
       FIREBASE: firepressConfig.firebaseConfig || {},
+      ROUTES: routes,
     },
     generateBuildId: async () => {
       return 'build'
