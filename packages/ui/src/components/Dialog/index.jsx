@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { DialogOverlay, DialogContent } from '@reach/dialog';
 
-import Transition from '../../Transition';
+import Transition from '../Transition';
 
 export default class Base extends Component {
   static propTypes = {
