@@ -1,8 +1,7 @@
 import React from 'react';
 import NextApp from 'next/app';
 import Head from 'next/head';
-import withRedux from 'next-redux-wrapper';
-import { withFirepress } from '@firepress/core/app';
+import { withFirepress, withRedux } from '@firepress/core/app';
 import { Application, Loader } from '@firepress/ui';
 
 // global styles need to be imported before any project
@@ -32,9 +31,7 @@ class App extends NextApp {
 
   static exportAppConfig = true
 
-  static async getAppConfig(ctx) {
-    console.log(ctx);
-
+  static async getAppConfig() {
     return {
       routes: [
         { pattern: '/extra-route', page: '_*' },
@@ -63,4 +60,4 @@ class App extends NextApp {
   }
 }
 
-export default withFirepress(App);
+export default withRedux(initStore)(withFirepress(App));
