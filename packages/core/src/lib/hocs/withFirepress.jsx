@@ -261,7 +261,7 @@ export default App => class _App extends Component {
       )
     ) {
       pageConfig = await _App.getPageConfig(firepressProps);
-   }
+    }
 
     return {
       ...newBaseCtx,
@@ -354,7 +354,9 @@ export default App => class _App extends Component {
   }
 
   componentWillUnmount() {
-    if (App.firebase.auth) {
+    const { isFirebaseAuthEnabled } = this.state;
+
+    if (isFirebaseAuthEnabled) {
       this.unregisterAuthObserver();
     }
   }
@@ -364,12 +366,14 @@ export default App => class _App extends Component {
       Component: PageComponent,
       firepressProps: { Page },
       firepressProps,
+      router,
       ...props
     } = this.props;
     const {
       wasLoadedFromCache,
       appConfig, pageConfig,
-      Routes, ctx, ctx: { pathname },
+      Routes, ctx,
+      ctx: { pathname, query, asPath },
       hasPageFullLoaded,
     } = this.state;
 
@@ -392,6 +396,10 @@ export default App => class _App extends Component {
 
     const appProps = {
       ...props,
+      pathname,
+      query,
+      asPath,
+      appConfig,
       Page: ({ children, ...extraProps }) => (
         <div
           id="page"
