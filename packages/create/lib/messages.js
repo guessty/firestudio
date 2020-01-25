@@ -2,7 +2,7 @@ const chalk = require('chalk')
 const output = require('./utils/output')
 
 const program = {
-  name: 'firestudio',
+  name: 'firepress',
   create: 'create'
 }
 
@@ -11,7 +11,7 @@ exports.help = function() {
     Only ${chalk.green('<project-directory>')} is required.
 
     If you have any problems, do not hesitate to file an issue:
-      ${chalk.cyan('https://github.com/guessty/firestudio/issues/new')}
+      ${chalk.cyan('https://github.com/guessty/firepress/issues/new')}
   `
 }
 
@@ -23,7 +23,7 @@ Please specify the project directory:
 
 For example:
 
-  ${chalk.cyan(program.name)} ${chalk.cyan(program.create)} ${chalk.green('my-firestudio-app')}
+  ${chalk.cyan(program.name)} ${chalk.cyan(program.create)} ${chalk.green('my-firepress-app')}
 
 Run ${chalk.cyan(`${program.name} --help`)} to see all options.
 `

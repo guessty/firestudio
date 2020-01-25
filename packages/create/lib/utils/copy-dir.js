@@ -24,7 +24,7 @@ module.exports = function copyDir(opts) {
       .then(function() {
         stopCopySpinner()
         output.success(
-          `Created files for "${output.cmd(projectName)}" firestudio app`
+          `Created files for "${output.cmd(projectName)}" Firepress app`
         )
         return this
       })
