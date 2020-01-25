@@ -16,7 +16,7 @@ try {
   firebaseConfig = require('../config/firebase.config');
 } catch {
   firebaseConfig = undefined;
-  console.log('\x1b[31m%s\x1b[0m', '[Firestudio] You need to add firebase config to connect to firebase services');
+  console.log('\x1b[31m%s\x1b[0m', '[Firepress] You need to add firebase config to connect to firebase services');
 }
 
 let credential;
@@ -24,7 +24,7 @@ try {
   credential = admin.credential.applicationDefault();
 } catch {
   credential = undefined;
-  console.log('\x1b[31m%s\x1b[0m', '[Firestudio] You need to grant your development environment access to Firebase services. Register your app as a service account and generate a private key.');
+  console.log('\x1b[31m%s\x1b[0m', '[Firepress] You need to grant your development environment access to Firebase services. Register your app as a service account and generate a private key.');
 }
 
 if (firebaseConfig) {

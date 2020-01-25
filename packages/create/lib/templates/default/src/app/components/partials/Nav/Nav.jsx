@@ -5,6 +5,18 @@ import Link from '@elements/Link';
 import SignInOutButton from '@elements/SignInOutButton';
 
 export default class Nav extends PureComponent {
+  static renderLink(text, href) {
+    return (
+      <Link
+        href={href}
+        styledAs="none"
+        className="flex h-full items-center mr-4 whitespace-no-wrap"
+      >
+        {text}
+      </Link>
+    );
+  }
+
   render() {
     return (
       <nav className="nav h-20 bg-white text-black font-medium border-b">
@@ -13,31 +25,14 @@ export default class Nav extends PureComponent {
             <Link
               href="/"
               styledAs="none"
-              className="flex h-full items-center text-2xl font-bold mr-4"
+              className="flex flex-row h-full items-center text-2xl font-bold mr-4"
             >
-              Firepress
+              <img className="block w-10 mr-2" alt="logo" src="/static/firepress-logo.webp" />
+              <span>Firepress</span>
             </Link>
-            <Link
-              href="/private-page"
-              styledAs="none"
-              className="flex h-full items-center mr-4"
-            >
-              Private Page
-            </Link>
-            <Link
-              href="/extra-route"
-              styledAs="none"
-              className="flex h-full items-center mr-4"
-            >
-              Extra Route
-            </Link>
-            <Link
-              href="/route-with-dynamic-prop/12"
-              styledAs="none"
-              className="flex h-full items-center mr-4"
-            >
-              Route With Dynamic Prop
-            </Link>
+            {Nav.renderLink('Private Page', '/private-page')}
+            {Nav.renderLink('Extra Route', '/extra-route')}
+            {Nav.renderLink('Route With Dynamic Prop', '/route-with-dynamic-prop/12')}
             <div className="flex-grow" />
             <div className="flex h-full items-center">
               <SignInOutButton />

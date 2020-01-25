@@ -44,8 +44,8 @@ export default class SignInOutButton extends Component {
         <Avatar {...firebase.auth().currentUser} />
         <div className="block border-r border-black w-1 h-10" />
         <Clickable
-          styledAs="a"
-          className="flex h-full items-center mx-4 hover:text-blue-600"
+          styledAs="button"
+          className="text-white border rounded border-white bg-gray-800 hocus:bg-gray-700 px-6"
           onClick={() => {
             firebase.auth().signOut();
           }}

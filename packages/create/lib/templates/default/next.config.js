@@ -17,7 +17,6 @@ const nextConfig = withSass(withCSS(withFirepressConfig({
     projectId: firebaseConfig.projectId,
     cloudRenderedPages: [],
     firebaseConfig,
-    // isSPA: true,
   },
   webpack(config) {
     config.resolve.alias = { // eslint-disable-line no-param-reassign
