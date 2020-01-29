@@ -232,6 +232,7 @@ export default App => class _App extends Component {
         (serverCtx.isDevServer && App.exportAppConfig)
         || (serverCtx.isExporting && App.exportAppConfig)
         || (serverCtx.isServer && !serverCtx.isDevServer && !App.exportAppConfig)
+        || (isClient)
       )
     ) {
       appConfig = await _App.getAppConfig(firepressProps);
@@ -272,9 +273,9 @@ export default App => class _App extends Component {
     };
   }
 
-  static getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps(props) {
     const { firepressProps } = props;
-    const appConfig = state.appConfig || firepressProps.appConfig;
+    const appConfig = firepressProps.appConfig;
     const pageConfig = firepressProps.pageConfig;
     const Routes = _App.getRoutes(appConfig ? appConfig.routes : []);
     const hasPageFullLoaded = !firepressProps.ctx.pathname.includes('/_');
@@ -315,18 +316,7 @@ export default App => class _App extends Component {
       });
     }
 
-    if (!appConfig) {
-      const newAppConfig = await _App.getAppConfig(this.state);
-      this.setState({
-        appConfig: newAppConfig,
-      }, () => {
-        Routes.Router.pushRoute(Routes.Router.asPath);
-      })
-    } else if (appConfig && !pageConfig) {
-      Routes.Router.pushRoute(Routes.Router.asPath);
-    }
-
-    if (!hasPageFullLoaded) {
+    if (!appConfig || (appConfig && !pageConfig) || !hasPageFullLoaded) {
       Routes.Router.pushRoute(Routes.Router.asPath);
     }
 
@@ -342,7 +332,11 @@ export default App => class _App extends Component {
   }
 
   componentDidUpdate() {
-    const { wasLoadedFromCache } = this.state;
+    const { wasLoadedFromCache, pageConfig } = this.state;
+
+    if (!pageConfig) {
+      Routes.Router.pushRoute(Routes.Router.asPath);
+    }
 
     if (wasLoadedFromCache) {
       // eslint-disable-next-line react/no-did-update-set-state
