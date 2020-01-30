@@ -48,21 +48,19 @@ export default App => class _App extends Component {
   );
 
   static getServerCtx(ctx) {
-    const isExporting = (!process.browser && !(ctx && ctx.req && ctx.req.headers));
-    const isClient = (Boolean(process.browser) && !(ctx && ctx.req && ctx.req.headers));
-    const isServer = (!process.browser && Boolean(ctx && ctx.req && ctx.req.headers));
+    const isServer = (!process.browser && Boolean(ctx.req && ctx.res));
     const isDevServer = process.env.NODE_ENV === 'development' && isServer;
+    const isExporting = isServer && global && global.__NEXT_DATA__ && global.__NEXT_DATA__.nextExport;
 
     return {
       isExporting,
-      isClient,
       isServer,
       isDevServer,
     };
   }
 
   static getRoutes(routes) {
-    const { publicRuntimeConfig: { ROUTES } } = getConfig();
+    const { publicRuntimeConfig: { ROUTES } = {} } = getConfig() || {};
     return buildRoutes([
       ...ROUTES || [],
       ...routes || [],
@@ -192,17 +190,21 @@ export default App => class _App extends Component {
       ...extraCtx,
     };
 
-    const redirectPath = typeof Page.redirectTo === 'function' ? Page.redirectTo(newBaseCtx) : Page.redirectTo;
-    if (redirectPath && serverCtx.isServer) {
-      const { res } = baseCtx;
-      res.writeHead(302, { Location: redirectPath });
-      res.end();
-    }
-
     const NEXT_DATA_FIREPRESS_PROPS = _App.getNextDataFirepressProps();
     let appConfig = NEXT_DATA_FIREPRESS_PROPS.appConfig;
     let pageConfig = (typeof Page.getPageConfig === 'function' || Page.isPrivate) ? undefined : {};
     let Routes = _App.getRoutes(appConfig && appConfig.routes ? appConfig.routes : []);
+
+    const redirectPath = typeof Page.redirectTo === 'function' ? Page.redirectTo(newBaseCtx) : Page.redirectTo;
+
+    if (redirectPath && serverCtx.isServer && !serverCtx.isDevServer && !serverCtx.isExporting) {
+      const { res } = baseCtx;
+      res.writeHead(302, { Location: redirectPath });
+      res.end();
+    } else if (isClient && redirectPath) {
+      Routes.Router.replaceRoute(redirectPath);
+    }
+
     let ctx = _App.getCtx(newBaseCtx, Routes);
     const isFirebaseAuthEnabled = Boolean(App.firebase && App.firebase.auth);
     const isFirebaseAuthLoaded = NEXT_DATA_FIREPRESS_PROPS.isFirebaseAuthLoaded || false;
@@ -231,7 +233,7 @@ export default App => class _App extends Component {
       && (
         (serverCtx.isDevServer && App.exportAppConfig)
         || (serverCtx.isExporting && App.exportAppConfig)
-        || (serverCtx.isServer && !serverCtx.isDevServer && !App.exportAppConfig)
+        || (serverCtx.isServer && !serverCtx.isDevServer && !serverCtx.isExporting && !App.exportAppConfig)
         || (isClient)
       )
     ) {
@@ -255,9 +257,9 @@ export default App => class _App extends Component {
     } else if (
       !Page.isPrivate
       && (
-        (serverCtx.isDevServer && App.exportAppConfig)
+        (serverCtx.isDevServer && Page.exportPageConfig)
         || (serverCtx.isExporting && Page.exportPageConfig)
-        || (serverCtx.isServer && !serverCtx.isDevServer && !Page.exportPageConfig)
+        || (serverCtx.isServer && !serverCtx.isDevServer && !serverCtx.isExporting && !Page.exportPageConfig)
         || (isClient)
       )
     ) {
