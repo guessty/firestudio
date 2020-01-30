@@ -61,10 +61,84 @@ export default App => class _App extends Component {
 
   static getRoutes(routes) {
     const { publicRuntimeConfig: { ROUTES } = {} } = getConfig() || {};
+
     return buildRoutes([
       ...ROUTES || [],
       ...routes || [],
     ]);
+  }
+
+  static attachRouterEvents(Router) {
+    Router.beforePopState(() => {
+      setTimeout(() => {
+        this.setState({ wasLoadedFromCache: true });
+      }, 0);
+      document.getElementById('page').style.cssText = `
+        visibility: hidden;
+      `;
+
+      return true;
+    });
+
+    const updateQueryState = (queryParams) => {
+      const currentState = window.history.state;
+      const parsedUrl = parseUrl(currentState.url, true);
+      parsedUrl.set('query', {
+        ...Object.entries(parsedUrl.query).reduce((acc, [key, value]) => {
+          if (key.charAt(0) === '_') return acc;
+
+          return {
+            ...acc,
+            [key]: value,
+          };
+        }, {}),
+        ...queryParams,
+      });
+      const updatedQuery = parsedUrl.query;
+      const asQuery = updatedQuery;
+      const hrefAsPathname = parsedUrl.pathname.split('/').reduce((acc, element) => {
+        if (!element) return acc;
+
+        if (element.charAt(0) === '_') {
+          const queryKey = element.replace('_', '');
+          delete asQuery[queryKey];
+
+          return `${acc}/${updatedQuery[queryKey]}`;
+        }
+
+        return `${acc}/${element}`;
+      }, '');
+      const updatedState = {
+        ...currentState,
+        url: parsedUrl.href,
+        ...currentState.as ? { as: `${hrefAsPathname}?${queryString.stringify(asQuery)}` } : {},
+        query: updatedQuery,
+      };
+      const updatedQueryParams = `?${queryString.stringify(parsedUrl.query)}`;
+
+      return {
+        updatedState,
+        updatedQueryParams,
+      };
+    };
+
+    if (typeof Router.pushQueryParams !== 'function') {
+      Router.pushQueryParams = (queryParams) => {
+        const { updatedState, updatedQueryParams } = updateQueryState(queryParams);
+        window.history.pushState(updatedState, 'updateQueryParams', updatedQueryParams);
+        const event = new CustomEvent('onupdatequeryparams', { detail: updatedState.query });
+        window.dispatchEvent(event);
+      };
+    }
+
+    if (typeof Router.replaceQueryParams !== 'function') {
+      Router.replaceQueryParams = (queryParams) => {
+        const { updatedState, updatedQueryParams } = updateQueryState(queryParams);
+        window.history.replaceState(updatedState, 'updateQueryParams', updatedQueryParams);
+        const event = new CustomEvent('onupdatequeryparams', { detail: updatedState.query });
+        window.dispatchEvent(event);
+      };
+    }
   }
 
   static setNextDataFirepressProps(props) {
@@ -86,22 +160,33 @@ export default App => class _App extends Component {
 
   static getCtx(ctx, Routes) {
     const { asPath, pathname: page } = ctx;
+    const isClient = Boolean(process.browser) && typeof window !== 'undefined';
 
-    if (!page.includes('*')) return ctx;
-    
     const { pathname, query } = parseUrl(asPath, true);
-    const params = Routes.routes
-      .filter(route => route.page === page)
-      .map(route => route.match(pathname))
-      .find(route => route !== undefined) || {};
 
-    return {
-      ...ctx,
+    const matchedRoute = Routes.routes
+      .filter(route => route.page === page)
+      .find(route => route.match(pathname) !== undefined) || {};
+
+    const { pattern } = matchedRoute;
+    const params = matchedRoute.match(pathname);
+
+    const routeCtx = {
       pathname,
+      pattern,
       query: {
         ...params,
         ...query,
-      }
+      },
+    };
+
+    if (isClient) {
+      Routes.Router.currentRoute = routeCtx;
+    }
+
+    return {
+      ...ctx,
+      ...routeCtx,
     };
   }
 
@@ -120,7 +205,7 @@ export default App => class _App extends Component {
       appConfig = {};
     }
 
-    _App.setNextDataFirepressProps({ appConfig })
+    _App.setNextDataFirepressProps({ appConfig });
 
     return appConfig;
   }
@@ -198,7 +283,6 @@ export default App => class _App extends Component {
     const redirectPath = typeof Page.redirectTo === 'function' ? Page.redirectTo(newBaseCtx) : Page.redirectTo;
 
     if (redirectPath && serverCtx.isServer && !serverCtx.isDevServer && !serverCtx.isExporting) {
-      const { res } = baseCtx;
       res.writeHead(302, { Location: redirectPath });
       res.end();
     } else if (isClient && redirectPath) {
@@ -225,7 +309,7 @@ export default App => class _App extends Component {
         getPageConfig: Page.getPageConfig,
         exportPageConfig: Page.exportPageConfig,
       },
-    }
+    };
 
     if (
       typeof appConfig === 'undefined'
@@ -233,7 +317,8 @@ export default App => class _App extends Component {
       && (
         (serverCtx.isDevServer && App.exportAppConfig)
         || (serverCtx.isExporting && App.exportAppConfig)
-        || (serverCtx.isServer && !serverCtx.isDevServer && !serverCtx.isExporting && !App.exportAppConfig)
+        || (serverCtx.isServer && !serverCtx.isDevServer
+            && !serverCtx.isExporting && !App.exportAppConfig)
         || (isClient)
       )
     ) {
@@ -259,7 +344,8 @@ export default App => class _App extends Component {
       && (
         (serverCtx.isDevServer && Page.exportPageConfig)
         || (serverCtx.isExporting && Page.exportPageConfig)
-        || (serverCtx.isServer && !serverCtx.isDevServer && !serverCtx.isExporting && !Page.exportPageConfig)
+        || (serverCtx.isServer && !serverCtx.isDevServer
+          && !serverCtx.isExporting && !Page.exportPageConfig)
         || (isClient)
       )
     ) {
@@ -301,18 +387,20 @@ export default App => class _App extends Component {
 
   unregisterAuthObserver;
 
-  async componentDidMount () {
+  async componentDidMount() {
     const {
       Routes, appConfig, pageConfig, hasPageFullLoaded,
       isFirebaseAuthEnabled,
     } = this.state;
+
+    _App.attachRouterEvents(Routes.Router);
 
     if (isFirebaseAuthEnabled) {
       _App.setNextDataFirepressProps({
         isFirebaseAuthEnabled: true,
         isFirebaseAuthLoaded: false,
       });
-      this.unregisterAuthObserver = App.firebase.auth().onAuthStateChanged((user) => {
+      this.unregisterAuthObserver = App.firebase.auth().onAuthStateChanged(() => {
         _App.setNextDataFirepressProps({ isFirebaseAuthLoaded: true });
         Routes.Router.pushRoute(Routes.Router.asPath);
       });
@@ -321,22 +409,12 @@ export default App => class _App extends Component {
     if (!appConfig || (appConfig && !pageConfig) || !hasPageFullLoaded) {
       Routes.Router.pushRoute(Routes.Router.asPath);
     }
-
-    Routes.Router.beforePopState(() => {
-      setTimeout(() => {
-        this.setState({ wasLoadedFromCache: true });
-      }, 0);
-      document.getElementById('page').style.cssText = `
-        visibility: hidden;
-      `;
-      return true;
-    });
   }
 
   componentDidUpdate() {
-    const { wasLoadedFromCache, pageConfig } = this.state;
+    const { wasLoadedFromCache, pageConfig, Routes, hasPageFullLoaded } = this.state;
 
-    if (!pageConfig) {
+    if (!pageConfig || !hasPageFullLoaded) {
       Routes.Router.pushRoute(Routes.Router.asPath);
     }
 
@@ -373,9 +451,13 @@ export default App => class _App extends Component {
       hasPageFullLoaded,
     } = this.state;
 
+    const canRenderApp = (typeof appConfig !== 'undefined');
+    const AppLoader = App.AppLoader || _App.AppLoader;
+    if (!canRenderApp) return (<AppLoader />);
+
     const pageMatches = Routes.routes
-    .filter(route => !route.pattern.match(/:(?<=:)(.*)(?=\*)/g))
-    .filter(route => route.regex.test(pathname));
+      .filter(route => !route.pattern.match(/:(?<=:)(.*)(?=\*)/g))
+      .filter(route => route.regex.test(pathname));
     const doesPageExist = Boolean(pageMatches.length);
 
     const Soft404Page = App.Soft404Page || _App.Soft404Page;
@@ -416,13 +498,8 @@ export default App => class _App extends Component {
       ),
     }
 
-    const canRenderApp = (typeof appConfig !== 'undefined');
-    const AppLoader = App.AppLoader || _App.AppLoader;
-
-    return canRenderApp ? (
+    return (
       <App {...appProps} />
-    ) : (
-      <AppLoader />
     );
   }
 }
