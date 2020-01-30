@@ -280,7 +280,7 @@ export default App => class _App extends Component {
     const appConfig = firepressProps.appConfig;
     const pageConfig = firepressProps.pageConfig;
     const Routes = _App.getRoutes(appConfig ? appConfig.routes : []);
-    const hasPageFullLoaded = !firepressProps.ctx.pathname.includes('/_');
+    const hasPageFullLoaded = !firepressProps.ctx.pathname.includes('*');
 
     return {
       ...firepressProps,
