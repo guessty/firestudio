@@ -6,6 +6,8 @@ import queryString from 'query-string';
 import unfetch from 'isomorphic-unfetch';
 import getConfig from 'next/config';
 
+import Routes from './../routes';
+
 const buildRoutes = require('./../build/routes');
 
 export default App => class _App extends Component {
@@ -68,77 +70,17 @@ export default App => class _App extends Component {
     ]);
   }
 
-  static attachRouterEvents(Router) {
-    Router.beforePopState(() => {
-      setTimeout(() => {
-        this.setState({ wasLoadedFromCache: true });
-      }, 0);
-      document.getElementById('page').style.cssText = `
-        visibility: hidden;
-      `;
+  static updateRoutes(routes) {
+    const { publicRuntimeConfig: { ROUTES } = {} } = getConfig() || {};
 
-      return true;
-    });
+    const newRoutes = buildRoutes([
+      ...ROUTES || [],
+      ...routes || [],
+    ]);
 
-    const updateQueryState = (queryParams) => {
-      const currentState = window.history.state;
-      const parsedUrl = parseUrl(currentState.url, true);
-      parsedUrl.set('query', {
-        ...Object.entries(parsedUrl.query).reduce((acc, [key, value]) => {
-          if (key.charAt(0) === '_') return acc;
-
-          return {
-            ...acc,
-            [key]: value,
-          };
-        }, {}),
-        ...queryParams,
-      });
-      const updatedQuery = parsedUrl.query;
-      const asQuery = updatedQuery;
-      const hrefAsPathname = parsedUrl.pathname.split('/').reduce((acc, element) => {
-        if (!element) return acc;
-
-        if (element.charAt(0) === '_') {
-          const queryKey = element.replace('_', '');
-          delete asQuery[queryKey];
-
-          return `${acc}/${updatedQuery[queryKey]}`;
-        }
-
-        return `${acc}/${element}`;
-      }, '');
-      const updatedState = {
-        ...currentState,
-        url: parsedUrl.href,
-        ...currentState.as ? { as: `${hrefAsPathname}?${queryString.stringify(asQuery)}` } : {},
-        query: updatedQuery,
-      };
-      const updatedQueryParams = `?${queryString.stringify(parsedUrl.query)}`;
-
-      return {
-        updatedState,
-        updatedQueryParams,
-      };
-    };
-
-    if (typeof Router.pushQueryParams !== 'function') {
-      Router.pushQueryParams = (queryParams) => {
-        const { updatedState, updatedQueryParams } = updateQueryState(queryParams);
-        window.history.pushState(updatedState, 'updateQueryParams', updatedQueryParams);
-        const event = new CustomEvent('onupdatequeryparams', { detail: updatedState.query });
-        window.dispatchEvent(event);
-      };
-    }
-
-    if (typeof Router.replaceQueryParams !== 'function') {
-      Router.replaceQueryParams = (queryParams) => {
-        const { updatedState, updatedQueryParams } = updateQueryState(queryParams);
-        window.history.replaceState(updatedState, 'updateQueryParams', updatedQueryParams);
-        const event = new CustomEvent('onupdatequeryparams', { detail: updatedState.query });
-        window.dispatchEvent(event);
-      };
-    }
+    Routes.routes = newRoutes.routes;
+    // Routes.Router = newRoutes.Router;
+    // Routes.Link = newRoutes.Link;
   }
 
   static setNextDataFirepressProps(props) {
@@ -166,10 +108,10 @@ export default App => class _App extends Component {
 
     const matchedRoute = Routes.routes
       .filter(route => route.page === page)
-      .find(route => route.match(pathname) !== undefined) || {};
+      .find(route => route.match(pathname) !== undefined);
 
-    const { pattern } = matchedRoute;
-    const params = matchedRoute.match(pathname);
+    const { pattern } = matchedRoute || {};
+    const params = matchedRoute ? matchedRoute.match(pathname) : {};
 
     const routeCtx = {
       pathname,
@@ -204,6 +146,8 @@ export default App => class _App extends Component {
     } catch {
       appConfig = {};
     }
+
+    _App.updateRoutes(appConfig.routes || []);
 
     _App.setNextDataFirepressProps({ appConfig });
 
@@ -278,7 +222,7 @@ export default App => class _App extends Component {
     const NEXT_DATA_FIREPRESS_PROPS = _App.getNextDataFirepressProps();
     let appConfig = NEXT_DATA_FIREPRESS_PROPS.appConfig;
     let pageConfig = (typeof Page.getPageConfig === 'function' || Page.isPrivate) ? undefined : {};
-    let Routes = _App.getRoutes(appConfig && appConfig.routes ? appConfig.routes : []);
+    // let Routes = _App.getRoutes(appConfig && appConfig.routes ? appConfig.routes : []);
 
     const redirectPath = typeof Page.redirectTo === 'function' ? Page.redirectTo(newBaseCtx) : Page.redirectTo;
 
@@ -295,7 +239,7 @@ export default App => class _App extends Component {
 
     let firepressProps = {
       ctx,
-      Routes,
+      // Routes,
       appConfig,
       pageConfig,
       isFirebaseAuthEnabled,
@@ -323,13 +267,13 @@ export default App => class _App extends Component {
       )
     ) {
       appConfig = await _App.getAppConfig(firepressProps);
-      Routes = _App.getRoutes(appConfig && appConfig.routes ? appConfig.routes : []);
+      // Routes = _App.getRoutes(appConfig && appConfig.routes ? appConfig.routes : []);
       ctx = _App.getCtx(newBaseCtx, Routes);
       firepressProps = {
         ...firepressProps,
         appConfig,
         ctx,
-        Routes,
+        // Routes,
       };
     }
 
@@ -365,14 +309,14 @@ export default App => class _App extends Component {
     const { firepressProps } = props;
     const appConfig = firepressProps.appConfig;
     const pageConfig = firepressProps.pageConfig;
-    const Routes = _App.getRoutes(appConfig ? appConfig.routes : []);
+    // const Routes = _App.getRoutes(appConfig ? appConfig.routes : []);
     const hasPageFullLoaded = !firepressProps.ctx.pathname.includes('*');
 
     return {
       ...firepressProps,
       appConfig,
       pageConfig,
-      Routes,
+      // Routes,
       hasPageFullLoaded,
     };
   }
@@ -380,7 +324,7 @@ export default App => class _App extends Component {
   state = {
     appConfig: undefined,
     pageConfig: undefined,
-    Routes: undefined,
+    // Routes: undefined,
     wasLoadedFromCache: false,
     hasPageFullLoaded: undefined,
   };
@@ -389,11 +333,12 @@ export default App => class _App extends Component {
 
   async componentDidMount() {
     const {
-      Routes, appConfig, pageConfig, hasPageFullLoaded,
+      // Routes, 
+      appConfig, pageConfig, hasPageFullLoaded,
       isFirebaseAuthEnabled,
     } = this.state;
 
-    _App.attachRouterEvents(Routes.Router);
+    this.attachRouterEvents(Routes.Router);
 
     if (isFirebaseAuthEnabled) {
       _App.setNextDataFirepressProps({
@@ -412,7 +357,10 @@ export default App => class _App extends Component {
   }
 
   componentDidUpdate() {
-    const { wasLoadedFromCache, pageConfig, Routes, hasPageFullLoaded } = this.state;
+    const {
+      wasLoadedFromCache, pageConfig, hasPageFullLoaded
+      // Routes,
+    } = this.state;
 
     if (!pageConfig || !hasPageFullLoaded) {
       Routes.Router.pushRoute(Routes.Router.asPath);
@@ -435,6 +383,79 @@ export default App => class _App extends Component {
     }
   }
 
+  attachRouterEvents(Router) {
+    Router.beforePopState(() => {
+      setTimeout(() => {
+        this.setState({ wasLoadedFromCache: true });
+      }, 0);
+      document.getElementById('page').style.cssText = `
+        visibility: hidden;
+      `;
+
+      return true;
+    });
+
+    const updateQueryState = (queryParams) => {
+      const currentState = window.history.state;
+      const parsedUrl = parseUrl(currentState.url, true);
+      parsedUrl.set('query', {
+        ...Object.entries(parsedUrl.query).reduce((acc, [key, value]) => {
+          if (key.charAt(0) === '_') return acc;
+
+          return {
+            ...acc,
+            [key]: value,
+          };
+        }, {}),
+        ...queryParams,
+      });
+      const updatedQuery = parsedUrl.query;
+      const asQuery = updatedQuery;
+      const hrefAsPathname = parsedUrl.pathname.split('/').reduce((acc, element) => {
+        if (!element) return acc;
+
+        if (element.charAt(0) === '_') {
+          const queryKey = element.replace('_', '');
+          delete asQuery[queryKey];
+
+          return `${acc}/${updatedQuery[queryKey]}`;
+        }
+
+        return `${acc}/${element}`;
+      }, '');
+      const updatedState = {
+        ...currentState,
+        url: parsedUrl.href,
+        ...currentState.as ? { as: `${hrefAsPathname}?${queryString.stringify(asQuery)}` } : {},
+        query: updatedQuery,
+      };
+      const updatedQueryParams = `?${queryString.stringify(parsedUrl.query)}`;
+
+      return {
+        updatedState,
+        updatedQueryParams,
+      };
+    };
+
+    if (typeof Router.pushQueryParams !== 'function') {
+      Router.pushQueryParams = (queryParams) => {
+        const { updatedState, updatedQueryParams } = updateQueryState(queryParams);
+        window.history.pushState(updatedState, 'updateQueryParams', updatedQueryParams);
+        const event = new CustomEvent('onupdatequeryparams', { detail: updatedState.query });
+        window.dispatchEvent(event);
+      };
+    }
+
+    if (typeof Router.replaceQueryParams !== 'function') {
+      Router.replaceQueryParams = (queryParams) => {
+        const { updatedState, updatedQueryParams } = updateQueryState(queryParams);
+        window.history.replaceState(updatedState, 'updateQueryParams', updatedQueryParams);
+        const event = new CustomEvent('onupdatequeryparams', { detail: updatedState.query });
+        window.dispatchEvent(event);
+      };
+    }
+  }
+
   render() {
     const {
       Component: PageComponent,
@@ -446,8 +467,8 @@ export default App => class _App extends Component {
     const {
       wasLoadedFromCache,
       appConfig, pageConfig,
-      Routes, ctx,
-      ctx: { pathname, query, asPath },
+      // Routes,
+      ctx, ctx: { pathname, query, asPath },
       hasPageFullLoaded,
     } = this.state;
 
