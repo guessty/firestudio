@@ -49,27 +49,6 @@ export default App => class _App extends Component {
     </div>
   );
 
-  static getServerCtx(ctx) {
-    const isServer = (!process.browser && Boolean(ctx.req && ctx.res));
-    const isDevServer = process.env.NODE_ENV === 'development' && isServer;
-    const isExporting = isServer && global && global.__NEXT_DATA__ && global.__NEXT_DATA__.nextExport;
-
-    return {
-      isExporting,
-      isServer,
-      isDevServer,
-    };
-  }
-
-  static getRoutes(routes) {
-    const { publicRuntimeConfig: { ROUTES } = {} } = getConfig() || {};
-
-    return buildRoutes([
-      ...ROUTES || [],
-      ...routes || [],
-    ]);
-  }
-
   static updateRoutes(routes) {
     const { publicRuntimeConfig: { ROUTES } = {} } = getConfig() || {};
 
@@ -79,8 +58,6 @@ export default App => class _App extends Component {
     ]);
 
     Routes.routes = newRoutes.routes;
-    // Routes.Router = newRoutes.Router;
-    // Routes.Link = newRoutes.Link;
   }
 
   static setNextDataFirepressProps(props) {
@@ -100,9 +77,10 @@ export default App => class _App extends Component {
     return {};
   }
 
-  static getCtx(ctx, Routes) {
+  static setCurrentRoute(Page, ctx) {    
     const { asPath, pathname: page } = ctx;
     const isClient = Boolean(process.browser) && typeof window !== 'undefined';
+    const pageRedirectTo = Page.redirectTo === 'function' ? Page.redirectTo(ctx) : Page.redirectTo;
 
     const { pathname, query } = parseUrl(asPath, true);
 
@@ -110,12 +88,13 @@ export default App => class _App extends Component {
       .filter(route => route.page === page)
       .find(route => route.match(pathname) !== undefined);
 
-    const { pattern } = matchedRoute || {};
+    const { pattern, redirectTo: routeRedirectTo } = matchedRoute || {};
     const params = matchedRoute ? matchedRoute.match(pathname) : {};
 
-    const routeCtx = {
+    const currentRoute = {
       pathname,
       pattern,
+      redirectTo: pageRedirectTo || routeRedirectTo,
       query: {
         ...params,
         ...query,
@@ -123,22 +102,15 @@ export default App => class _App extends Component {
     };
 
     if (isClient) {
-      Routes.Router.currentRoute = routeCtx;
+      Routes.Router.currentRoute = currentRoute;
     }
 
-    return {
-      ...ctx,
-      ...routeCtx,
-    };
+    return currentRoute;
   }
 
   static async getAppConfig(props) {
-    const { ctx, Page, Routes } = props;
+    const { ctx } = props;
     let appConfig;
-
-    if (Page.redirectTo) {
-      Routes.Router.replaceRoute(Page.redirectTo);
-    }
 
     try {
       appConfig = await App.getAppConfig(ctx);
@@ -148,7 +120,6 @@ export default App => class _App extends Component {
     }
 
     _App.updateRoutes(appConfig.routes || []);
-
     _App.setNextDataFirepressProps({ appConfig });
 
     return appConfig;
@@ -172,15 +143,11 @@ export default App => class _App extends Component {
   }
 
   static async getPageConfig(props) {
-    const { ctx, Page, Routes } = props;
+    const { ctx, Page } = props;
 
     const isClient = Boolean(process.browser) && typeof window !== 'undefined';
 
     let pageConfig = {};
-
-    if (Page.redirectTo) {
-      Routes.Router.replaceRoute(Page.redirectTo);
-    }
 
     if (isClient && Page.exportPageConfig) {
       pageConfig = await _App.getExportedPageConfig(ctx);
@@ -203,12 +170,16 @@ export default App => class _App extends Component {
 
   static async getInitialProps(appContext) {
     const { Component: Page, ctx: baseCtx } = appContext;
-    const serverCtx = _App.getServerCtx(baseCtx);
+
+    const isServerlike = (!process.browser && Boolean(baseCtx.req && baseCtx.res));
+    const isExporting = isServerlike && global && global.__NEXT_DATA__ && global.__NEXT_DATA__.nextExport;
+    const isDevServer = isServerlike && process.env.NODE_ENV === 'development' && !isExporting;
+    const isServer = isServerlike && !isDevServer && !isExporting;
     const isClient = Boolean(process.browser) && typeof window !== 'undefined';
 
     const {
       query, req, res, err, AppTree,
-      pathname, asPath, isServer,
+      pathname, asPath, isServer: ctxIsServer,
       ...extraCtx
     } = baseCtx;
 
@@ -220,26 +191,19 @@ export default App => class _App extends Component {
     };
 
     const NEXT_DATA_FIREPRESS_PROPS = _App.getNextDataFirepressProps();
-    let appConfig = NEXT_DATA_FIREPRESS_PROPS.appConfig;
-    let pageConfig = (typeof Page.getPageConfig === 'function' || Page.isPrivate) ? undefined : {};
-    // let Routes = _App.getRoutes(appConfig && appConfig.routes ? appConfig.routes : []);
-
-    const redirectPath = typeof Page.redirectTo === 'function' ? Page.redirectTo(newBaseCtx) : Page.redirectTo;
-
-    if (redirectPath && serverCtx.isServer && !serverCtx.isDevServer && !serverCtx.isExporting) {
-      res.writeHead(302, { Location: redirectPath });
-      res.end();
-    } else if (isClient && redirectPath) {
-      Routes.Router.replaceRoute(redirectPath);
-    }
-
-    let ctx = _App.getCtx(newBaseCtx, Routes);
     const isFirebaseAuthEnabled = Boolean(App.firebase && App.firebase.auth);
     const isFirebaseAuthLoaded = NEXT_DATA_FIREPRESS_PROPS.isFirebaseAuthLoaded || false;
 
+    let appConfig = NEXT_DATA_FIREPRESS_PROPS.appConfig;
+    let pageConfig = (typeof Page.getPageConfig === 'function' || Page.isPrivate) ? undefined : {};
+
+    let currentRoute = _App.setCurrentRoute(Page, newBaseCtx);
+
     let firepressProps = {
-      ctx,
-      // Routes,
+      ctx: {
+        ...newBaseCtx,
+        ...currentRoute,
+      },
       appConfig,
       pageConfig,
       isFirebaseAuthEnabled,
@@ -249,7 +213,6 @@ export default App => class _App extends Component {
       Page: {
         Loader: Page.Loader,
         isPrivate: Page.isPrivate,
-        redirectTo: redirectPath,
         getPageConfig: Page.getPageConfig,
         exportPageConfig: Page.exportPageConfig,
       },
@@ -259,22 +222,31 @@ export default App => class _App extends Component {
       typeof appConfig === 'undefined'
       && typeof App.getAppConfig === 'function'
       && (
-        (serverCtx.isDevServer && App.exportAppConfig)
-        || (serverCtx.isExporting && App.exportAppConfig)
-        || (serverCtx.isServer && !serverCtx.isDevServer
-            && !serverCtx.isExporting && !App.exportAppConfig)
+        (isDevServer && App.exportAppConfig)
+        || (isExporting && App.exportAppConfig)
+        || (isServer && !App.exportAppConfig)
         || (isClient)
       )
     ) {
       appConfig = await _App.getAppConfig(firepressProps);
-      // Routes = _App.getRoutes(appConfig && appConfig.routes ? appConfig.routes : []);
-      ctx = _App.getCtx(newBaseCtx, Routes);
+      currentRoute = _App.setCurrentRoute(Page, newBaseCtx);
       firepressProps = {
         ...firepressProps,
         appConfig,
-        ctx,
-        // Routes,
+        ctx: {
+          ...newBaseCtx,
+          ...currentRoute,
+        },
       };
+    }
+
+    if (currentRoute.redirectTo) {
+      if (isServer) {
+        res.writeHead(302, { Location: currentRoute.redirectTo });
+        res.end();
+      } else if (isClient) {
+        Routes.Router.replaceRoute(currentRoute.redirectTo);
+      }
     }
 
     if (Page.isPrivate && isFirebaseAuthEnabled && isFirebaseAuthLoaded) {
@@ -286,10 +258,9 @@ export default App => class _App extends Component {
     } else if (
       !Page.isPrivate
       && (
-        (serverCtx.isDevServer && Page.exportPageConfig)
-        || (serverCtx.isExporting && Page.exportPageConfig)
-        || (serverCtx.isServer && !serverCtx.isDevServer
-          && !serverCtx.isExporting && !Page.exportPageConfig)
+        (isDevServer && Page.exportPageConfig)
+        || (isExporting && Page.exportPageConfig)
+        || (isServer && !Page.exportPageConfig)
         || (isClient)
       )
     ) {
@@ -309,14 +280,12 @@ export default App => class _App extends Component {
     const { firepressProps } = props;
     const appConfig = firepressProps.appConfig;
     const pageConfig = firepressProps.pageConfig;
-    // const Routes = _App.getRoutes(appConfig ? appConfig.routes : []);
     const hasPageFullLoaded = !firepressProps.ctx.pathname.includes('*');
 
     return {
       ...firepressProps,
       appConfig,
       pageConfig,
-      // Routes,
       hasPageFullLoaded,
     };
   }
@@ -324,7 +293,6 @@ export default App => class _App extends Component {
   state = {
     appConfig: undefined,
     pageConfig: undefined,
-    // Routes: undefined,
     wasLoadedFromCache: false,
     hasPageFullLoaded: undefined,
   };
@@ -333,7 +301,6 @@ export default App => class _App extends Component {
 
   async componentDidMount() {
     const {
-      // Routes, 
       appConfig, pageConfig, hasPageFullLoaded,
       isFirebaseAuthEnabled,
     } = this.state;
@@ -351,6 +318,10 @@ export default App => class _App extends Component {
       });
     }
 
+    if (Routes.Router.currentRoute && Routes.Router.currentRoute.redirectTo) {
+      Routes.Router.replaceRoute(Routes.Router.currentRoute.redirectTo);
+    }
+
     if (!appConfig || (appConfig && !pageConfig) || !hasPageFullLoaded) {
       Routes.Router.pushRoute(Routes.Router.asPath);
     }
@@ -358,9 +329,12 @@ export default App => class _App extends Component {
 
   componentDidUpdate() {
     const {
-      wasLoadedFromCache, pageConfig, hasPageFullLoaded
-      // Routes,
+      wasLoadedFromCache, pageConfig, hasPageFullLoaded,
     } = this.state;
+
+    if (Routes.Router.currentRoute && Routes.Router.currentRoute.redirectTo) {
+      Routes.Router.replaceRoute(Routes.Router.currentRoute.redirectTo);
+    }
 
     if (!pageConfig || !hasPageFullLoaded) {
       Routes.Router.pushRoute(Routes.Router.asPath);
@@ -397,39 +371,21 @@ export default App => class _App extends Component {
 
     const updateQueryState = (queryParams) => {
       const currentState = window.history.state;
-      const parsedUrl = parseUrl(currentState.url, true);
-      parsedUrl.set('query', {
-        ...Object.entries(parsedUrl.query).reduce((acc, [key, value]) => {
-          if (key.charAt(0) === '_') return acc;
+      const url = currentState.as || currentState.url;
+      const { href, origin, pathname, query, } = parseUrl(url, true);
 
-          return {
-            ...acc,
-            [key]: value,
-          };
-        }, {}),
+      const updatedQuery = {
+        ...query,
         ...queryParams,
-      });
-      const updatedQuery = parsedUrl.query;
-      const asQuery = updatedQuery;
-      const hrefAsPathname = parsedUrl.pathname.split('/').reduce((acc, element) => {
-        if (!element) return acc;
+      };
 
-        if (element.charAt(0) === '_') {
-          const queryKey = element.replace('_', '');
-          delete asQuery[queryKey];
-
-          return `${acc}/${updatedQuery[queryKey]}`;
-        }
-
-        return `${acc}/${element}`;
-      }, '');
       const updatedState = {
         ...currentState,
-        url: parsedUrl.href,
-        ...currentState.as ? { as: `${hrefAsPathname}?${queryString.stringify(asQuery)}` } : {},
+        url: href,
+        ...currentState.as ? { as: `${origin}${pathname}?${queryString.stringify(updatedQuery)}` } : {},
         query: updatedQuery,
       };
-      const updatedQueryParams = `?${queryString.stringify(parsedUrl.query)}`;
+      const updatedQueryParams = `?${queryString.stringify(updatedQuery)}`;
 
       return {
         updatedState,
@@ -467,7 +423,6 @@ export default App => class _App extends Component {
     const {
       wasLoadedFromCache,
       appConfig, pageConfig,
-      // Routes,
       ctx, ctx: { pathname, query, asPath },
       hasPageFullLoaded,
     } = this.state;

@@ -9,6 +9,10 @@ const buildRoutes = (routes = []) => {
     .reverse()
     .forEach((route) => {
       appRoutes.add({ pattern: route.pattern, page: route.page });
+      if (route.redirectTo) {
+        const addedRoute = appRoutes.routes[appRoutes.routes.length - 1];
+        addedRoute.redirectTo = route.redirectTo;
+      }
     })
   
   routes.filter(route => (route.pattern.includes('/:') && !route.pattern.includes('*')))
@@ -16,6 +20,10 @@ const buildRoutes = (routes = []) => {
     .reverse()
     .forEach((route) => {
       appRoutes.add({ pattern: route.pattern, page: route.page });
+      if (route.redirectTo) {
+        const addedRoute = appRoutes.routes[appRoutes.routes.length - 1];
+        addedRoute.redirectTo = route.redirectTo;
+      }
     })
 
   routes.filter(route => (route.pattern.includes('*')))
@@ -24,6 +32,10 @@ const buildRoutes = (routes = []) => {
     .forEach((route) => {
       const pattern = route.pattern.replace(/\:\*/g, ':_params*')
       appRoutes.add({ pattern, page: route.page });
+      if (route.redirectTo) {
+        const addedRoute = appRoutes.routes[appRoutes.routes.length - 1];
+        addedRoute.redirectTo = route.redirectTo;
+      }
     })
 
   return appRoutes
