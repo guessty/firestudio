@@ -2,7 +2,7 @@ import React from 'react';
 import NextApp from 'next/app';
 import Head from 'next/head';
 import { Provider } from 'react-redux';
-import { withFirepress } from '@firepress/core/app';
+import { withFirepress } from '@firepress/core';
 import { withRedux } from '@firepress/store';
 import { Application, Loader } from '@firepress/ui';
 
@@ -41,6 +41,7 @@ class App extends NextApp {
     return {
       routes: [
         { pattern: '/extra-route', page: '_*' },
+        { pattern: '/redirect-to-home', page: '_*', redirectTo: '/' },
         { pattern: '/route-with-dynamic-prop/:prop', page: '_*' },
       ],
     };

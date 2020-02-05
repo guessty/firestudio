@@ -6,7 +6,7 @@ const withSass = require('@zeit/next-sass'); // eslint-disable-line import/no-ex
 
 let firebaseConfig;
 try {
-  firebaseConfig = require('./config/firebase.config');
+  firebaseConfig = require('./config/firebase.config'); // eslint-disable-line global-require
 } catch {
   firebaseConfig = {};
 }
@@ -28,6 +28,7 @@ const nextConfig = withSass(withCSS(withFirepressConfig({
       '@config': path.resolve(__dirname, './src/app/config'),
       '@plugins': path.resolve(__dirname, './src/app/plugins'),
       '@store': path.resolve(__dirname, './src/app/store'),
+      react: path.resolve('node_modules/react'),
     };
 
     config.resolve.plugins = [ // eslint-disable-line no-param-reassign

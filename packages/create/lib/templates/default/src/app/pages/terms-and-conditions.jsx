@@ -2,6 +2,8 @@ import React, { PureComponent } from 'react';
 import { Container, Flex, Hr } from '@firepress/ui';
 
 export default class extends PureComponent {
+  static redirectTo = '/privacy-policy';
+
   render() {
     return (
       <Container>
