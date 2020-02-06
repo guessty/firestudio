@@ -195,7 +195,9 @@ export default App => class _App extends Component {
     const isFirebaseAuthLoaded = NEXT_DATA_FIREPRESS_PROPS.isFirebaseAuthLoaded || false;
 
     let appConfig = NEXT_DATA_FIREPRESS_PROPS.appConfig;
-    let pageConfig = (typeof Page.getPageConfig === 'function' || Page.isPrivate) ? undefined : {};
+    let pageConfig = (typeof appConfig === 'undefined'
+      || typeof Page.getPageConfig === 'function' || Page.isPrivate)
+      ? undefined : {};
 
     let currentRoute = _App.setCurrentRoute(Page, newBaseCtx);
 
@@ -217,6 +219,12 @@ export default App => class _App extends Component {
         exportPageConfig: Page.exportPageConfig,
       },
     };
+
+    if (typeof appConfig === 'undefined' && typeof App.getAppConfig === 'undefined') {
+      appConfig = {};
+      _App.setNextDataFirepressProps({ appConfig });
+      pageConfig = (typeof Page.getPageConfig === 'function' || Page.isPrivate) ? undefined : {};
+    }
 
     if (
       typeof appConfig === 'undefined'
@@ -249,22 +257,24 @@ export default App => class _App extends Component {
       }
     }
 
-    if (Page.isPrivate && isFirebaseAuthEnabled && isFirebaseAuthLoaded) {
-      if (!App.firebase.auth().currentUser) {
-        _App.redirectPrivatePage(Routes.Router, asPath);
-      } else {
+    if (typeof appConfig !== 'undefined') {
+      if (Page.isPrivate && isFirebaseAuthEnabled && isFirebaseAuthLoaded) {
+        if (!App.firebase.auth().currentUser) {
+          _App.redirectPrivatePage(Routes.Router, asPath);
+        } else {
+          pageConfig = await _App.getPageConfig(firepressProps);
+        }
+      } else if (
+        !Page.isPrivate
+        && (
+          (isDevServer && Page.exportPageConfig)
+          || (isExporting && Page.exportPageConfig)
+          || (isServer && !Page.exportPageConfig)
+          || (isClient)
+        )
+      ) {
         pageConfig = await _App.getPageConfig(firepressProps);
       }
-    } else if (
-      !Page.isPrivate
-      && (
-        (isDevServer && Page.exportPageConfig)
-        || (isExporting && Page.exportPageConfig)
-        || (isServer && !Page.exportPageConfig)
-        || (isClient)
-      )
-    ) {
-      pageConfig = await _App.getPageConfig(firepressProps);
     }
 
     return {
@@ -329,14 +339,14 @@ export default App => class _App extends Component {
 
   componentDidUpdate() {
     const {
-      wasLoadedFromCache, pageConfig, hasPageFullLoaded,
+      wasLoadedFromCache, appConfig, pageConfig, hasPageFullLoaded,
     } = this.state;
 
     if (Routes.Router.currentRoute && Routes.Router.currentRoute.redirectTo) {
       Routes.Router.replaceRoute(Routes.Router.currentRoute.redirectTo);
     }
 
-    if (!pageConfig || !hasPageFullLoaded) {
+    if (!appConfig || !pageConfig || !hasPageFullLoaded) {
       Routes.Router.pushRoute(Routes.Router.asPath);
     }
 
