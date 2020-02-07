@@ -1,4 +1,4 @@
-const execa = require('execa')
+const { exec } = require('child_process');
 const Promise = require('promise')
 const messages = require('../messages')
 const output = require('./output')
@@ -6,43 +6,27 @@ const output = require('./output')
 module.exports = function install(opts) {
   const projectName = opts.projectName
   const projectPath = opts.projectPath
-  const packages = opts.packages || []
 
-  if (packages.length === 0) {
-    console.log('Missing packages in `install`, try running again.')
-    process.exit(1)
-  }
+  console.log(opts.projectName, projectPath);
 
-  const installCmd = 'npm'
-  const installArgs = getInstallArgs(installCmd, packages)
+  const installCmd = "npm install"
 
-  console.log(messages.installing(packages))
-  process.chdir(projectPath)
+  console.log(messages.installing())
 
   return new Promise(function(resolve, reject) {
     const stopInstallSpinner = output.wait('Installing modules')
 
-    execa(installCmd, installArgs)
-      .then(function() {
-        // Confirm that all dependencies were installed
-        return execa(installCmd, ['install'])
-      })
-      .then(function() {
+    exec(installCmd, { cwd: projectPath }, function (err) {
+      if (err) {
+        console.log(err)
         stopInstallSpinner()
-        output.success(`Installed dependencies for ${projectName}`)
-        resolve()
-      })
-      .catch(function() {
-        stopInstallSpinner()
-        console.log(messages.installError(packages))
+        console.log(messages.installError())
         return reject(new Error(`${installCmd} installation failed`))
-      })
-  })
-}
+      }
 
-function getInstallArgs(cmd, packages) {
-  if (cmd === 'npm') {
-    const args = ['install', '--save', '--save-exact']
-    return args.concat(packages, ['--verbose'])
-  }
+      stopInstallSpinner()
+      output.success(`Installed dependencies for ${projectName}`)
+      resolve()
+    });
+  })
 }

@@ -26,10 +26,7 @@ module.exports = function createApp(opts) {
     projectPath: projectPath,
     projectName: projectName
   })
-    // .then(installWithMessageFactory(opts))
-    .then(function() {
-      console.log(messages.start(projectName))
-    })
+    .then(installWithMessageFactory(opts))
     .catch(function(err) {
       throw err
     })

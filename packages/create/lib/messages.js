@@ -36,27 +36,12 @@ Uh oh! Looks like there's already a directory called ${chalk.red(
   )}. Please try a different name or delete that folder.`
 }
 
-exports.installing = function(packages) {
-  const pkgText = packages
-    .map(function(pkg) {
-      return `    ${chalk.cyan(chalk.bold(pkg))}`
-    })
-    .join('\n')
-
-  return `
-  Installing npm modules:
-${pkgText}
-`
+exports.installing = function() {
+  return 'Installing npm modules...'
 }
 
-exports.installError = function(packages) {
-  const pkgText = packages
-    .map(function(pkg) {
-      return `${chalk.cyan(chalk.bold(pkg))}`
-    })
-    .join(', ')
-
-  output.error(`Failed to install ${pkgText}, try again.`)
+exports.installError = function() {
+  output.error('Failed to install. Try manually installing within the project directory.')
 }
 
 exports.copying = function(projectName) {
@@ -80,15 +65,12 @@ exports.start = function(projectName) {
   Navigate to your project:
   $ ${output.cmd(`cd ${projectName}`)}
 
-  Install packages:
-  $ ${output.cmd(commands.install)}
-
   Start a development environment:
   $ ${output.cmd(commands.dev)}
 
   The template you installed comes with all the documentation you need to help you finish setting up your app.
 
   If you have any problems, do not hesitate to file an issue:
-  ${chalk.green('https://github.com/guessty/firstudio/issues')}
+  ${chalk.green('https://github.com/guessty/firepress/issues/new')}
 `
 }
