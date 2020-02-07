@@ -37,7 +37,9 @@ Uh oh! Looks like there's already a directory called ${chalk.red(
 }
 
 exports.installing = function() {
-  return 'Installing npm modules...'
+  return `
+  Installing npm modules...
+  `
 }
 
 exports.installError = function() {

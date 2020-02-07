@@ -7,8 +7,6 @@ module.exports = function install(opts) {
   const projectName = opts.projectName
   const projectPath = opts.projectPath
 
-  console.log(opts.projectName, projectPath);
-
   const installCmd = "npm install"
 
   console.log(messages.installing())
