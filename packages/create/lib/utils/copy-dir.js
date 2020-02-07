@@ -22,6 +22,12 @@ module.exports = function copyDir(opts) {
         )
       })
       .then(function() {
+        return fs.copy(
+          path.resolve(templatePath, './package-lock.json'),
+          path.resolve(projectPath, './package-lock.json')
+        )
+      })
+      .then(function() {
         stopCopySpinner()
         output.success(
           `Created files for "${output.cmd(projectName)}" Firepress app`

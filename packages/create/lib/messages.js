@@ -68,20 +68,20 @@ Creating ${chalk.bold(chalk.green(projectName))}...
 exports.start = function(projectName) {
 
   const commands = {
-    install: 'npm install',
+    install: 'npm i',
     dev: 'npm run dev',
   }
 
   return `
   ${chalk.green('Awesome!')} You're now ready to start playing with fire.
 
-  We already ran ${output.cmd(
-    commands.install
-  )} for you, so your next steps are:
-
+  Your next steps are:
 
   Navigate to your project:
   $ ${output.cmd(`cd ${projectName}`)}
+
+  Install packages:
+  $ ${output.cmd(commands.install)}
 
   Start a development environment:
   $ ${output.cmd(commands.dev)}
