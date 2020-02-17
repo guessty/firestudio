@@ -84,9 +84,8 @@ export default App => class _App extends Component {
 
     const { pathname, query } = parseUrl(asPath, true);
 
-    const matchedRoute = Routes.routes
-      .filter(route => route.page === page)
-      .find(route => route.match(pathname) !== undefined);
+    const filteredRoutes = Routes.routes.filter(route => route.page === page);
+    const matchedRoute = filteredRoutes.find(route => route.match(pathname) !== undefined);
 
     const { pattern, redirectTo: routeRedirectTo } = matchedRoute || {};
     const params = matchedRoute ? matchedRoute.match(pathname) : {};
@@ -238,6 +237,12 @@ export default App => class _App extends Component {
     ) {
       appConfig = await _App.getAppConfig(firepressProps);
       currentRoute = _App.setCurrentRoute(Page, newBaseCtx);
+      if (isServer) {
+        res.writeHead(302, { Location: currentRoute.pathname });
+        res.end();
+      } else if (isClient) {
+        Routes.Router.replaceRoute(currentRoute.pathname);
+      }
       firepressProps = {
         ...firepressProps,
         appConfig,
@@ -290,7 +295,7 @@ export default App => class _App extends Component {
     const { firepressProps } = props;
     const appConfig = firepressProps.appConfig;
     const pageConfig = firepressProps.pageConfig;
-    const hasPageFullLoaded = !firepressProps.ctx.pathname.includes('*');
+    const hasPageFullLoaded = typeof appConfig !== 'undefined' && !firepressProps.ctx.pathname.includes('*');
 
     return {
       ...firepressProps,
@@ -441,9 +446,8 @@ export default App => class _App extends Component {
     const AppLoader = App.AppLoader || _App.AppLoader;
     if (!canRenderApp) return (<AppLoader />);
 
-    const pageMatches = Routes.routes
-      .filter(route => !route.pattern.match(/:(?<=:)(.*)(?=\*)/g))
-      .filter(route => route.regex.test(pathname));
+    const filteredRoutes = Routes.routes.filter(route => !route.pattern.match(/:(?<=:)(.*)(?=\*)/g))
+    const pageMatches = filteredRoutes.filter(route => route.regex.test(pathname));
     const doesPageExist = Boolean(pageMatches.length);
 
     const Soft404Page = App.Soft404Page || _App.Soft404Page;
