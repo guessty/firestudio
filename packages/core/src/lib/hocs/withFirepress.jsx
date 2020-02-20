@@ -91,6 +91,7 @@ export default App => class _App extends Component {
     const params = matchedRoute ? matchedRoute.match(pathname) : {};
 
     const currentRoute = {
+      asPath,
       pathname,
       pattern,
       redirectTo: pageRedirectTo || routeRedirectTo,
@@ -238,10 +239,10 @@ export default App => class _App extends Component {
       appConfig = await _App.getAppConfig(firepressProps);
       currentRoute = _App.setCurrentRoute(Page, newBaseCtx);
       if (isServer) {
-        res.writeHead(302, { Location: currentRoute.pathname });
+        res.writeHead(302, { Location: currentRoute.asPath });
         res.end();
       } else if (isClient) {
-        Routes.Router.replaceRoute(currentRoute.pathname);
+        Routes.Router.replaceRoute(currentRoute.asPath);
       }
       firepressProps = {
         ...firepressProps,
@@ -386,18 +387,20 @@ export default App => class _App extends Component {
 
     const updateQueryState = (queryParams) => {
       const currentState = window.history.state;
-      const url = currentState.as || currentState.url;
-      const { href, origin, pathname, query, } = parseUrl(url, true);
+      const parsedUrl = parseUrl(Router.currentRoute.asPath, true);
 
       const updatedQuery = {
-        ...query,
+        ...parsedUrl.query,
         ...queryParams,
       };
 
+      parsedUrl.set('query', updatedQuery);
+      Router.currentRoute.asPath = parsedUrl.href;
+      Router.currentRoute.query = updatedQuery;
+
       const updatedState = {
         ...currentState,
-        url: href,
-        ...currentState.as ? { as: `${origin}${pathname}?${queryString.stringify(updatedQuery)}` } : {},
+        ...currentState.as ? { as: parseUrl.href } : {},
         query: updatedQuery,
       };
       const updatedQueryParams = `?${queryString.stringify(updatedQuery)}`;
