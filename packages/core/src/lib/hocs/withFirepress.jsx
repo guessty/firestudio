@@ -400,7 +400,7 @@ export default App => class _App extends Component {
 
       const updatedState = {
         ...currentState,
-        ...currentState.as ? { as: parseUrl.href } : {},
+        ...currentState.as ? { as: parsedUrl.href } : {},
         query: updatedQuery,
       };
       const updatedQueryParams = `?${queryString.stringify(updatedQuery)}`;
