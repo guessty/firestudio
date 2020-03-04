@@ -396,7 +396,10 @@ export default App => class _App extends Component {
 
       parsedUrl.set('query', updatedQuery);
       Router.currentRoute.asPath = parsedUrl.href;
-      Router.currentRoute.query = updatedQuery;
+      Router.currentRoute.query = {
+        ...Router.currentRoute.query,
+        ...updatedQuery
+      };
 
       const updatedState = {
         ...currentState,
