@@ -8,6 +8,7 @@ export default class MenuButton extends Component {
   static propTypes = {
     children: PropTypes.element.isRequired,
     disabled: PropTypes.bool,
+    id: PropTypes.string,
     onClick: PropTypes.func,
     onKeyDown: PropTypes.func,
   };
@@ -85,7 +86,7 @@ export default class MenuButton extends Component {
   }
 
   render() {
-    const { disabled, children } = this.props;
+    const { disabled, children, id } = this.props;
     const { ambManager } = this.context;
 
     const childProps = {
@@ -95,6 +96,7 @@ export default class MenuButton extends Component {
       'aria-disabled': disabled,
       onKeyDown: this.handleKeyDown,
       onClick: this.handleClick,
+      id,
     };
 
     if (ambManager.options.closeOnBlur) {

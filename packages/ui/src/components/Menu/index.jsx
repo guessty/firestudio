@@ -20,13 +20,12 @@ export default class _Menu extends PureComponent {
     children: PropTypes.node,
     render: PropTypes.func,
     onChange: PropTypes.func,
-    popupPostion: PropTypes.oneOf([
+    position: PropTypes.oneOf([
       'top', 'right', 'bottom', 'left',
       'topRight', 'rightTop', 'topLeft', 'leftTop',
       'bottomRight', 'rightBottom', 'bottomLeft', 'leftBottom',
     ]),
-    popupOffset: PropTypes.number,
-    autoAdjustPopupPosition: PropTypes.bool,
+    autoAdjustPosition: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -39,9 +38,9 @@ export default class _Menu extends PureComponent {
     children: null,
     render: undefined,
     onChange: () => {},
-    popupPostion: undefined,
-    popupOffset: undefined,
-    autoAdjustPopupPosition: undefined,
+    position: undefined,
+    offset: undefined,
+    autoAdjustPosition: undefined,
   };
 
   static getPositionConfig(position, offset = 0, autoAdjust = false) {
@@ -86,16 +85,18 @@ export default class _Menu extends PureComponent {
   };
 
   handleAlignMenu = () => {
-    const { popupPostion, popupOffset, autoAdjustPopupPosition } = this.props;
+    const { position, offset, autoAdjustPosition } = this.props;
     const { buttonId, menuId } = this.state;
     const buttonElement = document.getElementById(buttonId);
     const menuElement = document.getElementById(menuId);
 
-    domAlign(
-      menuElement,
-      buttonElement,
-      _Menu.getPositionConfig(popupPostion, popupOffset, autoAdjustPopupPosition),
-    );
+    if (buttonElement && menuElement) {
+      domAlign(
+        menuElement,
+        buttonElement,
+        _Menu.getPositionConfig(position, offset, autoAdjustPosition),
+      );
+    }
   };
 
   renderMenu(isOpen) {
@@ -137,7 +138,7 @@ export default class _Menu extends PureComponent {
 
   render() {
     const {
-      className, popupClassName, popupPostion, disabled,
+      className, popupClassName, position, disabled,
       buttonComponent, enableHoverEvents, onChange,
     } = this.props;
     const { buttonId, menuId } = this.state;
@@ -155,12 +156,12 @@ export default class _Menu extends PureComponent {
             {buttonComponent}
           </MenuButton>
           <Menu
-            className={`menu__popup pointer-events-none ${popupClassName}`}
+            className={`menu__popup pointer-events-none min-w-full ${popupClassName}`}
             id={menuId}
           >
             {menuState => {
               onChange(menuState);
-              if (typeof window !== 'undefined' && typeof popupPostion !== 'undefined') {
+              if (typeof window !== 'undefined' && typeof position !== 'undefined') {
                 this.handleAlignMenu();
               }
 
