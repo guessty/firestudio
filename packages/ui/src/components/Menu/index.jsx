@@ -81,21 +81,28 @@ export default class _Menu extends PureComponent {
 
   state = {
     buttonId: shortid.generate(),
-    menuId: shortid.generate(),
+    popupId: shortid.generate(),
   };
+
+  componentDidMount() {
+    this.handleAlignMenu();
+  }
 
   handleAlignMenu = () => {
     const { position, offset, autoAdjustPosition } = this.props;
-    const { buttonId, menuId } = this.state;
-    const buttonElement = document.getElementById(buttonId);
-    const menuElement = document.getElementById(menuId);
+    const { buttonId, popupId } = this.state;
 
-    if (buttonElement && menuElement) {
-      domAlign(
-        menuElement,
-        buttonElement,
-        _Menu.getPositionConfig(position, offset, autoAdjustPosition),
-      );
+    if (typeof window !== 'undefined' && typeof position !== 'undefined') {
+      const buttonElement = document.querySelector(`[data-menubuttonid="${buttonId}"]`);
+      const menuElement = document.querySelector(`[data-menupopupid="${popupId}"]`);
+  
+      if (buttonElement && menuElement) {
+        domAlign(
+          menuElement,
+          buttonElement,
+          _Menu.getPositionConfig(position, offset, autoAdjustPosition),
+        );
+      }
     }
   };
 
@@ -141,7 +148,7 @@ export default class _Menu extends PureComponent {
       className, popupClassName, position, disabled,
       buttonComponent, enableHoverEvents, onChange,
     } = this.props;
-    const { buttonId, menuId } = this.state;
+    const { buttonId, popupId } = this.state;
 
     return (
       <Wrapper
@@ -150,20 +157,18 @@ export default class _Menu extends PureComponent {
         <MenuHover enableHoverEvents={enableHoverEvents}>
           <MenuButton
             className="menu__button"
+            data-menubuttonid={buttonId}
             disabled={disabled}
-            id={buttonId}
           >
             {buttonComponent}
           </MenuButton>
           <Menu
             className={`menu__popup pointer-events-none min-w-full ${popupClassName}`}
-            id={menuId}
+            data-menupopupid={popupId}
           >
             {menuState => {
               onChange(menuState);
-              if (typeof window !== 'undefined' && typeof position !== 'undefined') {
-                this.handleAlignMenu();
-              }
+              this.handleAlignMenu();
 
               return this.renderMenu(menuState.isOpen)
             }}
