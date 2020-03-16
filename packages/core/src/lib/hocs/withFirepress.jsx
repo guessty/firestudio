@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { parse } from 'node-html-parser';
 import parseUrl from 'url-parse';
 import queryString from 'query-string';
+import * as pathToRegexp from 'path-to-regexp';
 import unfetch from 'isomorphic-unfetch';
 import getConfig from 'next/config';
 
@@ -90,11 +91,19 @@ export default App => class _App extends Component {
     const { pattern, redirectTo: routeRedirectTo } = matchedRoute || {};
     const params = matchedRoute ? matchedRoute.match(pathname) : {};
 
+    let redirectTo = pageRedirectTo || routeRedirectTo;
+
+    if (redirectTo) {
+      const toPath = pathToRegexp.compile(redirectTo);
+      redirectTo = toPath(params);
+    }
+
+
     const currentRoute = {
       asPath,
       pathname,
       pattern,
-      redirectTo: pageRedirectTo || routeRedirectTo,
+      redirectTo,
       query: {
         ...params,
         ...query,
