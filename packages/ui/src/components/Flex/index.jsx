@@ -35,12 +35,28 @@ class Flex extends PureComponent {
     const { as: Component, children, childClassName } = this.props;
 
     return React.Children.map(children, (child) => {
-      if (child && ((
-        child.type !== 'div' && child.type !== 'span' && child.type !== 'aside'
-        && child.type !== 'article' && child.type !== 'section'
-      ) || (
-        child.props && child.props.className && child.props.className !== 'flex-grow'
-      ))) {
+      if (child) {
+        const typesArray = ['div', 'span', 'aside', 'article', 'section'];
+        const classNamesArray = child.props && child.props.className ? child.props.className.split(' ') : [];
+
+        if (typesArray.includes(child.type)
+          && (classNamesArray.length === 0
+            || (classNamesArray.length === 1 && classNamesArray[0] === 'flex-grow')
+          )
+        ) {
+          return {
+            ...child,
+            ...child.props ? {
+              props: {
+                ...child.props,
+                ...child.props.className ? {
+                  className: `${child.props.className} ${childClassName}`,
+                } : {},
+              },
+            } : {},
+          };
+        }
+
         return Component !== 'span' ? (
           <div className={childClassName}>{child}</div>
         ) : (

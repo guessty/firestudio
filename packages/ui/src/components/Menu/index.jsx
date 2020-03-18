@@ -97,11 +97,13 @@ export default class _Menu extends PureComponent {
       const menuElement = document.querySelector(`[data-menupopupid="${popupId}"]`);
   
       if (buttonElement && menuElement) {
-        domAlign(
-          menuElement,
-          buttonElement,
-          _Menu.getPositionConfig(position, offset, autoAdjustPosition),
-        );
+        setTimeout(() => {
+          domAlign(
+            menuElement,
+            buttonElement,
+            _Menu.getPositionConfig(position, offset, autoAdjustPosition),
+          );
+        }, 0);
       }
     }
   };
@@ -123,7 +125,7 @@ export default class _Menu extends PureComponent {
           aria-hidden={!isOpen}
           className={className}
         >
-          {typeof render === 'function' ? render({ List: MenuList }) : (
+          {typeof render === 'function' ? render({ List: MenuList, isOpen }) : (
             <MenuList className={listClassName}>
               {children}
             </MenuList>
@@ -134,7 +136,7 @@ export default class _Menu extends PureComponent {
 
     return isOpen ? (
       <div className={`relative pointer-events-auto ${containerClassName}`}>
-        {typeof render === 'function' ? render({ List: MenuList }) : (
+        {typeof render === 'function' ? render({ List: MenuList, isOpen }) : (
           <MenuList className={listClassName}>
             {children}
           </MenuList>
@@ -145,7 +147,7 @@ export default class _Menu extends PureComponent {
 
   render() {
     const {
-      className, popupClassName, position, disabled,
+      className, popupClassName, disabled,
       buttonComponent, enableHoverEvents, onChange,
     } = this.props;
     const { buttonId, popupId } = this.state;
