@@ -461,7 +461,7 @@ export default App => class _App extends Component {
     const AppLoader = App.AppLoader || _App.AppLoader;
     if (!canRenderApp) return (<AppLoader />);
 
-    const filteredRoutes = Routes.routes.filter(route => !route.pattern.match(/:(?<=:)(.*)(?=\*)/g))
+    const filteredRoutes = Routes.routes.filter(route => !route.pattern.match(/:(.*)(?=\*)/g))
     const pageMatches = filteredRoutes.filter(route => route.regex.test(pathname));
     const doesPageExist = Boolean(pageMatches.length);
 
