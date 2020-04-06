@@ -17,7 +17,7 @@ module.exports = theme => Object.assign(
   application,
   avatar,
   backgroundImage,
-  carousel,
+  carousel(theme),
   clickable,
   container,
   dialog(theme),
