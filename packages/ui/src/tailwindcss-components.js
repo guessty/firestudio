@@ -1,1 +1,1 @@
-module.exports = require('./components/styles');
+module.exports = require('./components/tailwindcss-components');
