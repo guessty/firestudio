@@ -57,8 +57,11 @@
     position: relative;
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-grow: 1;
     width: 100%;
     pointer-events: none;
+    padding: 1.5rem;
   }
 
   &__content {
@@ -68,6 +71,9 @@
     width: 100%;
     pointer-events: auto;
     outline: none;
+    max-width: 640px;
+    padding: 1.5rem;
+    background-color: #f7fafc;
   }
 
   &--visible {
