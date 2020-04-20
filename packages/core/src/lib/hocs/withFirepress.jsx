@@ -328,7 +328,6 @@ export default App => class _App extends Component {
   unregisterAuthObserver;
 
   async componentDidMount() {
-    const { firepressProps: { currentRoute } } = this.props;
     const {
       appConfig, pageConfig, hasPageFullLoaded,
       isFirebaseAuthEnabled,
@@ -343,7 +342,10 @@ export default App => class _App extends Component {
       });
       this.unregisterAuthObserver = App.firebase.auth().onAuthStateChanged(() => {
         _App.setNextDataFirepressProps({ isFirebaseAuthLoaded: true });
-        Routes.Router.pushRoute(Routes.Router.asPath);
+
+        if (!appConfig || (appConfig && !pageConfig) || !hasPageFullLoaded) {
+          Routes.Router.pushRoute(Routes.Router.asPath);
+        }
       });
     }
 
