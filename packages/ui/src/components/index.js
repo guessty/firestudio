@@ -6,7 +6,7 @@ export { default as Clickable } from './Clickable';
 export { default as Container } from './Container';
 export { default as Dialog } from './Dialog';
 export { default as Flex } from './Flex';
-export { default as Form, Field } from './Form';
+// export { default as Form, Field } from './Form';
 export { default as Hr } from './Hr';
 export { default as Loader } from './Loader';
 export { default as Menu } from './Menu';

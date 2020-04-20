@@ -32,35 +32,70 @@ class Flex extends PureComponent {
   }
 
   renderChildren() {
-    const { as: Component, children, childClassName } = this.props;
+    const {
+      as: Component, children, className, childClassName,
+    } = this.props;
 
     return React.Children.map(children, (child) => {
       if (child) {
-        const typesArray = ['div', 'span', 'aside', 'article', 'section'];
-        const classNamesArray = child.props && child.props.className ? child.props.className.split(' ') : [];
+        // const typesArray = ['div', 'span', 'aside', 'article', 'section'];
+        // const classNamesArray = child.props && child.props.className ? child.props.className.split(' ') : [];
 
-        if (typesArray.includes(child.type)
-          && (classNamesArray.length === 0
-            || (classNamesArray.length === 1 && classNamesArray[0] === 'flex-grow')
-          )
-        ) {
-          return {
-            ...child,
-            ...child.props ? {
+        // if (typesArray.includes(child.type)
+        //   && (classNamesArray.length === 0
+        //     || (classNamesArray.length === 1 && classNamesArray[0] === 'flex-grow')
+        //   )
+        // ) {
+        //   return {
+        //     ...child,
+        //     ...child.props ? {
+        //       props: {
+        //         ...child.props,
+        //         ...child.props.className ? {
+        //           className: `${child.props.className} ${childClassName}`,
+        //         } : {},
+        //       },
+        //     } : {},
+        //   };
+        // }
+
+        const isRow = className.includes('flex-row');
+        const childClassName = child.props && child.props.className ? child.props.className : '';
+
+        let childElement = child;
+
+        let stolenClassNames = '';
+        if (isRow && childClassName) {
+          const childHasWidth = childClassName.includes('w-');
+
+          if (childHasWidth) {
+            let originalClassNames = 'w-full';
+            const childClassNameArray = childClassName.split(' ');
+            childClassNameArray.forEach((item) => {
+              if (item.includes('w-')) {
+                stolenClassNames = `${stolenClassNames} ${item}`
+              } else {
+                originalClassNames = `${originalClassNames} ${item}`
+              }
+            });
+
+            childElement = {
+              ...childElement,
               props: {
-                ...child.props,
-                ...child.props.className ? {
-                  className: `${child.props.className} ${childClassName}`,
-                } : {},
+                ...childElement.props,
+                className: originalClassNames,
               },
-            } : {},
-          };
+            };
+          }
         }
 
+        const childHasFlexGrow = childClassName.includes('flex-grow');
+        const wrapperClassName = `${childHasFlexGrow ? 'flex flex-col flex-grow ' : ''}${childClassName} ${stolenClassNames}`;
+
         return Component !== 'span' ? (
-          <div className={childClassName}>{child}</div>
+          <div className={wrapperClassName}>{childElement}</div>
         ) : (
-          <span className={childClassName}>{child}</span>
+          <span className={wrapperClassName}>{childElement}</span>
         );
       }
 

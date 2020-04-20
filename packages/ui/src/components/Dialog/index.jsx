@@ -21,8 +21,8 @@ export default class Base extends Component {
   static defaultProps = {
     isOpen: false,
     onDismiss: () => {},
-    className: '',
-    containerClassName: '',
+    className: 'max-w-screen-sm bg-gray-100 p-6 sm:p-12',
+    containerClassName: 'p-6 sm:items-center sm:flex-grow',
     overlayClassName: '',
     style: {},
     render: undefined,
