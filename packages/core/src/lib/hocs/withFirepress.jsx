@@ -5,7 +5,6 @@ import parseUrl from 'url-parse';
 import queryString from 'query-string';
 import * as pathToRegexp from 'path-to-regexp';
 import unfetch from 'isomorphic-unfetch';
-import getConfig from 'next/config';
 
 import Routes from './../routes';
 
@@ -51,10 +50,8 @@ export default App => class _App extends Component {
   );
 
   static updateRoutes(routes) {
-    const { publicRuntimeConfig: { ROUTES } = {} } = getConfig() || {};
-
     const newRoutes = buildRoutes([
-      ...ROUTES || [],
+      ...App.ROUTES || [],
       ...routes || [],
     ]);
 
@@ -83,7 +80,8 @@ export default App => class _App extends Component {
     const isClient = Boolean(process.browser) && typeof window !== 'undefined';
     const pageRedirectTo = Page.redirectTo === 'function' ? Page.redirectTo(ctx) : Page.redirectTo;
 
-    const { pathname, query } = parseUrl(asPath, true);
+    const url = asPath.replace('index.html', '').replace('.html', '');
+    const { pathname, query } = parseUrl(url, true);
 
     const filteredRoutes = Routes.routes.filter(route => route.page === page);
     const matchedRoute = filteredRoutes.find(route => route.match(pathname) !== undefined);
@@ -97,7 +95,6 @@ export default App => class _App extends Component {
       const toPath = pathToRegexp.compile(redirectTo);
       redirectTo = toPath(params);
     }
-
 
     const currentRoute = {
       asPath,
@@ -186,6 +183,10 @@ export default App => class _App extends Component {
     const isServer = isServerlike && !isDevServer && !isExporting;
     const isClient = Boolean(process.browser) && typeof window !== 'undefined';
 
+    if (Routes.routes.length === 0) {
+      _App.updateRoutes();
+    }
+
     const {
       query, req, res, err, AppTree,
       pathname, asPath, isServer: ctxIsServer,
@@ -215,6 +216,7 @@ export default App => class _App extends Component {
         ...newBaseCtx,
         ...currentRoute,
       },
+      currentRoute,
       appConfig,
       pageConfig,
       isFirebaseAuthEnabled,
@@ -296,6 +298,7 @@ export default App => class _App extends Component {
       ...newBaseCtx,
       firepressProps: {
         ...firepressProps,
+        appConfig,
         pageConfig,
       },
     };
@@ -339,7 +342,10 @@ export default App => class _App extends Component {
       });
       this.unregisterAuthObserver = App.firebase.auth().onAuthStateChanged(() => {
         _App.setNextDataFirepressProps({ isFirebaseAuthLoaded: true });
-        Routes.Router.pushRoute(Routes.Router.asPath);
+
+        if (!appConfig || (appConfig && !pageConfig) || !hasPageFullLoaded) {
+          Routes.Router.pushRoute(Routes.Router.asPath);
+        }
       });
     }
 
@@ -445,7 +451,7 @@ export default App => class _App extends Component {
   render() {
     const {
       Component: PageComponent,
-      firepressProps: { Page },
+      firepressProps: { Page, currentRoute },
       firepressProps,
       router,
       ...props
@@ -456,6 +462,10 @@ export default App => class _App extends Component {
       ctx, ctx: { pathname, query, asPath },
       hasPageFullLoaded,
     } = this.state;
+
+    if (!Routes.Router.currentRoute) {
+      Routes.Router.currentRoute = currentRoute;
+    }
 
     const canRenderApp = (typeof appConfig !== 'undefined');
     const AppLoader = App.AppLoader || _App.AppLoader;
