@@ -1,3 +1,3 @@
-import { default as withFirepressConfig } from './lib/build/config';
+import { default as withFirepressConfig } from './lib/withFirepressConfig';
 
 export default withFirepressConfig;

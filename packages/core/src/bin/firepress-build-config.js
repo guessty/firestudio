@@ -2,7 +2,7 @@
 const path = require('path')
 const parseArgs = require('minimist')
 //
-const buildDeploymentConfig = require('./../lib/build/deployment');
+const buildDeploymentConfig = require('./../lib/deployment');
 const loadConfig = require('./../lib/utils/get-next-config');
 //
 

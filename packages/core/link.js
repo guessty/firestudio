@@ -1,1 +1,1 @@
-module.exports = require('./dist/link');
+module.exports = require('./dist/link').default;

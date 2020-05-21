@@ -1,5 +1,5 @@
-import { default as withFirepressConfig } from '../build/config';
-import buildApp from '../build/app';
+import { default as withFirepressConfig } from './withFirepressConfig';
+import next from "next";
 
 export default {
   pageRenderer: (req, res) => {
@@ -9,7 +9,7 @@ export default {
         generateRoutesFromBuild: true,
       },
     });
-    const app = buildApp({ dev: false, conf })
+    const app = next({ dev: false, conf })
     const handler = app.getRequestHandler();
 
     return app.prepare().then(() => handler(req, res));

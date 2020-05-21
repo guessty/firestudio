@@ -8,20 +8,15 @@ const getDynamicSource = function(route) {
 };
 
 module.exports = function(routes, config) {
-  const staticRewrites = routes.filter(route => !(route.pattern.includes('/:') || route.pattern.includes('*')))
-    .sort((routeA, routeB) => routeA.pattern.split('/').length - routeB.pattern.split('/').length)
-    .reverse()
-    .map(route => ({
-      source: route.pattern,
-      destination: `${route.page === '/' ? '/index.html' : `${route.page}.html`}`,
-    }))
-  
+  const fallback = config.firepress.fallback || '/404.html';
+  const fallbackDestination = `${fallback.replace('.html', '')}.html`;
+
   const dynamicRewrites = routes.filter(route => (route.pattern.includes('/:') && !route.pattern.includes('*')))
     .sort((routeA, routeB) => routeA.pattern.split('/').length - routeB.pattern.split('/').length)
     .reverse()
     .map(route => ({
       source: getDynamicSource(route.pattern),
-      destination: `${route.page}.html`,
+      destination: fallbackDestination,
     }))
 
   const catchAnyRewrites = routes.filter(route => (route.pattern.includes('*')))
@@ -29,11 +24,10 @@ module.exports = function(routes, config) {
     .reverse()
     .map(route => ({
       source: getDynamicSource(route.pattern),
-      destination: `${route.page.replace(/\*/g, '')}.html`,
+      destination: fallbackDestination,
     }))
 
   return [
-    ...staticRewrites,
     ...dynamicRewrites,
     ...catchAnyRewrites,
   ];

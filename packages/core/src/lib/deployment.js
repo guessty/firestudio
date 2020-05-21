@@ -1,6 +1,6 @@
 const writeFileSync = require('fs').writeFileSync;
 const path = require('path');
-const getRewrites = require('../utils/get-rewrites');
+const getRewrites = require('./utils/get-rewrites');
 //
 
 const getDynamicSource = function(route) {
@@ -79,6 +79,7 @@ const buildJson = function(outdir, config) {
   const firebaseHostingConfig = {
     hosting: {
       headers: firepressConfig.headers,
+      cleanUrls: true,
       public: 'public',
       ignore: [
         'firebase.json',

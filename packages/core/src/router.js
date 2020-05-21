@@ -1,3 +1,5 @@
-import { Router } from './lib/routes'
+import { default as Routes } from './lib/routes';
 
-export default Router
+export { setRoutes } from './lib/routes';
+
+export default Routes.Router;

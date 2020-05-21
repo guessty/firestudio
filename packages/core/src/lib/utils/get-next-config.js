@@ -5,8 +5,6 @@ module.exports = function(dir) {
     cwd: dir,
   });
 
-  console.log(nextConfigSource);
-
   let nextConfig = {};
 
   if (nextConfigSource && nextConfigSource.length) {
