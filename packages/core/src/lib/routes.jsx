@@ -1,6 +1,7 @@
 import React from 'react';
 import { pathToRegexp, compile } from 'path-to-regexp';
 import parseUrl from 'url-parse';
+import queryString from 'query-string';
 import NextLink from 'next/link';
 import NextRouter from 'next/router';
 
@@ -199,16 +200,38 @@ export const buildRoutes = (routes = []) => {
   return appRoutes;
 };
 
+const getUpdatedPath = (path, params = {}) => {
+  const { url, query = {} } = queryString.parseUrl(path);
+  return queryString.stringifyUrl({
+    url,
+    query: {
+      ...query,
+      ...params
+    },
+  });
+};
+
 const SingletonRoutes = buildRoutes();
 SingletonRoutes.isValidClientRoute = pathname => (
   SingletonRoutes.routes.find(route => route.match(pathname) !== undefined));
+SingletonRoutes.Router.replaceQueryParams = (params = {}) => {
+  const path = getUpdatedPath(SingletonRoutes.Router.asPath, params);
+
+  SingletonRoutes.Router.replaceRoute(path);
+};
+SingletonRoutes.Router.pushQueryParams = (params = {}) => {
+  const path = getUpdatedPath(SingletonRoutes.Router.asPath, params);
+
+  SingletonRoutes.Router.pushRoute(path);
+};
 
 export const setRoutes = (routes = []) => {
   const newRoutes = buildRoutes(routes);
   SingletonRoutes.routes = newRoutes.routes;
+  SingletonRoutes.Router.routes = SingletonRoutes.routes;
 };
 
-export const initRoutes = () => {
+export const initRoutes = (routes = []) => {
   const originalPrototype = Object.getPrototypeOf(SingletonRoutes.Router.router);
   const originalSet = originalPrototype.set;
   function getRouteInfo(
@@ -392,16 +415,24 @@ export const initRoutes = () => {
     this.pattern = pattern;
     this.redirectTo = redirectTo;
 
-    originalSet.call(this, route, pathname, query, as, data);
+    return originalSet.call(this, route, pathname, query, as, data).then((response) => {
+      if (this.redirectTo) {
+        SingletonRoutes.Router.replaceRoute(this.redirectTo);
+      } else if (data.props.pageProps.shouldGetStaticPropsForClient) {
+        SingletonRoutes.Router.replaceRoute(as);
+      }
 
-    if (this.redirectTo) {
-      SingletonRoutes.Router.replaceRoute(this.redirectTo);
-    } else if (data.props.pageProps.shouldGetStaticPropsForClient) {
-      SingletonRoutes.Router.replaceRoute(as);
-    }
+      return response;
+    })
   }
   originalPrototype.getRouteInfo = getRouteInfo;
   originalPrototype.set = newSetMethod;
+
+
+
+  const newRoutes = buildRoutes(routes);
+  SingletonRoutes.routes = newRoutes.routes;
+  SingletonRoutes.Router.routes = SingletonRoutes.routes;
 };
 
 export default SingletonRoutes;

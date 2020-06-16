@@ -2,7 +2,7 @@ import React from 'react';
 import parseUrl from 'url-parse';
 import queryString from 'query-string';
 
-import Routes, { setRoutes, initRoutes } from './routes';
+import Routes, { initRoutes } from './routes';
 
 export default App => class _App extends React.Component {
   static isFirebaseAuthEnabled = Boolean(App.firebase && App.firebase.auth);
@@ -28,8 +28,15 @@ export default App => class _App extends React.Component {
   async componentDidMount() {
     const { Component } = this.props;
     const { isAppLoading } = this.state;
-    initRoutes();
-    setRoutes([...App.ROUTES || []]);
+
+    let ROUTES = typeof App.ROUTES === 'function' ? await App.ROUTES() : App.ROUTES;
+    if (typeof ROUTES !== 'undefined' && !Array.isArray(ROUTES)) {
+      // eslint-disable-next-line no-console
+      console.log('App.ROUTES must return an array of routes.');
+    }
+    ROUTES = Array.isArray(ROUTES) ? ROUTES : [];
+
+    initRoutes(ROUTES);
     if (isAppLoading) {
       setTimeout(() => {
         this.checkCurrentRoute();
@@ -70,7 +77,7 @@ export default App => class _App extends React.Component {
     return App.isClientFallbackEnabled
       && (
         (router.route === _App.defaultClientFallbackPage)
-        || (router.route.includes('[...') && Component.getClientProps)
+        || (router.route.includes('[...') && Component.getStaticPropsForClient)
         || (Component.redirectTo)
         || (Component.requiresAuthentication)
       );
