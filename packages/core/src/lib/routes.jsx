@@ -215,14 +215,20 @@ const SingletonRoutes = buildRoutes();
 SingletonRoutes.isValidClientRoute = pathname => (
   SingletonRoutes.routes.find(route => route.match(pathname) !== undefined));
 SingletonRoutes.Router.replaceQueryParams = (params = {}) => {
-  const path = getUpdatedPath(SingletonRoutes.Router.asPath, params);
+  const originalPath = SingletonRoutes.Router.asPath;
+  const updatedPath = getUpdatedPath(originalPath, params);
 
-  SingletonRoutes.Router.replaceRoute(path);
+  if (originalPath !== updatedPath) {
+    SingletonRoutes.Router.replaceRoute(updatedPath, undefined, { shallow: true });
+  }
 };
 SingletonRoutes.Router.pushQueryParams = (params = {}) => {
-  const path = getUpdatedPath(SingletonRoutes.Router.asPath, params);
+  const originalPath = SingletonRoutes.Router.asPath;
+  const updatedPath = getUpdatedPath(originalPath, params);
 
-  SingletonRoutes.Router.pushRoute(path);
+  if (originalPath !== updatedPath) {
+    SingletonRoutes.Router.pushRoute(updatedPath, undefined, { shallow: true });
+  }
 };
 
 export const setRoutes = (routes = []) => {

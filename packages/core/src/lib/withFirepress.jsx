@@ -78,6 +78,7 @@ export default App => class _App extends React.Component {
       && (
         (router.route === _App.defaultClientFallbackPage)
         || (router.route.includes('[...') && Component.getStaticPropsForClient)
+        || (Component.useClientFallback)
         || (Component.redirectTo)
         || (Component.requiresAuthentication)
       );
@@ -97,8 +98,10 @@ export default App => class _App extends React.Component {
   }
 
   render() {
-    const { Component, pageProps } = this.props;
-    const { isAuthenticated, isAppLoading, isPageLoading } = this.state;
+    const { Component, pageProps, router } = this.props;
+    const {
+      isAuthenticated, isAppLoading, isPageLoading,
+    } = this.state;
     const PageLoader = Component.PageLoader || App.PageLoader || _App.PageLoader;
 
     const isLoading = isAppLoading || isPageLoading
