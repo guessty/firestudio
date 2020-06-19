@@ -89,16 +89,22 @@ export default App => class _App extends React.Component {
     const url = router.asPath.replace('index.html', '').replace('.html', '');
     const { pathname, query } = parseUrl(url, true);
 
-    if (Routes.isValidClientRoute(pathname)) {
+    const Route = Routes.isValidClientRoute(pathname);
+
+    if (Route) {
       const as = queryString.stringifyUrl({ url: pathname, query });
-      Routes.Router.replaceRoute(as);
+      if (Route.redirectTo) {
+        Routes.Router.replaceRoute(Route.redirectTo);
+      } else {
+        Routes.Router.replaceRoute(as);
+      }
     } else {
       this.setState({ isAppLoading: false });
     }
   }
 
   render() {
-    const { Component, pageProps, router } = this.props;
+    const { Component, pageProps } = this.props;
     const {
       isAuthenticated, isAppLoading, isPageLoading,
     } = this.state;
