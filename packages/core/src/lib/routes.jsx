@@ -345,6 +345,11 @@ export const initRoutes = (routes = []) => {
             return { pageProps: { isPageLoading: true } };
           }
 
+          // handle use of client fallback
+          if (Component.useClientFallback) {
+            return { pageProps: {} };
+          }
+
           if (__N_SSG) {
             try {
               let props = await this._getStaticData(as);
