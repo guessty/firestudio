@@ -18,7 +18,7 @@ module.exports = (theme) => {
       },
     };
 
-    styles[`&.gap-${variation}`] = {
+    styles[`&.flex-gap-${variation}`] = {
       margin: `calc(-${padding[variation]} / 2)`,
       padding: '0',
       '& > *': {
@@ -26,7 +26,7 @@ module.exports = (theme) => {
       },
     };
 
-    styles[`&.gap-${variation}.p-${variation}`] = {
+    styles[`&.flex-gap-${variation}.p-${variation}`] = {
       margin: '0',
       padding: `calc(${padding[variation]} / 2)`,
       '& > *': {
