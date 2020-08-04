@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { withFirepress } from '@firepress/core';
 import { Application, Loader } from '@firepress/ui';
 import { register, unregister } from 'next-offline/runtime';
-// import 'intersection-observer';
+import 'intersection-observer';
 
 // global styles need to be imported before any project
 // components to ensure component styles have higher priority.
@@ -23,6 +23,8 @@ initIcons();
 class App extends NextApp {
   static isClientFallbackEnabled = true;
 
+  static isFirebaseAuthEnabled = true;
+
   static defaultClientFallbackPage = '/_error';
 
   static ROUTES = [
@@ -37,16 +39,16 @@ class App extends NextApp {
 
   static PageLoader = () => (
     <div className="flex flex-col flex-grow items-center justify-center">
-      <Loader className="text-white" />
+      <Loader className="text-black" />
     </div>
   );
 
   componentDidMount() {
-    // register();
+    register();
   }
 
   componentWillUnmount() {
-    // unregister();
+    unregister();
   }
 
   render() {

@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { Container, Flex, Hr } from '@firepress/ui';
 
 export default class PrivatePage extends PureComponent {
-  static requiresAuthentication = true;
+  static isPrivate = true;
 
   render() {
     return (

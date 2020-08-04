@@ -1,13 +1,11 @@
 import React, { PureComponent } from 'react';
 import { Container, Flex, Hr } from '@firepress/ui';
-import Router from '@firepress/core/Router';
 
-export default class Test extends PureComponent {
+export default class DynamicPage extends PureComponent {
   static useClientFallback = true;
 
   render() {
     const { args } = this.props;
-    console.log(Router.router);
 
     return (
       <Container>
