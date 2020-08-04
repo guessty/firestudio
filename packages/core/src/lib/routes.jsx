@@ -83,11 +83,9 @@ class Route {
 
 class Routes {
   constructor({
-    Link = NextLink,
     Router = NextRouter,
   } = {}) {
     this.routes = [];
-    this.Link = this.getLink(Link);
     this.Router = this.getRouter(Router);
   }
 
@@ -140,23 +138,6 @@ class Routes {
     const urls = { href, as: nameOrUrl };
 
     return { route, urls };
-  }
-
-  getLink(Link) {
-    const LinkRoutes = (props) => {
-      const {
-        route, params, to, ...newProps
-      } = props;
-      const nameOrUrl = route || to;
-
-      if (nameOrUrl) {
-        Object.assign(newProps, this.findAndGetUrls(nameOrUrl, params).urls);
-      }
-
-      return <Link {...newProps} />;
-    };
-
-    return LinkRoutes;
   }
 
   getRouter(Router) {
@@ -235,6 +216,7 @@ export const setRoutes = (routes = []) => {
   const newRoutes = buildRoutes(routes);
   SingletonRoutes.routes = newRoutes.routes;
   SingletonRoutes.Router.routes = SingletonRoutes.routes;
+  SingletonRoutes.Router.router.events.emit('routesSet', newRoutes.routes);
 };
 
 export const initRoutes = (routes = []) => {
@@ -247,7 +229,7 @@ export const initRoutes = (routes = []) => {
     as,
     shallow = false,
   ) {
-    const cachedRouteInfo = this.components[route];
+    const cachedRouteInfo = this.components[as];
 
     // If there is a shallow route transition possible
     // If the route is already rendered on the screen.
@@ -347,7 +329,7 @@ export const initRoutes = (routes = []) => {
 
           // handle use of client fallback
           if (Component.useClientFallback) {
-            return { pageProps: {} };
+            return { pageProps: { ...query } };
           }
 
           if (__N_SSG) {
@@ -392,7 +374,7 @@ export const initRoutes = (routes = []) => {
           );
         }).then((props) => {
           routeInfo.props = props; // eslint-disable-line no-param-reassign
-          this.components[route] = routeInfo;
+          this.components[as] = routeInfo;
 
           return routeInfo;
         });
@@ -439,11 +421,7 @@ export const initRoutes = (routes = []) => {
   originalPrototype.getRouteInfo = getRouteInfo;
   originalPrototype.set = newSetMethod;
 
-
-
-  const newRoutes = buildRoutes(routes);
-  SingletonRoutes.routes = newRoutes.routes;
-  SingletonRoutes.Router.routes = SingletonRoutes.routes;
+  setRoutes(routes);
 };
 
 export default SingletonRoutes;

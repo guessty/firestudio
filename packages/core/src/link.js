@@ -1,3 +1,3 @@
-import { default as Routes } from './lib/routes';
+import { default as Link } from './lib/Link';
 
-export default Routes.Link;
+export default Link;

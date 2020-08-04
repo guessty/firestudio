@@ -20,7 +20,7 @@ export default App => class _App extends React.Component {
   }
 
   state = {
-    isAuthenticated: false,
+    isAuthenticated: undefined,
     isAppLoading: this.isAppInitLoading(),
     isPageLoading: false,
   };
@@ -46,7 +46,7 @@ export default App => class _App extends React.Component {
     if (_App.isFirebaseAuthEnabled) {
       this.unregisterAuthObserver = App.firebase.auth().onAuthStateChanged(async (user) => {
         this.setState({ isAuthenticated: Boolean(user) });
-        if (!user && Component.requiresAuthentication) {
+        if (!user && Component.isPrivate) {
           const as = `${App.redirectPrivatePagesTo || '/'}?${queryString.stringify({ redirect: Routes.Router.asPath })}`;
           Routes.Router.replaceRoute(as);
         } 
@@ -55,13 +55,18 @@ export default App => class _App extends React.Component {
   }
 
   async componentDidUpdate() {
-    const { router } = this.props;
-    const { isAppLoading } = this.state;
+    const { router, Component } = this.props;
+    const { isAppLoading, isAuthenticated } = this.state;
     if (isAppLoading) {
       const fallbackPage = _App.defaultClientFallbackPage;
       if (router.route !== fallbackPage) {
         this.setState({ isAppLoading: false }); // eslint-disable-line react/no-did-update-set-state
       }
+    }
+
+    if (_App.isFirebaseAuthEnabled && Component.isPrivate && isAuthenticated === false) {
+      const as = `${App.redirectPrivatePagesTo || '/'}?${queryString.stringify({ redirect: Routes.Router.asPath })}`;
+      Routes.Router.replaceRoute(as);
     }
   }
 
@@ -80,7 +85,7 @@ export default App => class _App extends React.Component {
         || (router.route.includes('[...') && Component.getStaticPropsForClient)
         || (Component.useClientFallback)
         || (Component.redirectTo)
-        || (Component.requiresAuthentication)
+        || (Component.isPrivate)
       );
   }
 
@@ -111,7 +116,7 @@ export default App => class _App extends React.Component {
     const PageLoader = Component.PageLoader || App.PageLoader || _App.PageLoader;
 
     const isLoading = isAppLoading || isPageLoading
-      || (_App.isFirebaseAuthEnabled && Component.requiresAuthentication && !isAuthenticated);
+      || (_App.isFirebaseAuthEnabled && Component.isPrivate && !isAuthenticated);
 
     return (
       <App
