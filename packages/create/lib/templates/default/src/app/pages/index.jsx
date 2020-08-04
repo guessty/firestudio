@@ -9,7 +9,7 @@ export default class extends PureComponent {
     return (
       <Flex className="flex-grow">
         <Container className="relative text-black">
-          <Flex className="gap-around-8">
+          <Flex className="flex-gap-8 p-8">
             <div>
               <h1 className="text-4xl font-semibold">
                 Welcome to Firepress

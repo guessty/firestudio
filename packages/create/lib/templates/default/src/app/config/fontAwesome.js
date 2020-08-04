@@ -7,8 +7,6 @@ import {
   faLock,
 } from '@fortawesome/free-solid-svg-icons';
 
-require('@fortawesome/fontawesome-svg-core/styles.css');
-
 export default () => {
   library.add(faTimes);
   library.add(faBars);

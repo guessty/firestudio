@@ -1,17 +1,24 @@
+/*! purgecss start ignore */
+@import '~@firepress/ui/dist/styles.scss';
 
 @tailwind base;
 
 html {
   font-size: 14px;
   // overflow-x: hidden;
-  font-family: 'Exo 2', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   --reach-dialog: 1; // Hack to stop reach warning about needing a stylesheet
 
   @screen sm {
     font-size: 16px;
   }
 }
+
+button:focus {
+  outline: none;
+}
  
 @tailwind components;
+/*! purgecss end ignore */
  
 @tailwind utilities;

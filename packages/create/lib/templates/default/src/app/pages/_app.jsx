@@ -1,13 +1,14 @@
 import React from 'react';
 import NextApp from 'next/app';
 import Head from 'next/head';
-import { Provider } from 'react-redux';
 import { withFirepress } from '@firepress/core';
-import { withRedux } from '@firepress/store';
 import { Application, Loader } from '@firepress/ui';
+import { register, unregister } from 'next-offline/runtime';
+// import 'intersection-observer';
 
 // global styles need to be imported before any project
 // components to ensure component styles have higher priority.
+import '@fortawesome/fontawesome-svg-core/styles.css';
 import '../styles.scss';
 
 import initIcons from '@config/fontAwesome';
@@ -15,58 +16,63 @@ import firebase from '@config/firebase';
 import Nav from '@partials/Nav';
 import Main from '@partials/Main';
 import Footer from '@partials/Footer';
-import { initStore } from '@store';
+import { wrapper } from '@store';
 
 initIcons();
 
 class App extends NextApp {
-  static redirectPrivatePagesTo = '/sign-in';
+  static isClientFallbackEnabled = true;
 
-  // static exportAppConfig = true
+  static defaultClientFallbackPage = '/_error';
+
+  static ROUTES = [
+    ...(process.env.ROUTES || []).filter(route => route.pattern !== '/:args*'),
+    { pattern: '/extra-route', page: '[...args]' },
+    { pattern: '/route-with-dynamic-prop/12', page: '[...args]' },
+  ];
+
+  static redirectPrivatePagesTo = '/sign-in';
 
   static firebase = firebase;
 
-  // Method to mock api delays
-  static sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
-
   static PageLoader = () => (
     <div className="flex flex-col flex-grow items-center justify-center">
-      <Loader />
+      <Loader className="text-white" />
     </div>
   );
 
-  static async getAppConfig() {
-    await App.sleep(2000);
+  componentDidMount() {
+    // register();
+  }
 
-    return {
-      routes: [
-        { pattern: '/extra-route', page: '_*' },
-        { pattern: '/redirect-to-home', page: '_*', redirectTo: '/' },
-        { pattern: '/route-with-dynamic-prop/:prop', page: '_*' },
-      ],
-    };
+  componentWillUnmount() {
+    // unregister();
   }
 
   render() {
-    const { Page, store } = this.props;
+    const { Component, router, pageProps } = this.props;
 
     return (
-      <Provider store={store}>
-        <Application>
-          <Head>
-            <title>Firepress</title>
-          </Head>
-          <Application.Screen>
-            <Nav />
-            <Main>
-              <Page />
-            </Main>
-          </Application.Screen>
-          <Footer />
-        </Application>
-      </Provider>
+      <Application>
+        <Head>
+          <title>Firepress</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" />
+        </Head>
+        <Application.Screen>
+          <Nav />
+          <Main>
+            <Component
+              {...pageProps}
+              firebase={App.firebase}
+              PageLoader={App.PageLoader}
+              router={router}
+            />
+          </Main>
+        </Application.Screen>
+        <Footer />
+      </Application>
     );
   }
 }
 
-export default withRedux(initStore)(withFirepress(App));
+export default wrapper.withRedux(withFirepress(App));

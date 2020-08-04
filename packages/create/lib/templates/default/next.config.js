@@ -1,8 +1,7 @@
+// const withOffline = require('next-offline');
 const withFirepressConfig = require('@firepress/core/config');
 const path = require('path');
 const DirectoryNamedWebpackPlugin = require('directory-named-webpack-plugin'); // eslint-disable-line import/no-extraneous-dependencies
-const withCSS = require('@zeit/next-css'); // eslint-disable-line import/no-extraneous-dependencies
-const withSass = require('@zeit/next-sass'); // eslint-disable-line import/no-extraneous-dependencies
 
 let firebaseConfig;
 try {
@@ -11,8 +10,9 @@ try {
   firebaseConfig = {};
 }
 
-const nextConfig = withSass(withCSS(withFirepressConfig({
-  distDir: './dist/build',
+module.exports = withFirepressConfig({
+  distDir: process.env.NODE_ENV === 'development' ? './tmp/.next' : './dist/build',
+  dontAutoRegisterSw: true,
   firepress: {
     projectId: firebaseConfig.projectId,
     cloudRenderedPages: [],
@@ -55,6 +55,4 @@ const nextConfig = withSass(withCSS(withFirepressConfig({
   sassLoaderOptions: {
     includePaths: ['node_modules'],
   },
-})));
-
-module.exports = nextConfig;
+});

@@ -8,7 +8,7 @@ export default class Footer extends PureComponent {
     return (
       <footer className="h-full bg-white text-black border-t">
         <Container className="h-full px-8">
-          <Flex className="gap-around-8 justify-center items-center">
+          <Flex className="flex-gap-8 p-8 justify-center items-center">
             <Link
               href="/"
               styledAs="none"
