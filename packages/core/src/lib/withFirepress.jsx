@@ -99,7 +99,8 @@ export default App => class _App extends React.Component {
     if (Route) {
       const as = queryString.stringifyUrl({ url: pathname, query });
       if (Route.redirectTo) {
-        Routes.Router.replaceRoute(Route.redirectTo);
+        const params = Route.match(pathname);
+        Routes.Router.replaceRoute(Route.toRedirectPath(params));
       } else {
         Routes.Router.replaceRoute(as);
       }

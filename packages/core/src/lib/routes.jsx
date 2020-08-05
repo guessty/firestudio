@@ -34,6 +34,7 @@ class Route {
     this.keyNames = this.keys.map(key => key.name);
     this.toPath = compile(this.pattern);
     this.redirectTo = redirectTo;
+    this.toRedirectPath = redirectTo ? compile(redirectTo) : () => {};
   }
 
   match(path) {

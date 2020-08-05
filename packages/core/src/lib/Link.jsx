@@ -15,11 +15,11 @@ export default class Link extends PureComponent {
   };
 
   componentDidMount() {
-    Routes.Router.router.events.on('routesSet', this.handleRoutesSet);
+    Routes.Router.router?.events.on('routesSet', this.handleRoutesSet);
   }
 
   componentWillUnmount() {
-    Routes.Router.router.events.off('routesSet', this.handleRoutesSet)
+    Routes.Router.router?.events.off('routesSet', this.handleRoutesSet)
   }
 
   handleRoutesSet = (routes) => {
