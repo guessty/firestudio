@@ -54,15 +54,12 @@ const buildJson = function(outdir, config) {
   const pageRewrites = getRewrites(routes, config);
 
   const cloudRewrites = []
-  const exportPathMap = config.exportPathMap();
   firepressConfig.cloudRenderedPages.forEach(function(route) {
-    if (exportPathMap[route + '.html']) {
-      const source = getDynamicSource(normaliseRoute(route))
-      cloudRewrites.push({
-        source,
-        function: 'pageRenderer',
-      })
-    }
+    const source = getDynamicSource(normaliseRoute(route))
+    cloudRewrites.push({
+      source,
+      function: 'pageRenderer',
+    })
   }) 
 
   const combinedRewrites = [];
