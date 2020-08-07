@@ -33,7 +33,7 @@
   "dependencies": {
     "@babel/polyfill": "7.0.0",
     "@babel/runtime": "^7.4.4",
-    "@firepress/core": "^0.4.10",
+    "@firepress/core": "^0.4.11",
     "@firepress/ui": "^0.3.3",
     "@fortawesome/fontawesome-svg-core": "^1.2.8",
     "@fortawesome/free-regular-svg-icons": "^5.5.0",
