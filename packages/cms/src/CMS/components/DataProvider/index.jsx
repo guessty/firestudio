@@ -4,7 +4,14 @@ import PropTypes from 'prop-types';
 export default class DataProvider extends PureComponent {
   static propTypes = {
     dataKey: PropTypes.string,
-    data: PropTypes.node.isRequired,
+    data: PropTypes.oneOfType([
+      PropTypes.array,
+      PropTypes.bool,
+      PropTypes.func,
+      PropTypes.number,
+      PropTypes.shape(),
+      PropTypes.string,
+    ]).isRequired,
     _config: PropTypes.shape({
       components: PropTypes.shape({
         Container: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
