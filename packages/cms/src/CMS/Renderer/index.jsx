@@ -6,6 +6,7 @@ import parseUrl from 'url-parse';
 import Block from '../components/Block';
 import RichTextBlock from '../components/RichTextBlock';
 import Container from '../components/Container';
+import DataProvider from '../components/DataProvider';
 
 export default class Renderer extends Component {
   static propTypes = {
@@ -30,6 +31,7 @@ export default class Renderer extends Component {
   static COMPONENTS = {
     Container,
     RichTextBlock,
+    DataProvider,
   };
 
   static DEFAULT_JSON = {

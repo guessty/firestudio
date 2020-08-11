@@ -27,7 +27,7 @@ class Container extends PureComponent {
 
     const containerClassName = `
       ${_className}
-      ${className.includes('gap-between-') ? '' : 'gap-between-5'}
+      ${className.includes('flex-gap-') ? '' : 'flex-gap-5'}
       ${className}
     `;
 
