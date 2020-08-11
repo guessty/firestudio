@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 export default class DataProvider extends PureComponent {
   static propTypes = {
-    dataKey: PropTypes.string.isRequired,
-    dataValue: PropTypes.shape().isRequired,
+    dataKey: PropTypes.string,
+    data: PropTypes.node.isRequired,
     _config: PropTypes.shape({
       components: PropTypes.shape({
         Container: PropTypes.oneOfType([PropTypes.node, PropTypes.func]).isRequired,
@@ -13,9 +13,13 @@ export default class DataProvider extends PureComponent {
     }),
   }
 
+  static defaultProps = {
+    dataKey: 'data',
+  };
+
   render() {
     const {
-      _config, dataKey, dataValue, ...props
+      _config, dataKey, data, ...props
     } = this.props;
 
     const { components: { Container } } = _config;
@@ -27,7 +31,7 @@ export default class DataProvider extends PureComponent {
           ..._config,
           extraProps: {
             ..._config.extraProps,
-            [dataKey]: dataValue,
+            [dataKey]: data,
           },
         }}
       />
