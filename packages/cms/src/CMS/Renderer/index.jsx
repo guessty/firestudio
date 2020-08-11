@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Router from '@firepress/core/router';
+import parseUrl from 'url-parse';
 
 import Block from '../components/Block';
 import RichTextBlock from '../components/RichTextBlock';
@@ -41,17 +42,10 @@ export default class Renderer extends Component {
   };
 
   async componentDidMount() {
-    const { firebase, blockId } = this.props;
+    const { firebase } = this.props;
     setTimeout(() => {
-      this.unregisterAuthObserver = firebase.auth().onAuthStateChanged(async (user) => {
-        const isEditing = Router.query.fpmode === 'edit';
-        const isPreviewing = Router.query.fpmode === 'preview';
-        if (blockId && user && (isEditing || isPreviewing)) {
-          const idTokenResult = await user.getIdTokenResult();
-          if (idTokenResult.claims.editor) {
-            this.setState({ editorIsEnabled: true });
-          }
-        }
+      this.unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => {
+        this.checkAndEnableEditor(user);
       });
     }, 0);
   }
@@ -59,6 +53,19 @@ export default class Renderer extends Component {
   componentWillUnmount() {
     this.unregisterAuthObserver();
   }
+
+  checkAndEnableEditor = async (user) => {
+    const { blockId } = this.props;
+    const { query: { fpmode } } = parseUrl(Router.router.asPath, true);
+    const isEditing = fpmode === 'edit';
+    const isPreviewing = fpmode === 'preview';
+    if (blockId && user && (isEditing || isPreviewing)) {
+      const idTokenResult = await user.getIdTokenResult();
+      if (idTokenResult.claims.editor) {
+        this.setState({ editorIsEnabled: true });
+      }
+    }
+  };
 
   render() {
     const {

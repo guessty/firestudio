@@ -5,6 +5,7 @@ import Router from '@firepress/core/router';
 import { Clickable, Loader } from '@firepress/ui';
 import Dock from 'react-dock';
 import WindowSize from '@reach/window-size';
+import parseUrl from 'url-parse';
 
 import { getBlockById } from '../index';
 
@@ -54,7 +55,8 @@ export default class Editor extends Component {
 
   async componentDidMount() {
     const { firebase, blockId } = this.props;
-    const isPreviewing = Router.query.fpmode === 'preview';
+    const { query: { fpmode } } = parseUrl(Router.router.asPath, true);
+    const isPreviewing = fpmode === 'preview';
     setTimeout(() => {
       const db = firebase.firestore();
       this.docRef = db.collection('blocks').doc(blockId);

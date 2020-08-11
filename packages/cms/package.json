@@ -1,6 +1,6 @@
 {
   "name": "@firepress/cms",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A Firebase connected CMS for Firepress",
   "keywords": [
     "React",
@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.4.4",
-    "@firepress/core": "^0.4.10",
+    "@firepress/core": "^0.4.11",
     "@firepress/ui": "^0.3.3",
     "@reach/dialog": "^0.2.9",
     "@reach/visually-hidden": "^0.1.4",
@@ -54,6 +54,7 @@
     "react-dock": "^0.2.4",
     "react-dom": "^16.8.6",
     "react-json-view": "^1.19.1",
-    "shortid": "^2.2.15"
+    "shortid": "^2.2.15",
+    "url-parse": "^1.4.7"
   }
 }
