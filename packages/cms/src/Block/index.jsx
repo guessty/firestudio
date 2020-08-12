@@ -121,17 +121,26 @@ export default class Block extends Component {
     return { json, blocks };
   };
 
-  static getBlocks = (firebase, blockIds) => {
-    return blockIds.reduce(async (acc, blockId) => {
+  static getBlocks = async (firebase, blockIds) => {
+    let blocks = {}
+
+    await Promise.all(blockIds.map(async (blockId) => {
       const { json = null } = await getBlockById(firebase, blockId) || {};
       const nestedBlocks = await Block.getNestedBlocks(firebase, json);
-
-      return {
-        ...acc,
+      const foundBlocks = {
         [blockId]: json,
         ...nestedBlocks,
-      };
-    }, {});
+      }
+
+      blocks = {
+        ...blocks,
+        ...foundBlocks,
+      }
+
+      return foundBlocks;
+    }));
+
+    return blocks;
   }
 
   state = {
@@ -196,7 +205,7 @@ export default class Block extends Component {
       <BlockComponent
         key={blockId}
         blockId={blockId}
-        json={blocks[blockId] || DEFAULT_JSON}
+        json={blocks[blockId] || Block.DEFAULT_JSON}
         _config={_config}
         children={children} // eslint-disable-line react/no-children-prop
       />
