@@ -4,15 +4,17 @@ import { isEmpty as _isEmpty } from 'lodash';
 import Router from '@firepress/core/router';
 
 import { parseProps, canComponentRender } from './helpers';
+import valueParser from './parser';
 import { ConditionalPropType } from './PropTypes';
 
-class Base extends Component {
+class Renderer extends Component {
   static propTypes = {
     children: PropTypes.oneOfType([
       PropTypes.shape({}),
       PropTypes.arrayOf(PropTypes.shape({})),
+      PropTypes.node,
     ]),
-    component: PropTypes.string.isRequired,
+    component: PropTypes.string,
     connectedProps: PropTypes.shape({}),
     className: PropTypes.string,
     wrapperClassName: PropTypes.string,
@@ -27,10 +29,15 @@ class Base extends Component {
       components: PropTypes.shape({}),
       extraProps: PropTypes.shape({}),
       globalProps: PropTypes.shape({}),
+      parserOptions: PropTypes.shape({
+        methods: PropTypes.shape({}),
+        isMethodValidFnc: PropTypes.func,
+      })
     }),
   };
 
   static defaultProps = {
+    component: "Container",
     children: undefined,
     className: '',
     wrapperClassName: '',
@@ -42,6 +49,9 @@ class Base extends Component {
       components: {},
       extraProps: {},
       globalProps: {},
+      parserOptions: {
+        methods: {},
+      }
     },
   };
 
@@ -104,9 +114,14 @@ class Base extends Component {
   };
 
   parseProps(propsValue) {
+    const { _config: { parserOptions } } = this.props;
     const { connectedProps } = this.state;
 
-    return parseProps(propsValue, connectedProps);
+    const parser = (originalValue, parsingSteps) => valueParser(
+      originalValue, parsingSteps, parserOptions.methods, parserOptions.isMethodValidFnc,
+    );
+
+    return parseProps(propsValue, connectedProps, parser);
   }
 
   render() {
@@ -152,4 +167,4 @@ class Base extends Component {
   }
 }
 
-export default Base;
+export default Renderer;

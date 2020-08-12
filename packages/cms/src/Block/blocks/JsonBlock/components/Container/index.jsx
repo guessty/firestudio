@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-import Base from '../Base';
+import Renderer from '../Renderer';
 
 class Container extends PureComponent {
   static propTypes = {
@@ -9,7 +9,7 @@ class Container extends PureComponent {
     children: PropTypes.oneOfType([
       PropTypes.shape({}),
       PropTypes.arrayOf(PropTypes.shape({})),
-    ]).isRequired,
+    ]),
     className: PropTypes.string,
     _className: PropTypes.string,
   };
@@ -18,6 +18,7 @@ class Container extends PureComponent {
     as: 'div',
     className: '',
     _className: 'flex flex-col',
+    children: [],
   };
 
   render() {
@@ -27,7 +28,6 @@ class Container extends PureComponent {
 
     const containerClassName = `
       ${_className}
-      ${className.includes('flex-gap-') ? '' : 'flex-gap-5'}
       ${className}
     `;
 
@@ -36,7 +36,7 @@ class Container extends PureComponent {
     return (
       <Component className={containerClassName}>
         {childArray.map((child, index) => (child ? (
-          <Base
+          <Renderer
             key={`container_${child.component}_${index}`} // eslint-disable-line react/no-array-index-key
             {...child}
             {...props}

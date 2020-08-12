@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
 import RichTextEditor from './Editor';
-import Block, { Editor } from '../Block';
+import JsonBlock, { Editor } from '../JsonBlock';
 
 export default class RichTextBlock extends PureComponent {
   static propTypes = {
@@ -29,7 +29,7 @@ export default class RichTextBlock extends PureComponent {
     const { json: sJson } = this.state;
 
     return (
-      <Block
+      <JsonBlock
         {...this.props}
         json={sJson}
         render={({ json }) => (

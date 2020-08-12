@@ -63,9 +63,9 @@ export const getValueFromProps = (props, potentialPointer, valueParser = value =
     value = pointer.default;
   }
 
-  if (pointer.type === 'primitive' && (typeof value !== 'string' && typeof value !== 'number')) {
+  if (pointer.type === 'primitive' && (typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean')) {
     // eslint-disable-next-line no-console
-    console.warn(`Type Warning - The returned value for pointer: "${JSON.stringify(potentialPointer)}" is not a "String" or "Number".`);
+    console.warn(`Type Warning - The returned value for pointer: "${JSON.stringify(potentialPointer)}" is not a "String", "Number" or "Boolean".`);
 
     return JSON.stringify(value);
   }

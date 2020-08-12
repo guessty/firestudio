@@ -1,2 +1,6 @@
-export { Renderer, getPublishedBlock } from './CMS';
+import Block from './Block';
+
+export const getBlocks = Block.getBlocks;
+
+export default Block;
 

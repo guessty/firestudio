@@ -7,7 +7,7 @@ import Dock from 'react-dock';
 import WindowSize from '@reach/window-size';
 import parseUrl from 'url-parse';
 
-import { getBlockById } from '../index';
+import { getBlockById } from '../../../index';
 
 const ReactJsonView = dynamic(() => import('react-json-view'), { ssr: false });
 
