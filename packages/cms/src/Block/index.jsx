@@ -183,7 +183,7 @@ export default class Block extends Component {
       <BlockComponent
         key={blockId}
         blockId={blockId}
-        json={blocks[blockId] || DEFAULT_JSON}
+        json={blocks[blockId] || Block.DEFAULT_JSON}
         _config={_config}
         children={children} // eslint-disable-line react/no-children-prop
       />
