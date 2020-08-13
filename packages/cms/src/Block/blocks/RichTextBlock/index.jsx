@@ -2,8 +2,8 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-import RichTextEditor from './Editor';
-import JsonBlock, { Editor } from '../JsonBlock';
+import EditorContent from './EditorContent';
+import Editor from '../../Editor';
 
 export default class RichTextBlock extends PureComponent {
   static propTypes = {
@@ -19,43 +19,32 @@ export default class RichTextBlock extends PureComponent {
     className: '',
   };
 
-  state = {
-    // eslint-disable-next-line react/destructuring-assignment, max-len
-    json: this.props.json || this.props._config.blocks[this.props.blockId] || RichTextEditor.DEFAULT_JSON,
-  };
-
   render() {
-    const { _config: { firebase, editorIsEnabled }, blockId, className } = this.props;
-    const { json: sJson } = this.state;
+    const {
+      _config: { firebase, editorIsEnabled, blocks },
+      blockId, className,
+    } = this.props;
 
-    return (
-      <JsonBlock
-        {...this.props}
-        json={sJson}
-        render={({ json }) => (
-          <>
-            {editorIsEnabled ? (
-              <Editor
-                json={json}
-                firebase={firebase}
-                blockId={blockId}
-                render={({ setWorkingJson, workingJson }) => (
-                  <RichTextEditor
-                    json={workingJson}
-                    onSetWorkingJson={setWorkingJson}
-                  />
-                )}
-              >
-                {({ workingJson }) => (
-                  <RichTextEditor.Content className={className} json={workingJson} />
-                )}
-              </Editor>
-            ) : (
-              <RichTextEditor.Content className={className} json={sJson} />
-            )}
-          </>
+    const json = blocks[blockId] || EditorContent.DEFAULT_JSON
+
+    return editorIsEnabled ? (
+      <Editor
+        json={json}
+        firebase={firebase}
+        blockId={blockId}
+        render={({ setWorkingJson, workingJson }) => (
+          <EditorContent
+            json={workingJson}
+            onSetWorkingJson={setWorkingJson}
+          />
         )}
-      />
+      >
+        {({ workingJson }) => (
+          <EditorContent.Content className={className} json={workingJson} />
+        )}
+      </Editor>
+    ) : (
+      <EditorContent.Content className={className} json={sJson} />
     );
   }
 }

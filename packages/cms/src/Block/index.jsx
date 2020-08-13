@@ -4,7 +4,7 @@ import Router from '@firepress/core/router';
 import parseUrl from 'url-parse';
 import { isPlainObject as _isPlainObject } from 'lodash';
 
-import JsonBlock, { Container, DataProvider } from './blocks/JsonBlock';
+import JsonBlock from './blocks/JsonBlock';
 import RichTextBlock from './blocks/RichTextBlock';
 import DataBlock from './blocks/DataBlock';
 
@@ -36,12 +36,9 @@ export default class Block extends Component {
   static propTypes = {
     blockId: PropTypes.string.isRequired,
     blockType: PropTypes.string.isRequired,
-    jsonComponents: PropTypes.shape({}),
     blockComponents: PropTypes.shape({}),
     blocks: PropTypes.shape({}),
     firebase: PropTypes.shape({}),
-    globalProps: PropTypes.shape({}),
-    Loader: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     children: PropTypes.oneOfType([
       PropTypes.shape({}),
       PropTypes.arrayOf(PropTypes.shape({})),
@@ -50,18 +47,10 @@ export default class Block extends Component {
   };
 
   static defaultProps = {
-    jsonComponents: {},
     blockComponents: {},
     blocks: {},
     firebase: undefined,
-    globalProps: {},
-    Loader: undefined,
     children: undefined,
-  };
-
-  static JSON_COMPONENTS = {
-    Container,
-    DataProvider,
   };
 
   static BLOCK_COMPONENTS = {
@@ -121,17 +110,23 @@ export default class Block extends Component {
     return { json, blocks };
   };
 
-  static getBlocks = (firebase, blockIds) => {
-    return blockIds.reduce(async (acc, blockId) => {
+  static getBlocks = async (firebase, blockIds) => {
+    const blocksArray = await Promise.all(blockIds.map(async (blockId) => {
       const { json = null } = await getBlockById(firebase, blockId) || {};
       const nestedBlocks = await Block.getNestedBlocks(firebase, json);
 
       return {
-        ...acc,
         [blockId]: json,
         ...nestedBlocks,
       };
-    }, {});
+    }));
+
+    const blocks = blocksArray.reduce((acc, item) => ({
+      ...acc,
+      ...item,
+    }));
+
+    return blocks;
   }
 
   state = {
@@ -167,22 +162,14 @@ export default class Block extends Component {
   render() {
     const {
       blockId, blockType, blocks, children,
-      jsonComponents, blockComponents,
-      firebase, globalProps, Loader,
+      blockComponents, firebase,
     } = this.props;
     const { editorIsEnabled } = this.state;
 
     const _config = {
       blocks,
-      components: {
-        ...Block.JSON_COMPONENTS,
-        ...jsonComponents,
-      },
       ...firebase ? { firebase } : {},
       editorIsEnabled,
-      globalProps,
-      extraProps: {},
-      Loader,
     };
 
     const BLOCKS = {

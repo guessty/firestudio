@@ -19,7 +19,7 @@ const H4Icon = () => (
   </svg>
 );
 
-export default class RichTextEditor extends PureComponent {
+export default class EditorContent extends PureComponent {
   static propTypes = {
     json: PropTypes.shape({}),
     onSetWorkingJson: PropTypes.func.isRequired,
@@ -60,14 +60,14 @@ export default class RichTextEditor extends PureComponent {
   ]
 
   static jsonToHtml = (json) => {
-    const contentState = convertFromRaw(json || RichTextEditor.DEFAULT_JSON);
+    const contentState = convertFromRaw(json || EditorContent.DEFAULT_JSON);
     const editorState = EditorState.createWithContent(contentState);
 
     return draftToHtml(convertToRaw(editorState.getCurrentContent()));
   };
 
   static Content = ({ json, className = '' }) => {
-    const contentState = convertFromRaw(json || RichTextEditor.DEFAULT_JSON);
+    const contentState = convertFromRaw(json || EditorContent.DEFAULT_JSON);
     const editorState = EditorState.createWithContent(contentState);
     const __html = draftToHtml(convertToRaw(editorState.getCurrentContent()));
 
@@ -83,7 +83,7 @@ export default class RichTextEditor extends PureComponent {
   state = {
     // eslint-disable-next-line react/destructuring-assignment
     editorState: EditorState.createWithContent(convertFromRaw(this.props.json
-      || RichTextEditor.DEFAULT_JSON)),
+      || EditorContent.DEFAULT_JSON)),
   };
 
   handleEditorStateChange = (editorState) => {
@@ -105,7 +105,7 @@ export default class RichTextEditor extends PureComponent {
         >
           <div style={{ marginLeft: 80 }}>
             <MegadraftEditor
-              actions={RichTextEditor.ACTIONS}
+              actions={EditorContent.ACTIONS}
               editorState={editorState}
               onChange={this.handleEditorStateChange}
               placeholder="Add some text"

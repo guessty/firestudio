@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import dynamic from 'next/dynamic';
 import { AgGridReact } from 'ag-grid-react';
 
 export default class RichTextEditor extends PureComponent {
