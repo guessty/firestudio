@@ -15,7 +15,8 @@ export default class RichTextEditor extends PureComponent {
   };
 
   handleOnUpdate = ({ updated_src: workingJson }) => {
-    onSetWorkingJson(workingJson)
+    const { onSetWorkingJson } = this.props;
+    onSetWorkingJson(workingJson);
 
     return workingJson;
   };
