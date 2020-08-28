@@ -12,7 +12,7 @@ export default class Editor extends Component {
   static propTypes = {
     blockId: PropTypes.string.isRequired,
     firebase: PropTypes.shape({}).isRequired,
-    json: PropTypes.shape({}),
+    content: PropTypes.shape({}),
     buttonPosition: PropTypes.oneOf(['left', 'right']),
     children: PropTypes.func.isRequired,
     render: PropTypes.func.isRequired,
@@ -20,14 +20,14 @@ export default class Editor extends Component {
 
   static defaultProps = {
     buttonPosition: 'right',
-    json: {},
+    content: {},
     render: undefined,
   };
 
   static getDraftBlock = async (firebase, blockId) => {
-    const { json, draftContentId } = await getBlockById(firebase, blockId, true) || {};
+    const { content, draftContentId } = await getBlockById(firebase, blockId, true) || {};
 
-    return { json, draftContentId, blocks: {} };
+    return { content, draftContentId, blocks: {} };
   };
 
   static LOADER = () => (
@@ -42,9 +42,9 @@ export default class Editor extends Component {
     isLoading: false,
     isPreviewing: false,
     // eslint-disable-next-line react/destructuring-assignment
-    workingJson: this.props.json,
+    workingContent: this.props.content,
     // eslint-disable-next-line react/destructuring-assignment
-    savedJson: this.props.json,
+    savedContent: this.props.content,
     hasEdits: false,
     isOpen: false,
     draftContentId: undefined,
@@ -61,9 +61,9 @@ export default class Editor extends Component {
         isLoading: true,
         isPreviewing,
       }, async () => {
-        const { json, draftContentId } = await Editor.getDraftBlock(firebase, blockId);
+        const { content, draftContentId } = await Editor.getDraftBlock(firebase, blockId);
         if (draftContentId) {
-          this.setState({ workingJson: json, draftContentId });
+          this.setState({ workingContent: content, draftContentId });
         }
         this.setState({ isLoading: false });
       });
@@ -73,43 +73,43 @@ export default class Editor extends Component {
   handleOnClickActionButton = () => {
     const { hasEdits } = this.state;
     if (hasEdits) {
-      this.saveJson();
+      this.save();
     } else {
-      this.publishJson();
+      this.publish();
     }
   };
 
-  handleOnUpdate = ({ updated_src: workingJson }) => {
-    this.setWorkingJson(workingJson);
+  handleOnUpdate = ({ updated_src: workingContent }) => {
+    this.setWorkingContent(workingContent);
 
-    return workingJson;
+    return workingContent;
   };
 
-  setWorkingJson = (workingJson) => {
-    const { savedJson } = this.state;
+  setWorkingContent = (workingContent) => {
+    const { savedContent } = this.state;
 
     this.setState({
-      hasEdits: savedJson !== workingJson,
-      workingJson,
+      hasEdits: savedContent !== workingContent,
+      workingContent,
     });
   };
 
-  async saveJson() {
-    const { workingJson, draftContentId } = this.state;
+  async save() {
+    const { workingContent, draftContentId } = this.state;
     if (draftContentId) {
-      await this.docRef.collection('content').doc(draftContentId).set({ json: workingJson });
+      await this.docRef.collection('content').doc(draftContentId).set(workingContent);
     } else {
-      const draftRef = await this.docRef.collection('content').add({ json: workingJson });
+      const draftRef = await this.docRef.collection('content').add(workingContent);
       await this.docRef.set({ draftContentId: draftRef.id }, { merge: true });
       this.setState({ draftContentId });
     }
     this.setState({
       hasEdits: false,
-      savedJson: workingJson,
+      savedContent: workingContent,
     });
   }
 
-  async publishJson() {
+  async publish() {
     const { draftContentId } = this.state;
     await this.docRef.set({
       publishedContentId: draftContentId,
@@ -118,9 +118,9 @@ export default class Editor extends Component {
   }
 
   renderPublishButton() {
-    const { json } = this.props;
-    const { workingJson } = this.state;
-    const isDisabled = JSON.stringify(json) === JSON.stringify(workingJson);
+    const { content } = this.props;
+    const { workingContent } = this.state;
+    const isDisabled = JSON.stringify(content) === JSON.stringify(workingContent);
 
     return (
       <Clickable
@@ -184,12 +184,12 @@ export default class Editor extends Component {
 
   renderEditorContent() {
     const { render } = this.props;
-    const { workingJson, savedJson } = this.state;
+    const { workingContent, savedContent } = this.state;
 
     return render({
-      workingJson,
-      savedJson,
-      setWorkingJson: this.setWorkingJson,
+      workingContent,
+      savedContent,
+      setWorkingContent: this.setWorkingContent,
     });
   }
 
@@ -229,12 +229,12 @@ export default class Editor extends Component {
   render() {
     const { children } = this.props;
     const {
-      isOpen, isLoading, isPreviewing, workingJson,
+      isOpen, isLoading, isPreviewing, workingContent,
     } = this.state;
 
     if (isLoading) return (<Editor.LOADER />);
 
-    if (isPreviewing) return children({ workingJson });
+    if (isPreviewing) return children({ workingContent });
 
     return (
       <div className="flex flex-col w-full h-full relative p-6">
@@ -249,7 +249,7 @@ export default class Editor extends Component {
         <WindowSize>
           {({ width }) => (
             <>
-              {width > 1023 && (
+              {width >= 1280 && (
                 <Dock position="right" isVisible={isOpen}>
                   <div className="flex flex-col w-full h-full">
                     {this.renderEditorControls()}
@@ -257,7 +257,7 @@ export default class Editor extends Component {
                   </div>
                 </Dock>
               )}
-              {width <= 1023 && (
+              {width < 1280 && (
                 <div
                   className={`
                     fixed top-0 left-0 right-0 bottom-0 z-50 bg-white
@@ -273,7 +273,7 @@ export default class Editor extends Component {
             </>
           )}
         </WindowSize>
-        {children({ workingJson })}
+        {children({ workingContent })}
       </div>
     );
   }

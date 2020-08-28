@@ -6,7 +6,7 @@ import { isPlainObject as _isPlainObject } from 'lodash';
 
 import JsonBlock from './blocks/JsonBlock';
 import RichTextBlock from './blocks/RichTextBlock';
-import DataBlock from './blocks/DataBlock';
+import DataGridBlock from './blocks/DataGridBlock';
 
 export const getBlockById = async (firebase, blockId, isDraftMode) => {
   try {
@@ -24,7 +24,7 @@ export const getBlockById = async (firebase, blockId, isDraftMode) => {
     const contentDocData = contentDoc.data();
 
     return {
-      json: contentDocData.json || null,
+      content: contentDocData || null,
       ...isDraftMode ? { draftContentId: contentId } : {},
     };
   } catch {
@@ -54,34 +54,33 @@ export default class Block extends Component {
   };
 
   static BLOCK_COMPONENTS = {
-    Data: DataBlock,
+    DataGrid: DataGridBlock,
     Json: JsonBlock,
     RichText: RichTextBlock,
   }
 
-  static DEFAULT_JSON = {};
+  static DEFAULT_CONTENT = {};
 
-  static getNestedBlocks = async (firebase, json) => {
-    const findBlocks = async (nFirebase, nJson) => {
+  static getNestedBlocks = async (firebase, content) => {
+    const findBlocks = async (nFirebase, nContent) => {
       let foundBlocks = {};
-      if (_isPlainObject(nJson)) {
-        if (nJson.blockId) {
-          if (typeof foundBlocks[nJson.blockId] === 'undefined') {
-            const { json: blockJson = null } = (
-              await getBlockById(nFirebase, nJson.blockId) || {});
+      if (_isPlainObject(nContent)) {
+        if (nContent.blockId) {
+          if (typeof foundBlocks[nContent.blockId] === 'undefined') {
+            const { content: blockContent = null } = await getBlockById(nFirebase, nContent.blockId) || {};
             foundBlocks = {
               ...foundBlocks,
-              [nJson.blockId]: blockJson,
+              [nContent.blockId]: blockContent,
             };
-            const nFoundBlocks = await findBlocks(nFirebase, blockJson);
+            const nFoundBlocks = await findBlocks(nFirebase, blockContent);
             foundBlocks = {
               ...foundBlocks,
               ...nFoundBlocks,
             };
           }
         }
-        if (nJson.children) {
-          const childArray = Array.isArray(nJson.children) ? nJson.children : [nJson.children];
+        if (nContent.children) {
+          const childArray = Array.isArray(nContent.children) ? nContent.children : [nContent.children];
           await Promise.all(childArray.map(async (child) => {
             const cFoundBlocks = await findBlocks(nFirebase, child);
 
@@ -98,25 +97,25 @@ export default class Block extends Component {
       return foundBlocks;
     };
 
-    const blocks = await findBlocks(firebase, json);
+    const blocks = await findBlocks(firebase, content);
 
     return blocks;
   };
 
   static getPublishedBlock = async (firebase, blockContentId) => {
-    const { json = null } = await getBlockById(firebase, blockContentId) || {};
-    const blocks = await Block.getNestedBlocks(firebase, json);
+    const { content = null } = await getBlockById(firebase, blockContentId) || {};
+    const blocks = await Block.getNestedBlocks(firebase, content);
 
-    return { json, blocks };
+    return { content, blocks };
   };
 
   static getBlocks = async (firebase, blockIds) => {
     const blocksArray = await Promise.all(blockIds.map(async (blockId) => {
-      const { json = null } = await getBlockById(firebase, blockId) || {};
-      const nestedBlocks = await Block.getNestedBlocks(firebase, json);
+      const { content = null } = await getBlockById(firebase, blockId) || {};
+      const nestedBlocks = await Block.getNestedBlocks(firebase, content);
 
       return {
-        [blockId]: json,
+        [blockId]: content,
         ...nestedBlocks,
       };
     }));
@@ -183,7 +182,7 @@ export default class Block extends Component {
       <BlockComponent
         key={blockId}
         blockId={blockId}
-        json={blocks[blockId] || Block.DEFAULT_JSON}
+        content={blocks[blockId] || Block.DEFAULT_CONTENT}
         _config={_config}
         children={children} // eslint-disable-line react/no-children-prop
       />

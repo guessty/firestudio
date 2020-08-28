@@ -4,25 +4,25 @@ import dynamic from 'next/dynamic';
 
 const ReactJsonView = dynamic(() => import('react-json-view'), { ssr: false });
 
-export default class RichTextEditor extends PureComponent {
+export default class EditorContent extends PureComponent {
   static propTypes = {
-    json: PropTypes.shape({}),
-    onSetWorkingJson: PropTypes.func.isRequired,
+    content: PropTypes.shape({}),
+    onSetWorkingContent: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
-    json: {},
+    content: {},
   };
 
-  handleOnUpdate = ({ updated_src: workingJson }) => {
-    const { onSetWorkingJson } = this.props;
-    onSetWorkingJson(workingJson);
+  handleOnUpdate = ({ updated_src: workingContent }) => {
+    const { onSetWorkingContent } = this.props;
+    onSetWorkingContent(workingContent);
 
-    return workingJson;
+    return workingContent;
   };
 
   render() {
-    const { json } = this.props;
+    const { content } = this.props;
 
     return (
       <div
@@ -32,7 +32,7 @@ export default class RichTextEditor extends PureComponent {
         }}
       >
         <ReactJsonView
-          src={json}
+          src={content}
           theme="monokai"
           shouldCollapse={({ type }) => type === 'array'}
           onAdd={this.handleOnUpdate}

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import EditorContent from './EditorContent';
 import Editor from '../../Editor';
 
-export default class DataBlock extends PureComponent {
+export default class DataGridBlock extends PureComponent {
   static propTypes = {
     _config: PropTypes.shape({
       firebase: PropTypes.shape({}).isRequired,
@@ -22,11 +22,11 @@ export default class DataBlock extends PureComponent {
     children: [],
   };
 
-  renderChildren(json) {
+  renderChildren(content) {
     const { children } = this.props;
 
     if (typeof children === 'function') {
-      return children({ ...json })
+      return children({ ...content })
     }
 
     return children;
@@ -37,22 +37,22 @@ export default class DataBlock extends PureComponent {
       _config: { firebase, editorIsEnabled, blocks },
       blockId,
     } = this.props;
-    const json = blocks[blockId] || {};
+    const content = blocks[blockId] || {};
     
     return editorIsEnabled ? (
       <Editor
         blockId={blockId}
-        json={json}
+        content={content}
         firebase={firebase}
-        render={({ setWorkingJson, workingJson }) => (
+        render={({ setWorkingContent, workingContent }) => (
           <EditorContent
-            json={workingJson}
-            onSetWorkingJson={setWorkingJson}
+            content={workingContent}
+            onSetWorkingContent={setWorkingContent}
           />
         )}
       >
-        {({ workingJson }) => this.renderChildren(workingJson)}
+        {({ workingContent }) => this.renderChildren(workingContent)}
       </Editor>
-    ) : this.renderChildren(json);
+    ) : this.renderChildren(content);
   }
 }

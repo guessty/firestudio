@@ -21,15 +21,15 @@ const H4Icon = () => (
 
 export default class EditorContent extends PureComponent {
   static propTypes = {
-    json: PropTypes.shape({}),
-    onSetWorkingJson: PropTypes.func.isRequired,
+    content: PropTypes.shape({}),
+    onSetWorkingContent: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
-    json: convertToRaw(EditorState.createEmpty().getCurrentContent()),
+    content: convertToRaw(EditorState.createEmpty().getCurrentContent()),
   };
 
-  static DEFAULT_JSON = convertToRaw(EditorState.createEmpty().getCurrentContent());
+  static DEFAULT_CONTENT = convertToRaw(EditorState.createEmpty().getCurrentContent());
 
   static ACTIONS = [
     {
@@ -60,14 +60,14 @@ export default class EditorContent extends PureComponent {
   ]
 
   static jsonToHtml = (json) => {
-    const contentState = convertFromRaw(json || EditorContent.DEFAULT_JSON);
+    const contentState = convertFromRaw(json || EditorContent.DEFAULT_CONTENT);
     const editorState = EditorState.createWithContent(contentState);
 
     return draftToHtml(convertToRaw(editorState.getCurrentContent()));
   };
 
-  static Content = ({ json, className = '' }) => {
-    const contentState = convertFromRaw(json || EditorContent.DEFAULT_JSON);
+  static Content = ({ content, className = '' }) => {
+    const contentState = convertFromRaw(content || EditorContent.DEFAULT_CONTENT);
     const editorState = EditorState.createWithContent(contentState);
     const __html = draftToHtml(convertToRaw(editorState.getCurrentContent()));
 
@@ -82,14 +82,14 @@ export default class EditorContent extends PureComponent {
 
   state = {
     // eslint-disable-next-line react/destructuring-assignment
-    editorState: EditorState.createWithContent(convertFromRaw(this.props.json
-      || EditorContent.DEFAULT_JSON)),
+    editorState: EditorState.createWithContent(convertFromRaw(this.props.content
+      || EditorContent.DEFAULT_CONTENT)),
   };
 
   handleEditorStateChange = (editorState) => {
-    const { onSetWorkingJson } = this.props;
+    const { onSetWorkingContent } = this.props;
     this.setState({ editorState });
-    onSetWorkingJson(convertToRaw(editorState.getCurrentContent()));
+    onSetWorkingContent(convertToRaw(editorState.getCurrentContent()));
   };
 
   render() {

@@ -25,26 +25,26 @@ export default class RichTextBlock extends PureComponent {
       blockId, className,
     } = this.props;
 
-    const json = blocks[blockId] || EditorContent.DEFAULT_JSON
+    const content = blocks[blockId] || EditorContent.DEFAULT_CONTENT;
 
     return editorIsEnabled ? (
       <Editor
-        json={json}
+        content={content}
         firebase={firebase}
         blockId={blockId}
-        render={({ setWorkingJson, workingJson }) => (
+        render={({ setWorkingContent, workingContent }) => (
           <EditorContent
-            json={workingJson}
-            onSetWorkingJson={setWorkingJson}
+            content={workingContent}
+            onSetWorkingContent={setWorkingContent}
           />
         )}
       >
-        {({ workingJson }) => (
-          <EditorContent.Content className={className} json={workingJson} />
+        {({ workingContent }) => (
+          <EditorContent.Content className={className} content={workingContent} />
         )}
       </Editor>
     ) : (
-      <EditorContent.Content className={className} json={sJson} />
+      <EditorContent.Content className={className} content={content} />
     );
   }
 }

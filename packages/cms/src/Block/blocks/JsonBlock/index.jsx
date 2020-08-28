@@ -22,11 +22,11 @@ export default class JsonBlock extends PureComponent {
     children: [],
   };
 
-  renderChildren(json) {
+  renderChildren(content) {
     const { children } = this.props;
 
     if (typeof children === 'function') {
-      return children({ ...json })
+      return children({ ...content })
     }
 
     return children;
@@ -37,22 +37,22 @@ export default class JsonBlock extends PureComponent {
       _config: { firebase, editorIsEnabled, blocks },
       blockId,
     } = this.props;
-    const json = blocks[blockId] || {};
+    const content = blocks[blockId] || {};
     
     return editorIsEnabled ? (
       <Editor
         blockId={blockId}
-        json={json}
+        content={content}
         firebase={firebase}
-        render={({ setWorkingJson, workingJson }) => (
+        render={({ setWorkingContent, workingContent }) => (
           <EditorContent
-            json={workingJson}
-            onSetWorkingJson={setWorkingJson}
+            content={workingContent}
+            onSetWorkingContent={setWorkingContent}
           />
         )}
       >
-        {({ workingJson }) => this.renderChildren(workingJson)}
+        {({ workingContent }) => this.renderChildren(workingContent)}
       </Editor>
-    ) : this.renderChildren(json);
+    ) : this.renderChildren(content);
   }
 }
