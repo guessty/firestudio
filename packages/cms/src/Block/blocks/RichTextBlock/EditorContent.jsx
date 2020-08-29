@@ -97,10 +97,10 @@ export default class EditorContent extends PureComponent {
 
     return (
       <div
-        className="flex flex-col flex-grow w-full border-l border-r border-gray-200 overflow-auto"
+        className="RichTextBlockEditor"
       >
         <div
-          className="flex flex-col w-full my-0 mx-auto flex-grow bg-white px-5 py-16"
+          className="RichTextBlockEditor__container"
           style={{ maxWidth: '740px' }}
         >
           <div style={{ marginLeft: 80 }}>

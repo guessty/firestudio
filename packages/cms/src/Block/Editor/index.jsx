@@ -31,8 +31,8 @@ export default class Editor extends Component {
   };
 
   static LOADER = () => (
-    <div className="flex flex-col flex-grow items-center justify-center">
-      <Loader className="text-orange-500" />
+    <div className="Editor__loader-container">
+      <Loader className="Editor__loader" />
     </div>
   );
 
@@ -125,8 +125,8 @@ export default class Editor extends Component {
     return (
       <Clickable
         className={`
-          px-2 text-white bg-green-500
-          ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600'}
+          Editor__publish-button
+          ${isDisabled ? 'Editor__publish-button--disabled' : ''}
         `}
         disabled={isDisabled}
         onClick={this.handleOnClickActionButton}
@@ -142,8 +142,8 @@ export default class Editor extends Component {
     return (
       <Clickable
         className={`
-          px-2 text-white bg-orange-500
-          ${!hasEdits ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-600'}
+          Editor__save-button
+          ${!hasEdits ? 'Editor__save-button--disabled' : ''}
         `}
         disabled={!hasEdits}
         onClick={this.handleOnClickActionButton}
@@ -158,17 +158,14 @@ export default class Editor extends Component {
 
     return (
       <div>
-        <div className="flex flex-row items-center justify-between w-full h-16 px-5 border-b border-gray-900">
+        <div className="Editor__editor-controls">
           <div>
             {hasEdits ? this.renderSaveButton() : this.renderPublishButton()}
           </div>
           <div>
             <Clickable
               aria-label="Close"
-              className={`
-                flex flex-col items-center justify-center pointer-events-auto
-                -mr-5 w-16 h-16 py-2 text-black text-2xl
-              `}
+              className="Editor__close-button"
               styledAs="none"
               onClick={() => {
                 this.setState({ isOpen: false });
@@ -203,10 +200,8 @@ export default class Editor extends Component {
       <Clickable
         aria-label="Edit"
         className={`
-          absolute top-0 ${buttonPosition}-0 -m-3
-          flex flex-col items-center justify-center pointer-events-auto
-          w-8 h-8 py-2 text-white text-xl rounded-full shadow-lg
-          ${hasEdits || readyToPublish ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-500 hover:bg-green-600'}
+          Editor__edit-button Editor__edit-button--${buttonPosition}
+          ${hasEdits || readyToPublish ? 'Editor__edit-button--save' : 'Editor__edit-button--publish'}
         `}
         styledAs="none"
         onClick={() => {
@@ -214,11 +209,11 @@ export default class Editor extends Component {
         }}
       >
         <span>
-          <span className="flex flex-row whitespace-no-wrap">
+          <span className="Editor__edit-button__label">
             {hasEdits ? (
               <span>...</span>
             ) : (
-              <span className="transform -scale-x-100">✎</span>
+              <span className="Editor__edit-button__icon">✎</span>
             )}
           </span>
         </span>
@@ -237,13 +232,8 @@ export default class Editor extends Component {
     if (isPreviewing) return children({ workingContent });
 
     return (
-      <div className="flex flex-col w-full h-full relative p-6">
-        <div
-          className={`
-            absolute flex flex-col top-0 bottom-0 left-0 right-0
-            border border-dashed border-white
-          `}
-        >
+      <div className="Editor">
+        <div className="Editor__indicator">
           {this.renderEditButton()}
         </div>
         <WindowSize>
@@ -251,7 +241,7 @@ export default class Editor extends Component {
             <>
               {width >= 1280 && (
                 <Dock position="right" isVisible={isOpen}>
-                  <div className="flex flex-col w-full h-full">
+                  <div className="Editor__container">
                     {this.renderEditorControls()}
                     {this.renderEditorContent()}
                   </div>
@@ -260,11 +250,11 @@ export default class Editor extends Component {
               {width < 1280 && (
                 <div
                   className={`
-                    fixed top-0 left-0 right-0 bottom-0 z-50 bg-white
-                    ${isOpen ? 'block' : 'hidden'}
+                    Editor__full-screen
+                    ${isOpen ? 'Editor--block' : 'Editor--hidden'}
                   `}
                 >
-                  <div className="flex flex-col w-full h-full">
+                  <div className="Editor__container">
                     {this.renderEditorControls()}
                     {this.renderEditorContent()}
                   </div>

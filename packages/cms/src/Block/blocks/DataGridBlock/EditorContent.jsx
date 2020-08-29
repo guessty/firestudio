@@ -66,25 +66,29 @@ export default class EditorContent extends PureComponent {
     const { view } = this.state;
 
     return (
-      <div>
-        <input
-          type="radio"
-          value="grid"
-          name="view"
-          id="gridView"
-          checked={view === 'grid'}
-          onChange={this.handleChangeView}
-        />
-        <label htmlFor="gridView">Grid</label>
-        <input
-          type="radio"
-          value="json"
-          name="view"
-          id="jsonView"
-          checked={view === 'json'}
-          onChange={this.handleChangeView}
-        />
-        <label htmlFor="jsonView">JSON</label>
+      <div className="DataGridBlockEditor__radio_container">
+        <div className="DataGridBlockEditor__radio">
+          <input
+            type="radio"
+            value="grid"
+            name="view"
+            id="gridView"
+            checked={view === 'grid'}
+            onChange={this.handleChangeView}
+          />
+          <label htmlFor="gridView">Grid</label>
+        </div>
+        <div className="DataGridBlockEditor__radio">
+          <input
+            type="radio"
+            value="json"
+            name="view"
+            id="jsonView"
+            checked={view === 'json'}
+            onChange={this.handleChangeView}
+          />
+          <label htmlFor="jsonView">JSON</label>
+        </div>
       </div>
     );
   }
@@ -96,30 +100,28 @@ export default class EditorContent extends PureComponent {
     const rowData = content?.data || [];
 
     return (
-      <div className="flex flex-col flex-grow overflow-hidden">
+      <div className="DataGridBlockEditor">
         {this.renderRadios()}
         {view === 'grid' && (
-          <div className="flex flex-row flex-grow w-full h-full relative">
-            <div className="flex flex-col flex-grow">
-              <AgGridReact
-                key="datagrid"
-                ensureDomOrder
-                suppressColumnVirtualisation
-                suppressPropertyNamesCheck
-                className="flex flex-col flex-grow"
-                columnDefs={columnDefs}
-                defaultColDef={{
-                  sortingOrder: ['asc', 'desc'],
-                  lockPosition: true,
-                  resizable: true,
-                  sortable: true,
-                }}
-                headerHeight={40}
-                rowData={rowData}
-                rowHeight={40}
-                onGridReady={this.handleGridReady}
-              />
-            </div>
+          <div className="DataGridBlockEditor__grid-container">
+            <AgGridReact
+              key="datagrid"
+              ensureDomOrder
+              suppressColumnVirtualisation
+              suppressPropertyNamesCheck
+              className="DataGridBlockEditor__grid"
+              columnDefs={columnDefs}
+              defaultColDef={{
+                sortingOrder: ['asc', 'desc'],
+                lockPosition: true,
+                resizable: true,
+                sortable: true,
+              }}
+              headerHeight={40}
+              rowData={rowData}
+              rowHeight={40}
+              onGridReady={this.handleGridReady}
+            />
           </div>
         )}
         {view === 'json' && (

@@ -26,7 +26,7 @@ export default class EditorContent extends PureComponent {
 
     return (
       <div
-        className="flex flex-col flex-grow overflow-auto py-5"
+        className="JsonBlockEditor"
         style={{
           backgroundColor: 'rgb(39, 40, 34)',
         }}
