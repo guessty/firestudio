@@ -97,10 +97,10 @@ export default class EditorContent extends PureComponent {
 
     return (
       <div
-        className="RichTextBlockEditor"
+        className="fp-cms__rich-text-editor"
       >
         <div
-          className="RichTextBlockEditor__container"
+          className="fp-cms__rich-text-editor__container"
           style={{ maxWidth: '740px' }}
         >
           <div style={{ marginLeft: 80 }}>

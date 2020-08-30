@@ -26,7 +26,7 @@ export default class EditorContent extends PureComponent {
 
     return (
       <div
-        className="JsonBlockEditor"
+        className="fp-cms__json-editor"
         style={{
           backgroundColor: 'rgb(39, 40, 34)',
         }}

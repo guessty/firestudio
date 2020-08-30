@@ -130,6 +130,7 @@ export default class Block extends Component {
 
   state = {
     editorIsEnabled: false,
+    mode: 'default',
   };
 
   async componentDidMount() {
@@ -139,10 +140,12 @@ export default class Block extends Component {
         this.checkAndEnableEditor(user);
       });
     }, 0);
+    Router.router.events.on('routeChangeComplete', this.handleRouteChange);
   }
 
   componentWillUnmount() {
     this.unregisterAuthObserver();
+    Router.router.events.off('routeChangeComplete', this.handleRouteChange);
   }
 
   checkAndEnableEditor = async (user) => {
@@ -158,12 +161,21 @@ export default class Block extends Component {
     }
   };
 
+  handleRouteChange = () => {
+    const { editorIsEnabled } = this.state;
+
+    if (editorIsEnabled) {
+      const { query: { fpmode = 'default' } } = parseUrl(Router.router.asPath, true);
+      this.setState({ mode: fpmode });
+    }
+  }
+
   render() {
     const {
       blockId, blockType, blocks, children,
       blockComponents, firebase,
     } = this.props;
-    const { editorIsEnabled } = this.state;
+    const { editorIsEnabled, mode } = this.state;
 
     const _config = {
       blocks,
@@ -180,7 +192,7 @@ export default class Block extends Component {
 
     return (
       <BlockComponent
-        key={blockId}
+        key={`${blockId}_${mode}`}
         blockId={blockId}
         content={blocks[blockId] || Block.DEFAULT_CONTENT}
         _config={_config}

@@ -31,8 +31,8 @@ export default class Editor extends Component {
   };
 
   static LOADER = () => (
-    <div className="Editor__loader-container">
-      <Loader className="Editor__loader" />
+    <div className="fp-cms__editor__loader-container">
+      <Loader className="fp-cms__editor__loader" />
     </div>
   );
 
@@ -125,8 +125,8 @@ export default class Editor extends Component {
     return (
       <Clickable
         className={`
-          Editor__publish-button
-          ${isDisabled ? 'Editor__publish-button--disabled' : ''}
+          fp-cms__editor__publish-button
+          ${isDisabled ? 'fp-cms__editor__publish-button--disabled' : ''}
         `}
         disabled={isDisabled}
         onClick={this.handleOnClickActionButton}
@@ -142,8 +142,8 @@ export default class Editor extends Component {
     return (
       <Clickable
         className={`
-          Editor__save-button
-          ${!hasEdits ? 'Editor__save-button--disabled' : ''}
+          fp-cms__editor__save-button
+          ${!hasEdits ? 'fp-cms__editor__save-button--disabled' : ''}
         `}
         disabled={!hasEdits}
         onClick={this.handleOnClickActionButton}
@@ -158,14 +158,14 @@ export default class Editor extends Component {
 
     return (
       <div>
-        <div className="Editor__editor-controls">
+        <div className="fp-cms__editor__editor-controls">
           <div>
             {hasEdits ? this.renderSaveButton() : this.renderPublishButton()}
           </div>
           <div>
             <Clickable
               aria-label="Close"
-              className="Editor__close-button"
+              className="fp-cms__editor__close-button"
               styledAs="none"
               onClick={() => {
                 this.setState({ isOpen: false });
@@ -200,8 +200,8 @@ export default class Editor extends Component {
       <Clickable
         aria-label="Edit"
         className={`
-          Editor__edit-button Editor__edit-button--${buttonPosition}
-          ${hasEdits || readyToPublish ? 'Editor__edit-button--save' : 'Editor__edit-button--publish'}
+          fp-cms__editor__edit-button fp-cms__editor__edit-button--${buttonPosition}
+          ${hasEdits || readyToPublish ? 'fp-cms__editor__edit-button--save' : 'fp-cms__editor__edit-button--publish'}
         `}
         styledAs="none"
         onClick={() => {
@@ -209,11 +209,11 @@ export default class Editor extends Component {
         }}
       >
         <span>
-          <span className="Editor__edit-button__label">
+          <span className="fp-cms__editor__edit-button__label">
             {hasEdits ? (
               <span>...</span>
             ) : (
-              <span className="Editor__edit-button__icon">✎</span>
+              <span className="fp-cms__editor__edit-button__icon">✎</span>
             )}
           </span>
         </span>
@@ -232,8 +232,8 @@ export default class Editor extends Component {
     if (isPreviewing) return children({ workingContent });
 
     return (
-      <div className="Editor">
-        <div className="Editor__indicator">
+      <div className="fp-cms__editor">
+        <div className="fp-cms__editor__indicator">
           {this.renderEditButton()}
         </div>
         <WindowSize>
@@ -241,7 +241,7 @@ export default class Editor extends Component {
             <>
               {width >= 1280 && (
                 <Dock position="right" isVisible={isOpen}>
-                  <div className="Editor__container">
+                  <div className="fp-cms__editor__container">
                     {this.renderEditorControls()}
                     {this.renderEditorContent()}
                   </div>
@@ -250,11 +250,11 @@ export default class Editor extends Component {
               {width < 1280 && (
                 <div
                   className={`
-                    Editor__full-screen
-                    ${isOpen ? 'Editor--block' : 'Editor--hidden'}
+                    fp-cms__editor__full-screen
+                    ${isOpen ? 'fp-cms__editor--block' : 'fp-cms__editor--hidden'}
                   `}
                 >
-                  <div className="Editor__container">
+                  <div className="fp-cms__editor__container">
                     {this.renderEditorControls()}
                     {this.renderEditorContent()}
                   </div>
@@ -263,7 +263,9 @@ export default class Editor extends Component {
             </>
           )}
         </WindowSize>
-        {children({ workingContent })}
+        <div className="fp-cms__editor__content">
+          {children({ workingContent })}
+        </div>
       </div>
     );
   }

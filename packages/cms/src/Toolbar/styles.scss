@@ -1,0 +1,52 @@
+.fp-cms__toolbar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  padding: 0.5rem;
+  justify-content: space-between;
+  background-color: white;
+  z-index: 20;
+  align-items: center;
+
+  &__options {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin: -0.5rem;
+    align-items: center;
+
+    & > * {
+      padding: 0.5rem;
+    }
+  }
+
+  &__mode {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin: -0.25rem;
+
+    & > * {
+      padding: 0.25rem;
+    }
+
+    select {
+      border: 1px solid lightgray;
+    }
+  }
+
+  &__menu-button {
+    border: 1px solid lightgray;
+    padding: 0.25rem 0.5rem;
+  }
+
+  &__menu {
+    display: flex;
+    flex-direction: column;
+    min-width: 12rem;
+    position: absolute;
+    min-width: auto !important;
+    background-color: white;
+    border: 1px solid lightgray;
+  }
+}

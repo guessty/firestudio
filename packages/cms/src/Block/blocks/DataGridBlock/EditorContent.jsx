@@ -66,8 +66,8 @@ export default class EditorContent extends PureComponent {
     const { view } = this.state;
 
     return (
-      <div className="DataGridBlockEditor__radio_container">
-        <div className="DataGridBlockEditor__radio">
+      <div className="fp-cms__data-grid-editor__radio_container">
+        <div className="fp-cms__data-grid-editor__radio">
           <input
             type="radio"
             value="grid"
@@ -78,7 +78,7 @@ export default class EditorContent extends PureComponent {
           />
           <label htmlFor="gridView">Grid</label>
         </div>
-        <div className="DataGridBlockEditor__radio">
+        <div className="fp-cms__data-grid-editor__radio">
           <input
             type="radio"
             value="json"
@@ -100,16 +100,16 @@ export default class EditorContent extends PureComponent {
     const rowData = content?.data || [];
 
     return (
-      <div className="DataGridBlockEditor">
+      <div className="fp-cms__data-grid-editor">
         {this.renderRadios()}
         {view === 'grid' && (
-          <div className="DataGridBlockEditor__grid-container">
+          <div className="fp-cms__data-grid-editor__grid-container">
             <AgGridReact
               key="datagrid"
               ensureDomOrder
               suppressColumnVirtualisation
               suppressPropertyNamesCheck
-              className="DataGridBlockEditor__grid"
+              className="fp-cms__data-grid-editor__grid"
               columnDefs={columnDefs}
               defaultColDef={{
                 sortingOrder: ['asc', 'desc'],
