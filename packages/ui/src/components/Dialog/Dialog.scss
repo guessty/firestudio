@@ -1,6 +1,6 @@
 .dialog {
   z-index: 30;
-  position: absolute;
+  position: fixed;
   display: none;
   top: 0;
   left: 0;
@@ -15,7 +15,7 @@
   }
 
   &__overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
