@@ -20,7 +20,7 @@ export default class Toolbar extends Component {
 
   state = {
     editorIsEnabled: false,
-    mode: 'default'
+    isEditing: false
   };
 
   async componentDidMount() {
@@ -37,31 +37,39 @@ export default class Toolbar extends Component {
   }
 
   checkAndEnableEditor = async (user) => {
-    const { query: { fpmode } } = parseUrl(Router.router.asPath, true);
+    const { query: { edit } } = parseUrl(Router.router.asPath, true);
+    let editorIsEnabled = false;
     if (user) {
       const idTokenResult = await user.getIdTokenResult();
       if (idTokenResult.claims.editor) {
-        this.setState({ editorIsEnabled: true, mode: fpmode || 'default' });
+        this.setState({ isEditing: edit === 'true' });
+        editorIsEnabled = true;
       }
     }
+
+    document.documentElement.style.cssText = editorIsEnabled ? `
+      padding-top: 3rem !important;
+    ` : '';
+
+    this.setState({ editorIsEnabled });
   };
 
   handleChangeMode = (e) => {
-    const fpmode = e.target.value;
+    const edit = e.target.value === 'edit';
     const parsedUrl = parseUrl(Router.router.asPath, '/', true);
     parsedUrl.set('query', {
       ...parsedUrl.query,
-      fpmode,
+      edit,
     });
     Router.replaceRoute(parsedUrl.href);
     this.setState({
-      mode: fpmode,
+      isEditing: edit,
     });
   }
 
   render() {
     const { children } = this.props;
-    const { editorIsEnabled, mode } = this.state;
+    const { editorIsEnabled, isEditing } = this.state;
 
     return editorIsEnabled && (
       <div className="fp-cms__toolbar">
@@ -70,10 +78,9 @@ export default class Toolbar extends Component {
           <div className="fp-cms__toolbar__mode">
             <span>Mode:</span>
             <div>
-              <select value={mode} onChange={this.handleChangeMode}>
-                <option value="default">Live (default)</option>
+              <select value={isEditing ? 'edit' : 'live'} onChange={this.handleChangeMode}>
+                <option value="live">Live</option>
                 <option value="edit">Edit</option>
-                <option value="preview">Preview</option>
               </select>
             </div>
           </div>

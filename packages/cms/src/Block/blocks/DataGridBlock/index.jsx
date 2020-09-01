@@ -15,11 +15,11 @@ export default class DataGridBlock extends PureComponent {
       PropTypes.node,
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.func,
-    ]).isRequired,
+    ]),
   };
 
   static defaultProps = {
-    children: [],
+    children: null,
   };
 
   renderChildren(content) {

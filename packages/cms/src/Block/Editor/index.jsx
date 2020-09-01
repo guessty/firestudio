@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Router from '@firepress/core/router';
 import { Clickable, Loader } from '@firepress/ui';
 import Dock from 'react-dock';
 import WindowSize from '@reach/window-size';
-import parseUrl from 'url-parse';
 
 import { getBlockById } from '../index';
 
@@ -40,7 +38,6 @@ export default class Editor extends Component {
 
   state = {
     isLoading: false,
-    isPreviewing: false,
     // eslint-disable-next-line react/destructuring-assignment
     workingContent: this.props.content,
     // eslint-disable-next-line react/destructuring-assignment
@@ -52,14 +49,11 @@ export default class Editor extends Component {
 
   async componentDidMount() {
     const { firebase, blockId } = this.props;
-    const { query: { fpmode } } = parseUrl(Router.router.asPath, true);
-    const isPreviewing = fpmode === 'preview';
     setTimeout(() => {
       const db = firebase.firestore();
       this.docRef = db.collection('blocks').doc(blockId);
       this.setState({
         isLoading: true,
-        isPreviewing,
       }, async () => {
         const { content, draftContentId } = await Editor.getDraftBlock(firebase, blockId);
         if (draftContentId) {
@@ -224,12 +218,10 @@ export default class Editor extends Component {
   render() {
     const { children } = this.props;
     const {
-      isOpen, isLoading, isPreviewing, workingContent,
+      isOpen, isLoading, workingContent,
     } = this.state;
 
     if (isLoading) return (<Editor.LOADER />);
-
-    if (isPreviewing) return children({ workingContent });
 
     return (
       <div className="fp-cms__editor">

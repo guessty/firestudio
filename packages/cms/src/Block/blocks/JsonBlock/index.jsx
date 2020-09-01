@@ -15,11 +15,11 @@ export default class JsonBlock extends PureComponent {
       PropTypes.node,
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.func,
-    ]).isRequired,
+    ]),
   };
 
   static defaultProps = {
-    children: [],
+    children: null,
   };
 
   renderChildren(content) {
@@ -34,7 +34,9 @@ export default class JsonBlock extends PureComponent {
 
   render() {
     const {
-      _config: { firebase, editorIsEnabled, blocks },
+      _config: {
+        firebase, editorIsEnabled, blocks,
+      },
       blockId,
     } = this.props;
     const content = blocks[blockId] || {};

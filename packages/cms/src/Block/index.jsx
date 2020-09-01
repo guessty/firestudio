@@ -40,9 +40,9 @@ export default class Block extends Component {
     blocks: PropTypes.shape({}),
     firebase: PropTypes.shape({}),
     children: PropTypes.oneOfType([
-      PropTypes.shape({}),
-      PropTypes.arrayOf(PropTypes.shape({})),
       PropTypes.node,
+      PropTypes.arrayOf(PropTypes.node),
+      PropTypes.func,
     ]),
   };
 
@@ -50,7 +50,7 @@ export default class Block extends Component {
     blockComponents: {},
     blocks: {},
     firebase: undefined,
-    children: undefined,
+    children: null,
   };
 
   static BLOCK_COMPONENTS = {
@@ -130,7 +130,7 @@ export default class Block extends Component {
 
   state = {
     editorIsEnabled: false,
-    mode: 'default',
+    isEditing: false,
   };
 
   async componentDidMount() {
@@ -150,13 +150,15 @@ export default class Block extends Component {
 
   checkAndEnableEditor = async (user) => {
     const { blockId } = this.props;
-    const { query: { fpmode } } = parseUrl(Router.router.asPath, true);
-    const isEditing = fpmode === 'edit';
-    const isPreviewing = fpmode === 'preview';
-    if (blockId && user && (isEditing || isPreviewing)) {
+    const { query: { edit } } = parseUrl(Router.router.asPath, true);
+    const isEditing = edit === 'true'
+    if (blockId && user) {
       const idTokenResult = await user.getIdTokenResult();
       if (idTokenResult.claims.editor) {
-        this.setState({ editorIsEnabled: true });
+        this.setState({
+          editorIsEnabled: true,
+          isEditing,
+        });
       }
     }
   };
@@ -165,8 +167,8 @@ export default class Block extends Component {
     const { editorIsEnabled } = this.state;
 
     if (editorIsEnabled) {
-      const { query: { fpmode = 'default' } } = parseUrl(Router.router.asPath, true);
-      this.setState({ mode: fpmode });
+      const { query: { edit } } = parseUrl(Router.router.asPath, true);
+      this.setState({ isEditing: edit === 'true' });
     }
   }
 
@@ -175,12 +177,12 @@ export default class Block extends Component {
       blockId, blockType, blocks, children,
       blockComponents, firebase,
     } = this.props;
-    const { editorIsEnabled, mode } = this.state;
+    const { editorIsEnabled, isEditing } = this.state;
 
     const _config = {
       blocks,
       ...firebase ? { firebase } : {},
-      editorIsEnabled,
+      editorIsEnabled: editorIsEnabled && isEditing,
     };
 
     const BLOCKS = {
@@ -192,7 +194,7 @@ export default class Block extends Component {
 
     return (
       <BlockComponent
-        key={`${blockId}_${mode}`}
+        key={blockId}
         blockId={blockId}
         content={blocks[blockId] || Block.DEFAULT_CONTENT}
         _config={_config}
