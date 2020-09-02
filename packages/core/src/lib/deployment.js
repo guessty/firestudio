@@ -34,7 +34,7 @@ const buildFirebaserc = function(config) {
 const buildJson = function(outdir, config) {
   let customFunctions = {}
   try {
-    customFunctions = require(`${outdir}/functions/apis`).default;
+    customFunctions = require(`${outdir}/functions/api/index`).default;
   } catch {
     console.log('> no custom functions to rewrite')
   }
@@ -63,13 +63,13 @@ const buildJson = function(outdir, config) {
   }) 
 
   const combinedRewrites = [];
-  pageRewrites.forEach(function(rewrite) {
+  functionRewrites.forEach(function(rewrite) {
     combinedRewrites.push(rewrite);
   })
   cloudRewrites.forEach(function(rewrite) {
     combinedRewrites.push(rewrite);
   })
-  functionRewrites.forEach(function(rewrite) {
+  pageRewrites.forEach(function(rewrite) {
     combinedRewrites.push(rewrite);
   })
 

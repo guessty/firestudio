@@ -9,7 +9,7 @@ const generateDirRoutes = (dir, pathString = undefined, routes = []) => {
   const normalizedPath = normalizePath(dir);
   const stats = fs.statSync(normalizedPath);
   const baseName = path.basename(dir);
-  if (stats.isDirectory() && baseName !== '__tests__') {
+  if (stats.isDirectory() && baseName !== '__tests__' && baseName !== 'api') {
     let nextPathString = '';
     if (pathString !== undefined) {
       nextPathString = `${pathString}/${baseName}`;
