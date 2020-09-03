@@ -6,10 +6,24 @@
 
   &__popup {
     position: absolute;
+    pointer-events: none;
+    min-width: 100%;
   }
 
   &__container {
     position: relative;
+    pointer-events: auto;
+
+    &--open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    &--closed {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
   }
 
   &__list {

@@ -115,9 +115,9 @@ export default class _Menu extends PureComponent {
 
     if (keepInDom) {
       const className = `
-        relative ${containerClassName}
-        ${isOpen ? 'opacity-100 visible pointer-events-auto'
-          : 'opacity-0 invisible pointer-events-none'}
+        menu__container ${containerClassName}
+        ${isOpen ? 'menu__container--open'
+          : 'menu__container--closed'}
       `;
 
       return (
@@ -135,7 +135,7 @@ export default class _Menu extends PureComponent {
     }
 
     return isOpen ? (
-      <div className={`relative pointer-events-auto ${containerClassName}`}>
+      <div className={`menu__container ${containerClassName}`}>
         {typeof render === 'function' ? render({ List: MenuList, isOpen }) : (
           <MenuList className={listClassName}>
             {children}
@@ -165,7 +165,7 @@ export default class _Menu extends PureComponent {
             {buttonComponent}
           </MenuButton>
           <Menu
-            className={`menu__popup pointer-events-none min-w-full ${popupClassName}`}
+            className={`menu__popup ${popupClassName}`}
             data-menupopupid={popupId}
           >
             {menuState => {
