@@ -36,6 +36,8 @@ export default App => class _App extends React.Component {
     }
     ROUTES = Array.isArray(ROUTES) ? ROUTES : [];
 
+    Routes.Router.router.events.on('routeChangeComplete', this.handleRouteChangeComplete);
+
     initRoutes(ROUTES);
     if (isAppLoading) {
       setTimeout(() => {
@@ -55,14 +57,8 @@ export default App => class _App extends React.Component {
   }
 
   async componentDidUpdate() {
-    const { router, Component } = this.props;
-    const { isAppLoading, isAuthenticated } = this.state;
-    if (isAppLoading) {
-      const fallbackPage = _App.defaultClientFallbackPage;
-      if (router.route !== fallbackPage) {
-        this.setState({ isAppLoading: false }); // eslint-disable-line react/no-did-update-set-state
-      }
-    }
+    const { Component } = this.props;
+    const { isAuthenticated } = this.state;
 
     if (_App.isFirebaseAuthEnabled && Component.isPrivate && isAuthenticated === false) {
       const as = `${App.redirectPrivatePagesTo || '/'}?${queryString.stringify({ redirect: Routes.Router.asPath })}`;
@@ -71,10 +67,23 @@ export default App => class _App extends React.Component {
   }
 
   componentWillUnmount() {
+    Routes.Router.router.events.off('routeChangeComplete', this.handleRoutesSet);
     if (_App.isFirebaseAuthEnabled) {
       this.unregisterAuthObserver();
     }
   }
+
+  handleRouteChangeComplete = () => {
+    const { router } = this.props;
+    const { isAppLoading } = this.state;
+
+    if (isAppLoading) {
+      const fallbackPage = _App.defaultClientFallbackPage;
+      if (router.route !== fallbackPage) {
+        this.setState({ isAppLoading: false }); // eslint-disable-line react/no-did-update-set-state
+      }
+    }
+  };
 
   isAppInitLoading() {
     const { Component, router } = this.props;
