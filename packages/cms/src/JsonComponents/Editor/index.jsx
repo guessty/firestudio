@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import dynamic from 'next/dynamic';
-import Router from '@firepress/core/router';
 import { Clickable, Loader } from '@firepress/ui';
 import Dock from 'react-dock';
 import WindowSize from '@reach/window-size';
@@ -55,7 +54,7 @@ export default class Editor extends Component {
 
   async componentDidMount() {
     const { firebase, blockId } = this.props;
-    const { query: { fpmode } } = parseUrl(Router.router.asPath, true);
+    const { query: { fpmode } } = parseUrl(window.location.href, true);
     const isPreviewing = fpmode === 'preview';
     setTimeout(() => {
       const db = firebase.firestore();

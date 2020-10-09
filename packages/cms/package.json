@@ -1,6 +1,6 @@
 {
   "name": "@firepress/cms",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "description": "A Firebase connected CMS for Firepress",
   "keywords": [
     "React",
@@ -40,7 +40,6 @@
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.4.4",
-    "@firepress/core": "^0.4.11",
     "@firepress/ui": "^0.3.7",
     "@reach/dialog": "^0.2.9",
     "@reach/visually-hidden": "^0.1.4",

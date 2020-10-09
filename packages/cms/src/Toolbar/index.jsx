@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Router from '@firepress/core/router';
 import parseUrl from 'url-parse';
-import { Clickable, Flex, Menu } from '@firepress/ui';
+import { Clickable, Menu } from '@firepress/ui';
 
 export default class Toolbar extends Component {
   static propTypes = {
@@ -37,7 +36,7 @@ export default class Toolbar extends Component {
   }
 
   checkAndEnableEditor = async (user) => {
-    const { query: { edit } } = parseUrl(Router.router.asPath, true);
+    const { query: { edit } } = parseUrl(window.location.href, true);
     let editorIsEnabled = false;
     if (user) {
       const idTokenResult = await user.getIdTokenResult();
@@ -56,12 +55,12 @@ export default class Toolbar extends Component {
 
   handleChangeMode = (e) => {
     const edit = e.target.value === 'edit';
-    const parsedUrl = parseUrl(Router.router.asPath, '/', true);
+    const parsedUrl = parseUrl(window.location.href, '/', true);
     parsedUrl.set('query', {
       ...parsedUrl.query,
       edit,
     });
-    Router.replaceRoute(parsedUrl.href);
+    window.location.replace(parsedUrl.href);
     this.setState({
       isEditing: edit,
     });

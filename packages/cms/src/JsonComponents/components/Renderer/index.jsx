@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { isEmpty as _isEmpty } from 'lodash';
-import Router from '@firepress/core/router';
 
 import { parseProps, canComponentRender } from './helpers';
 import valueParser from './parser';
@@ -63,7 +62,7 @@ class Renderer extends Component {
       ...extraProps,
       ...globalProps,
       queryParams: {
-        ...Router.currentRoute ? Router.currentRoute.query : {},
+        // ...Router.currentRoute ? Router.currentRoute.query : {},
         ...updatedQueryParams,
       },
     };

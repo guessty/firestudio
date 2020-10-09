@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Router from '@firepress/core/router';
 import parseUrl from 'url-parse';
 import { isPlainObject as _isPlainObject } from 'lodash';
 
@@ -140,17 +139,15 @@ export default class Block extends Component {
         this.checkAndEnableEditor(user);
       });
     }, 0);
-    Router.router.events.on('routeChangeComplete', this.handleRouteChange);
   }
 
   componentWillUnmount() {
     this.unregisterAuthObserver();
-    Router.router.events.off('routeChangeComplete', this.handleRouteChange);
   }
 
   checkAndEnableEditor = async (user) => {
     const { blockId } = this.props;
-    const { query: { edit } } = parseUrl(Router.router.asPath, true);
+    const { query: { edit } } = parseUrl(window.location.href, true);
     const isEditing = edit === 'true'
     if (blockId && user) {
       const idTokenResult = await user.getIdTokenResult();
@@ -162,15 +159,6 @@ export default class Block extends Component {
       }
     }
   };
-
-  handleRouteChange = () => {
-    const { editorIsEnabled } = this.state;
-
-    if (editorIsEnabled) {
-      const { query: { edit } } = parseUrl(Router.router.asPath, true);
-      this.setState({ isEditing: edit === 'true' });
-    }
-  }
 
   render() {
     const {
