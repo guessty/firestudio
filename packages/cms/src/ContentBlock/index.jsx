@@ -20,6 +20,7 @@ const ContentBlock = ({
   id,
   type = 'json',
   children,
+  disabled = false,
 }) => {
   const publishedContent = block?.publishedContent?.json || '{}';
 
@@ -36,7 +37,7 @@ const ContentBlock = ({
 
   const publishedJson = JSON.parse(publishedContent);
 
-  return (isEditingEnabled && isEditing) ? (
+  return (isEditingEnabled && isEditing && !disabled) ? (
     <Editor
       content={publishedJson}
       db={db}

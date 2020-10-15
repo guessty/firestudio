@@ -1,13 +1,12 @@
-import React, { Component, useState } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import parseUrl from 'url-parse';
 import { Clickable, Menu } from '@firepress/ui';
 
-const Toolbar = ({ db, user, children }) => {
+const Toolbar = ({ user, children }) => {
   let isEditing = false;
-  const isEditingEnabled = user?.claims.editor || false;
+  const isEditingEnabled = user?.claims?.editor || false;
 
-  if (!!db && !!user && isEditingEnabled) {
+  if (!!user && isEditingEnabled) {
     document.documentElement.style.cssText = editorIsEnabled ? `
       padding-top: 3rem !important;
     ` : '';

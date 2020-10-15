@@ -1,6 +1,6 @@
 {
   "name": "@firepress/cms",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Firebase connected CMS for Firepress",
   "keywords": [
     "React",
