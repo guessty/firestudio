@@ -4,12 +4,40 @@ import { Clickable, Loader } from '@firepress/ui';
 import Dock from 'react-dock';
 import WindowSize from '@reach/window-size';
 
-import { getBlockById } from '../index';
+const getBlockContent = async (blockData) => {
+  try {
+    let draftContent = null;
+    const draftContentRef = blockData.draftContent;
+    if (draftContentRef) {
+      const draftContentDoc = await draftContentRef.get();
+      if (draftContentDoc.exists) {
+        draftContent = draftContentDoc.data();
+      };
+    }
+
+    let publishedContent = null;
+    const publishedContentRef = blockData.publishedContent;
+    if (publishedContentRef) {
+      const publishedContentDoc = await publishedContentRef.get();
+      if (publishedContentDoc.exists) {
+        publishedContent = publishedContentDoc.data();
+      };
+    }
+
+    return {
+      ...blockData,
+      draftContent,
+      publishedContent,
+    }
+  } catch {
+    return blockData;
+  }
+};
 
 export default class Editor extends Component {
   static propTypes = {
     blockId: PropTypes.string.isRequired,
-    firebase: PropTypes.shape({}).isRequired,
+    db: PropTypes.shape({}).isRequired,
     content: PropTypes.shape({}),
     buttonPosition: PropTypes.oneOf(['left', 'right']),
     children: PropTypes.func.isRequired,
@@ -22,19 +50,13 @@ export default class Editor extends Component {
     render: undefined,
   };
 
-  static getDraftBlock = async (firebase, blockId) => {
-    const { content, draftContentId } = await getBlockById(firebase, blockId, true) || {};
-
-    return { content, draftContentId, blocks: {} };
-  };
-
   static LOADER = () => (
     <div className="fp-cms__editor__loader-container">
       <Loader className="fp-cms__editor__loader" />
     </div>
   );
 
-  docRef;
+  blockRef;
 
   state = {
     isLoading: false,
@@ -44,34 +66,38 @@ export default class Editor extends Component {
     savedContent: this.props.content,
     hasEdits: false,
     isOpen: false,
-    draftContentId: undefined,
+    blockData: {},
   };
 
   async componentDidMount() {
-    const { firebase, blockId } = this.props;
+    const { db, blockId } = this.props;
     setTimeout(() => {
-      const db = firebase.firestore();
-      this.docRef = db.collection('blocks').doc(blockId);
+      this.blockRef = db.collection('_blocks').doc(blockId);
       this.setState({
         isLoading: true,
       }, async () => {
-        const { content, draftContentId } = await Editor.getDraftBlock(firebase, blockId);
-        if (draftContentId) {
-          this.setState({ workingContent: content, draftContentId });
+        const blockDoc = await this.blockRef.get();
+        let blockData = {
+          publishedContent: null,
+          draftContent: null,
+          versionHistory: [],
+        };
+        if (!blockDoc.exists) {
+          await this.blockRef.set({
+            ...blockData,
+          });
+        } else {
+          blockData = blockDoc.data();
         }
-        this.setState({ isLoading: false });
+
+        const blockDataWithContent = await getBlockContent(blockData);
+
+        const workingContent = (blockDataWithContent?.draftContent || blockDataWithContent?.publishedContent)?.json || {};
+
+        this.setState({ isLoading: false, workingContent, blockData });
       });
     }, 0);
   }
-
-  handleOnClickActionButton = () => {
-    const { hasEdits } = this.state;
-    if (hasEdits) {
-      this.save();
-    } else {
-      this.publish();
-    }
-  };
 
   handleOnUpdate = ({ updated_src: workingContent }) => {
     this.setWorkingContent(workingContent);
@@ -88,73 +114,83 @@ export default class Editor extends Component {
     });
   };
 
-  async save() {
-    const { workingContent, draftContentId } = this.state;
-    if (draftContentId) {
-      await this.docRef.collection('content').doc(draftContentId).set(workingContent);
-    } else {
-      const draftRef = await this.docRef.collection('content').add(workingContent);
-      await this.docRef.set({ draftContentId: draftRef.id }, { merge: true });
-      this.setState({ draftContentId });
-    }
-    this.setState({
-      hasEdits: false,
-      savedContent: workingContent,
+  handleSave = () => {
+    const { db } = this.props;
+    const { workingContent, blockData } = this.state;
+
+    this.setState({ isSaving: true }, async () => {
+      let draftRef = blockData.draftContent;
+      if (draftRef) {
+        await draftRef.set({ json: workingContent }, { merge: true });
+      } else {
+        draftRef = await db.collection('_content').add({ json: workingContent });
+        await this.blockRef.set({ draftContent: draftRef }, { merge: true });
+      }
+  
+      this.setState({
+        isSaving: false,
+        hasEdits: false,
+        savedContent: workingContent,
+        blockData: {
+          ...blockData,
+          draftContent: draftRef,
+        },
+      });
+    })
+  }
+
+  handlePublish = () => {
+    const { blockData } = this.state;
+
+    this.setState({ isPublishing: true }, async () => {
+      const nextBlockData = {
+        publishedContent: blockData.draftContent,
+        draftContent: null,
+        versionHistory: [
+          ...blockData.versionHistory,
+          blockData.draftContent,
+        ],
+      };
+
+      await this.blockRef.set(nextBlockData, { merge: true });
+
+      this.setState({
+        isPublishing: false,
+        blockData: nextBlockData,
+      })
     });
   }
 
-  async publish() {
-    const { draftContentId } = this.state;
-    await this.docRef.set({
-      publishedContentId: draftContentId,
-      draftContentId: null,
-    }, { merge: true });
-  }
+  renderActionButton() {
+    const { hasEdits, isSaving, isPublishing, blockData } = this.state;
 
-  renderPublishButton() {
-    const { content } = this.props;
-    const { workingContent } = this.state;
-    const isDisabled = JSON.stringify(content) === JSON.stringify(workingContent);
+    const isPublished = !hasEdits && !isPublishing && !blockData.draftContent && blockData.publishedContent;
 
-    return (
-      <Clickable
-        className={`
-          fp-cms__editor__publish-button
-          ${isDisabled ? 'fp-cms__editor__publish-button--disabled' : ''}
-        `}
-        disabled={isDisabled}
-        onClick={this.handleOnClickActionButton}
-      >
-        Publish
-      </Clickable>
-    );
-  }
-
-  renderSaveButton() {
-    const { hasEdits } = this.state;
+    let label = hasEdits || isPublished ? 'Save' : 'Publish';
+    if (isSaving) label = 'Saving...';
+    if (isPublishing) label = 'Publishing...';
 
     return (
       <Clickable
         className={`
           fp-cms__editor__save-button
-          ${!hasEdits ? 'fp-cms__editor__save-button--disabled' : ''}
+          ${isSaving || isPublishing || isPublished
+            ? 'fp-cms__editor__save-button--disabled' : ''}
         `}
-        disabled={!hasEdits}
-        onClick={this.handleOnClickActionButton}
+        disabled={isSaving || isPublishing || isPublished}
+        onClick={hasEdits ? this.handleSave : this.handlePublish}
       >
-        Save Changes
+        {label}
       </Clickable>
     );
   }
 
   renderEditorControls() {
-    const { hasEdits } = this.state;
-
     return (
       <div>
         <div className="fp-cms__editor__editor-controls">
           <div>
-            {hasEdits ? this.renderSaveButton() : this.renderPublishButton()}
+            {this.renderActionButton()}
           </div>
           <div>
             <Clickable
@@ -186,9 +222,9 @@ export default class Editor extends Component {
 
   renderEditButton() {
     const { buttonPosition } = this.props;
-    const { hasEdits, draftContentId } = this.state;
+    const { hasEdits, blockData } = this.state;
 
-    const readyToPublish = !hasEdits && draftContentId;
+    const readyToPublish = !hasEdits && blockData.draftContent;
 
     return (
       <Clickable
@@ -218,7 +254,7 @@ export default class Editor extends Component {
   render() {
     const { children } = this.props;
     const {
-      isOpen, isLoading, workingContent,
+      isOpen, isLoading, workingContent: content,
     } = this.state;
 
     if (isLoading) return (<Editor.LOADER />);
@@ -256,7 +292,7 @@ export default class Editor extends Component {
           )}
         </WindowSize>
         <div className="fp-cms__editor__content">
-          {children({ workingContent })}
+          {children(content)}
         </div>
       </div>
     );

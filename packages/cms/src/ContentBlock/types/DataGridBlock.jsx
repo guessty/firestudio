@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { AgGridReact } from 'ag-grid-react';
 
-import JsonEditorContent from '../JsonBlock/EditorContent';
+import JsonBlock from './JsonBlock';
 
 export default class EditorContent extends PureComponent {
   static propTypes = {
@@ -125,7 +125,7 @@ export default class EditorContent extends PureComponent {
           </div>
         )}
         {view === 'json' && (
-          <JsonEditorContent {...this.props} />
+          <JsonBlock {...this.props} />
         )}
       </div>
     );
