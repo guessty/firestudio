@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import PropTypes from 'prop-types';
-import ReactJsonView from 'react-json-view';
+
+const ReactJsonView = React.lazy(() => import('react-json-view'));
 
 const JsonBlock = ({ content, onSetWorkingContent }) => {
   const handleUpdate = ({ updated_src: workingContent }) => {
@@ -16,14 +17,16 @@ const JsonBlock = ({ content, onSetWorkingContent }) => {
         backgroundColor: 'rgb(39, 40, 34)',
       }}
     >
-      <ReactJsonView
-        src={content}
-        theme="monokai"
-        shouldCollapse={({ type }) => type === 'array'}
-        onAdd={handleUpdate}
-        onDelete={handleUpdate}
-        onEdit={handleUpdate}
-      />
+      <Suspense fallback={<div>Loading...</div>}>
+        <ReactJsonView
+          src={content}
+          theme="monokai"
+          shouldCollapse={({ type }) => type === 'array'}
+          onAdd={handleUpdate}
+          onDelete={handleUpdate}
+          onEdit={handleUpdate}
+        />
+      </Suspense>
     </div>
   );
 };

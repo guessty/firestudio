@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { convertFromRaw, convertToRaw, EditorState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
-import { MegadraftEditor } from 'megadraft';
 import BoldIcon from 'megadraft/lib/icons/bold';
 import ItalicIcon from 'megadraft/lib/icons/italic';
 import LinkIcon from 'megadraft/lib/icons/link';
@@ -10,6 +9,8 @@ import ULIcon from 'megadraft/lib/icons/ul';
 import OLIcon from 'megadraft/lib/icons/ol';
 import H2Icon from 'megadraft/lib/icons/h2';
 import BlockQuoteIcon from 'megadraft/lib/icons/blockquote';
+
+const MegadraftEditor = React.lazy(() => import('megadraft').then(mod => mod.MegadraftEditor));
 
 const H4Icon = () => (
   <svg width="20" height="20" viewBox="0 0 24 20">
@@ -102,12 +103,14 @@ export default class RickTextBlock extends PureComponent {
           style={{ maxWidth: '740px' }}
         >
           <div style={{ marginLeft: 80 }}>
-            <MegadraftEditor
-              actions={RickTextBlock.ACTIONS}
-              editorState={editorState}
-              onChange={this.handleEditorStateChange}
-              placeholder="Add some text"
-            />
+            <Suspense fallback={<div>Loading...</div>}>
+              <MegadraftEditor
+                actions={RickTextBlock.ACTIONS}
+                editorState={editorState}
+                onChange={this.handleEditorStateChange}
+                placeholder="Add some text"
+              />
+            </Suspense>
           </div>
         </div>
       </div>
