@@ -50,7 +50,7 @@ export default class Editor extends Component {
     render: undefined,
   };
 
-  static LOADER = () => (
+  static Loader = () => (
     <div className="fp-cms__editor__loader-container">
       <Loader className="fp-cms__editor__loader" />
     </div>
@@ -257,7 +257,7 @@ export default class Editor extends Component {
       isOpen, isLoading, workingContent: content,
     } = this.state;
 
-    if (isLoading) return (<Editor.LOADER />);
+    if (isLoading) return (<Editor.Loader />);
 
     return (
       <div className="fp-cms__editor">

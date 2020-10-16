@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import PropTypes from 'prop-types';
 import parseUrl from 'url-parse';
+import { Loader } from '@firepress/ui';
 
-import Editor from './Editor'
 import * as BLOCK_TYPES from './types';
+
+const Editor = React.lazy(() => import('./Editor'));
 
 const defaultRenderer = ({ content, children }) => {
   if (typeof children === 'function') {
@@ -23,35 +25,40 @@ const ContentBlock = ({
   disabled = false,
 }) => {
   const publishedContent = block?.publishedContent?.json || '{}';
-
-  let isEditing = false;
+  const publishedJson = JSON.parse(publishedContent);
   const isEditingEnabled = user?.claims.editor || false;
-
-  if (!!db && !!user && isEditingEnabled) {
-    const { query: { edit } } = parseUrl(window.location.href, true);
-    isEditing = edit === 'true'
-  }
 
   const Block = BLOCK_TYPES[type] || BLOCK_TYPES.json;
   const blockRenderer = Block.renderer || defaultRenderer;
 
-  const publishedJson = JSON.parse(publishedContent);
+  if (!isEditingEnabled || disabled) return blockRenderer({ content: publishedJson, children });
 
-  return (isEditingEnabled && isEditing && !disabled) ? (
-    <Editor
-      content={publishedJson}
-      db={db}
-      blockId={id}
-      render={({ setWorkingContent, workingContent }) => (
-        <Block
-          content={workingContent}
-          onSetWorkingContent={setWorkingContent}
-        />
+  const { query: { edit } } = parseUrl(window.location.href, true);
+  const isEditing = edit === 'true';
+
+  return (isEditing) ? (
+    <Suspense
+      fallback={(
+        <div className="fp-cms__editor__loader-container">
+          <Loader className="fp-cms__editor__loader" />
+        </div>
       )}
     >
-      {(workingContent) => blockRenderer({ content: workingContent, children })}
-    </Editor>
-  ) : blockRenderer({ content: publishedContent, children });
+      <Editor
+        content={publishedJson}
+        db={db}
+        blockId={id}
+        render={({ setWorkingContent, workingContent }) => (
+          <Block
+            content={workingContent}
+            onSetWorkingContent={setWorkingContent}
+          />
+        )}
+      >
+        {(workingContent) => blockRenderer({ content: workingContent, children })}
+      </Editor>
+    </Suspense>
+  ) : blockRenderer({ content: publishedJson, children });
 };
 
 ContentBlock.propTypes = {

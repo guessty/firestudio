@@ -3,16 +3,16 @@ import parseUrl from 'url-parse';
 import { Clickable, Menu } from '@firepress/ui';
 
 const Toolbar = ({ user, children }) => {
-  let isEditing = false;
   const isEditingEnabled = user?.claims?.editor || false;
 
-  if (!!user && isEditingEnabled) {
-    document.documentElement.style.cssText = editorIsEnabled ? `
+  if (!isEditingEnabled) return null;
+
+  const { query: { edit } } = parseUrl(window.location.href, true);
+  const isEditing = edit === 'true'
+
+  document.documentElement.style.cssText = isEditingEnabled ? `
       padding-top: 3rem !important;
     ` : '';
-    const { query: { edit } } = parseUrl(window.location.href, true);
-    isEditing = edit === 'true'
-  }
 
   const handleChangeMode = (e) => {
     const edit = e.target.value === 'edit';
@@ -24,7 +24,7 @@ const Toolbar = ({ user, children }) => {
     window.location.replace(parsedUrl.href);
   }
 
-  return (isEditingEnabled) ? (
+  return (
     <div className="fp-cms__toolbar">
       <span>Firepress CMS</span>
       <div className="fp-cms__toolbar__options">
@@ -64,7 +64,7 @@ const Toolbar = ({ user, children }) => {
         )}
       </div>
     </div> 
-  ) : null;
+  );
 }
 
 export default Toolbar;
