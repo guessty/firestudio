@@ -107,6 +107,7 @@ export default class EditorContent extends PureComponent {
             <AgGridReact
               key="datagrid"
               ensureDomOrder
+              singleClickEdit
               suppressColumnVirtualisation
               suppressPropertyNamesCheck
               className="fp-cms__data-grid-editor__grid"
@@ -116,6 +117,7 @@ export default class EditorContent extends PureComponent {
                 lockPosition: true,
                 resizable: true,
                 sortable: true,
+                editable: true,
               }}
               headerHeight={40}
               rowData={rowData}

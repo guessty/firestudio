@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Clickable, Loader } from '@firepress/ui';
-import Dock from 'react-dock';
-import WindowSize from '@reach/window-size';
 
 const getBlockContent = async (blockData) => {
   try {
@@ -264,33 +262,17 @@ export default class Editor extends Component {
         <div className="fp-cms__editor__indicator">
           {this.renderEditButton()}
         </div>
-        <WindowSize>
-          {({ width }) => (
-            <>
-              {width >= 1280 && (
-                <Dock position="right" isVisible={isOpen}>
-                  <div className="fp-cms__editor__container">
-                    {this.renderEditorControls()}
-                    {this.renderEditorContent()}
-                  </div>
-                </Dock>
-              )}
-              {width < 1280 && (
-                <div
-                  className={`
-                    fp-cms__editor__full-screen
-                    ${isOpen ? 'fp-cms__editor--block' : 'fp-cms__editor--hidden'}
-                  `}
-                >
-                  <div className="fp-cms__editor__container">
-                    {this.renderEditorControls()}
-                    {this.renderEditorContent()}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </WindowSize>
+        <div
+          className={`
+            fp-cms__editor__full-screen
+            ${isOpen ? 'fp-cms__editor--block' : 'fp-cms__editor--hidden'}
+          `}
+        >
+          <div className="fp-cms__editor__container">
+            {this.renderEditorControls()}
+            {this.renderEditorContent()}
+          </div>
+        </div>
         <div className="fp-cms__editor__content">
           {children(content)}
         </div>

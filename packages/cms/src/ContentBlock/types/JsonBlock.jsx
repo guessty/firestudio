@@ -21,7 +21,7 @@ const JsonBlock = ({ content, onSetWorkingContent }) => {
         <ReactJsonView
           src={content}
           theme="monokai"
-          shouldCollapse={({ type }) => type === 'array'}
+          shouldCollapse={() => true}
           onAdd={handleUpdate}
           onDelete={handleUpdate}
           onEdit={handleUpdate}
