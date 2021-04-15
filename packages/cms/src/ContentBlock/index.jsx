@@ -1,7 +1,8 @@
 import React, { Suspense } from 'react';
 import PropTypes from 'prop-types';
-import parseUrl from 'url-parse';
 import { Loader } from '@firepress/ui';
+
+import useSessionStorage from '../hooks/useSessionStorage';
 
 import * as BLOCK_TYPES from './types';
 
@@ -33,10 +34,11 @@ const ContentBlock = ({
 
   if (!isEditingEnabled || disabled) return blockRenderer({ content: publishedJson, children });
 
-  const { query: { edit } } = parseUrl(window.location.href, true);
-  const isEditing = edit === 'true';
+  const [mode] = useSessionStorage('mode');
+  const isEditing = mode === 'edit';
+  const isPreviewing = mode === 'preview';
 
-  return (isEditing) ? (
+  return (isEditing || isPreviewing) ? (
     <Suspense
       fallback={(
         <div className="fp-cms__editor__loader-container">
@@ -48,6 +50,7 @@ const ContentBlock = ({
         content={publishedJson}
         db={db}
         blockId={id}
+        isPreviewing={isPreviewing}
         render={({ setWorkingContent, workingContent }) => (
           <Block
             content={workingContent}

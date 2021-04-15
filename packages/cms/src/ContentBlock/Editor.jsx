@@ -38,6 +38,7 @@ export default class Editor extends Component {
     db: PropTypes.shape({}).isRequired,
     content: PropTypes.shape({}),
     buttonPosition: PropTypes.oneOf(['left', 'right']),
+    isPreviewing: PropTypes.bool,
     children: PropTypes.func.isRequired,
     render: PropTypes.func.isRequired,
   };
@@ -45,6 +46,7 @@ export default class Editor extends Component {
   static defaultProps = {
     buttonPosition: 'right',
     content: {},
+    isPreviewing: false,
     render: undefined,
   };
 
@@ -250,12 +252,14 @@ export default class Editor extends Component {
   }
 
   render() {
-    const { children } = this.props;
+    const { children, isPreviewing } = this.props;
     const {
       isOpen, isLoading, workingContent: content,
     } = this.state;
 
     if (isLoading) return (<Editor.Loader />);
+
+    if (isPreviewing) return children(content);
 
     return (
       <div className="fp-cms__editor">

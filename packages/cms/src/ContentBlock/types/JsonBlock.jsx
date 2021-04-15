@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const ReactJsonView = React.lazy(() => import('react-json-view'));
 
-const JsonBlock = ({ content, onSetWorkingContent }) => {
+const JsonBlock = ({ content, onSetWorkingContent, config = {} }) => {
   const handleUpdate = ({ updated_src: workingContent }) => {
     onSetWorkingContent(workingContent);
 
@@ -19,9 +19,11 @@ const JsonBlock = ({ content, onSetWorkingContent }) => {
     >
       <Suspense fallback={<div>Loading...</div>}>
         <ReactJsonView
+          shouldCollapse={() => true}
+          groupArraysAfterLength={50}
+          {...config}
           src={content}
           theme="monokai"
-          shouldCollapse={() => true}
           onAdd={handleUpdate}
           onDelete={handleUpdate}
           onEdit={handleUpdate}

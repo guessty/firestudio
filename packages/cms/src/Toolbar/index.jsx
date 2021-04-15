@@ -1,27 +1,18 @@
 import React from 'react';
-import parseUrl from 'url-parse';
 import { Clickable, Menu } from '@firepress/ui';
+
+import useSessionStorage from '../hooks/useSessionStorage';
 
 const Toolbar = ({ user, children }) => {
   const isEditingEnabled = user?.claims?.editor || false;
+  const [mode, setMode] = useSessionStorage('mode', 'live');
 
   if (!isEditingEnabled) return null;
 
-  const { query: { edit } } = parseUrl(window.location.href, true);
-  const isEditing = edit === 'true'
-
-  document.documentElement.style.cssText = isEditingEnabled ? `
-      padding-top: 3rem !important;
-    ` : '';
+  document.documentElement.style.cssText = isEditingEnabled ? 'padding-top: 3rem !important;' : 'padding-top: 0 !important;';
 
   const handleChangeMode = (e) => {
-    const edit = e.target.value === 'edit';
-    const parsedUrl = parseUrl(window.location.href, '/', true);
-    parsedUrl.set('query', {
-      ...parsedUrl.query,
-      edit,
-    });
-    window.location.replace(parsedUrl.href);
+    setMode(e.target.value);
   }
 
   return (
@@ -31,9 +22,10 @@ const Toolbar = ({ user, children }) => {
         <div className="fp-cms__toolbar__mode">
           <span>Mode:</span>
           <div>
-            <select value={isEditing ? 'edit' : 'live'} onChange={handleChangeMode}>
+            <select value={mode} onChange={handleChangeMode}>
               <option value="live">Live</option>
               <option value="edit">Edit</option>
+              <option value="preview">Preview</option>
             </select>
           </div>
         </div>
