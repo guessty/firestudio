@@ -1,6 +1,6 @@
 {
   "name": "@firepress/cms",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "A Firebase connected CMS for Firepress",
   "keywords": [
     "React",
@@ -54,7 +54,7 @@
     "react": "^16.8.6",
     "react-dock": "^0.2.4",
     "react-dom": "^16.8.6",
-    "react-json-view": "^1.19.1",
+    "react-json-view": "^1.21.3",
     "shortid": "^2.2.15",
     "url-parse": "^1.4.7"
   }

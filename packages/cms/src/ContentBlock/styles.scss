@@ -9,6 +9,8 @@
   position: relative;
   padding: 1.5rem;
   pointer-events: all;
+  flex-grow: inherit;
+  padding: 0 !important;
 
   &__indicator {
     position: absolute;
@@ -19,6 +21,8 @@
     left: 0;
     right: 0;
     border: 1px dashed #ffffff;
+    z-index: 5;
+    pointer-events: none;
   }
 
   &__container {
@@ -35,13 +39,12 @@
     left: 0;
     right: 0;
     background-color: #ffffff;
-    z-index: 999;
+    z-index: 9999;
   }
 
   &__edit-button {
     position: absolute;
     top: 0;
-    margin: -0.75rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -52,9 +55,14 @@
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
     color: #ffffff;
-    border-radius: 9999px;
     font-size: 1.25rem;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    align-items: flex-end !important;
+    margin: 0!important;
+    border-radius: 0 !important;
+    border-bottom-left-radius: 1.75rem !important;
+    padding-top: 0 !important;
+    padding-right: 0.25rem !important;
 
     &__icon {
       transform: scaleX(-1);
@@ -172,6 +180,9 @@
 
   &__content {
     pointer-events: all;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   &--block {
@@ -180,6 +191,20 @@
 
   &--hidden {
     display: none;
+  }
+
+  .react-json-view {
+    .copy-icon,
+    .click-to-add-icon,
+    .click-to-remove-icon,
+    .click-to-edit-icon,
+    .edit-check,
+    .edit-cancel {
+      svg {
+        width: 1.2rem !important;
+        height: 1.2rem !important;
+      }
+    }
   }
 }
 
@@ -307,8 +332,8 @@
       margin-top: 29px;
     }
   
-    + .megadraft-block {
+    // + .megadraft-block {
       
-    }
+    // }
   }
 }

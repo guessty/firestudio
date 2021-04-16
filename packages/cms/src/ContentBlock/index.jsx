@@ -24,6 +24,7 @@ const ContentBlock = ({
   type = 'json',
   children,
   disabled = false,
+  editorConfig = {},
 }) => {
   const publishedContent = block?.publishedContent?.json || '{}';
   const publishedJson = JSON.parse(publishedContent);
@@ -54,6 +55,7 @@ const ContentBlock = ({
         render={({ setWorkingContent, workingContent }) => (
           <Block
             content={workingContent}
+            config={editorConfig}
             onSetWorkingContent={setWorkingContent}
           />
         )}
